@@ -8,10 +8,10 @@
     <link rel="stylesheet" href="index.css" />
   </head>
   <body>
-    <div class="shop-menu">
+    <div hidden id="shop-menu" class="shop-menu">
       <div class="header">
         <p class="title">Shop</p>
-        <button>X</button>
+        <button onclick="handleShopClose()">X</button>
       </div>
 
       <div class="parent">
@@ -28,7 +28,13 @@
 
     <div class="game">
       <div id="map" class="map">
-        <canvas id="grid" width="640" height="640"></canvas>
+        <div id="shop-button">
+          <div class="content"></div>
+          <p>shop</p>
+        </div>
+
+        <canvas id="grid" width="640" height="640"> </canvas>
+        <canvas id="objects" width="640" height="640"></canvas>
       </div>
     </div>
 
