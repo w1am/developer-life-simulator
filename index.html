@@ -16,21 +16,27 @@
 
       <div class="parent">
         <div class="sidebar">
-          <div class="item">Servers</div>
-          <div class="item">Developers</div>
-          <div class="item">Services</div>
+          <div onclick="setTab('servers')" class="item">Servers</div>
+          <div onclick="setTab('developers')" class="item">Developers</div>
+          <div onclick="setTab('services')" class="item">Services</div>
         </div>
-        <div id="shop" class="content">
-          <!-- <div class="item">ppp</div> -->
-        </div>
+        <div id="shop" class="content"></div>
       </div>
     </div>
 
     <div class="game">
       <div id="map" class="map">
-        <div id="shop-button">
-          <div class="content"></div>
-          <p>shop</p>
+        <div id="info-container">
+          <div id="shop-button">
+            <div class="content"></div>
+            <p>shop</p>
+          </div>
+
+          <div id="balance">
+            <div class="content">
+              <span id="balance-amount">0</span>
+            </div>
+          </div>
         </div>
 
         <canvas id="grid" width="640" height="640"> </canvas>
