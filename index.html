@@ -15,30 +15,53 @@
       </div>
 
       <div class="parent">
-        <div class="sidebar">
-          <div onclick="setTab('servers')" class="item">Servers</div>
-          <div onclick="setTab('developers')" class="item">Developers</div>
-          <div onclick="setTab('services')" class="item">Services</div>
+        <div id="sidebar">
+          <div
+            active="true"
+            onclick="setTab('servers')"
+            id="item-servers"
+            class="item"
+          >
+            Servers
+          </div>
+          <div
+            active="false"
+            onclick="setTab('developers')"
+            id="item-developers"
+            class="item"
+          >
+            Developers
+          </div>
+          <div
+            active="false"
+            onclick="setTab('services')"
+            id="item-services"
+            class="item"
+          >
+            Services
+          </div>
         </div>
         <div id="shop" class="content"></div>
       </div>
     </div>
 
+    <div id="info-container">
+      <div class="button">
+        <div id="content-shop"></div>
+        <p>Shop</p>
+      </div>
+
+      <div class="button">
+        <div id="content-job"></div>
+        <p>Jobs</p>
+      </div>
+    </div>
+
+    <div id="balance-amount">0</div>
+
     <div class="game">
       <div id="map" class="map">
-        <div id="info-container">
-          <div id="shop-button">
-            <div class="content"></div>
-            <p>shop</p>
-          </div>
-
-          <div id="balance">
-            <div class="content">
-              <span id="balance-amount">0</span>
-            </div>
-          </div>
-        </div>
-
+        <canvas id="dev" width="640" height="640"> </canvas>
         <canvas id="grid" width="640" height="640"> </canvas>
         <canvas id="objects" width="640" height="640"></canvas>
       </div>

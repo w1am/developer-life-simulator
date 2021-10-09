@@ -1,13 +1,19 @@
 var canvas = /** @type {HTMLCanvasElement} */ (document.querySelector('#grid'))
 var objectsCanvas = /** @type {HTMLCanvasElement} */ (document.querySelector('#objects'))
+var devCanvas = /** @type {HTMLCanvasElement} */ (document.querySelector('#dev'))
 const ctx = canvas.getContext("2d");
 const objectsCtx = objectsCanvas.getContext("2d");
+const devCtx = devCanvas.getContext("2d");
+
+localStorage.setItem('layout', JSON.stringify([]))
 
 let shopActive = false
 let grabbed = false
 let newPrice = 0
-let tab = 'servers'
 let cursor = [1, 1]
+const [TILE_WIDTH, TILE_HEIGHT] = [10, 10]
+const TABS = ['servers', 'developers', 'services']
+let tab = [TABS[0]]
 
 // when game loads
 localStorage.setItem('balance', 122000)
@@ -19,20 +25,11 @@ let balance = Number(localStorage.getItem('balance'))
 //   objectsCtx.drawImage(table, 2 * 64, 4 * 64, 192, 128)
 // }
 // table.src = "./table.png";
+// [[2, 4], [4, 5]]
 
-const layout = [
-  // [[2, 4], [4, 5]]
-]
-
-const inRange = function (num, ranges) {
-  const coordX = num[0]
-  const coordY = num[1]
-
-  if (coordX >= ranges[0][0] && coordX <= ranges[0][1] && coordY >= ranges[1][0] && coordY <= ranges[1][1]) {
-    return true
-  }
-  return false
-}
+// const layout = [
+//   [[2, 4], [4, 5]]
+// ]
 
 class Product {
   constructor(id, name, icon, price, cursor) {
@@ -60,6 +57,13 @@ let products = [];
 const pixels = 2;
 const tileSize = 2 * 32;
 
+// for (let i = 0; i < 10; i += 1) {
+//   for (let j = 0; j < 10; j += 1) {
+//     devCtx.strokeStyle = "red"
+//     devCtx.strokeText(`${i}, ${j}`, (i * tileSize) + (tileSize / 2) - 10, (j * tileSize) + (tileSize / 2) + 5)
+//   }
+// }
+
 const clearRect = function () {
   for (let i = 0; i < 10; i += 1) {
     for (let j = 0; j < 10; j += 1) {
@@ -68,27 +72,43 @@ const clearRect = function () {
   }
 }
 
-const objectExists = function (coordX, coordY) {
-  for (let i = 0; i < layout.length; i += 1) {
-    if (inRange([coordX, coordY], layout[i])) {
-      return true
-    }
+const inRange = function (num, ranges) {
+  const coordX = num[0]
+  const coordY = num[1]
+
+  if (coordX >= ranges[0][0] && coordX <= ranges[0][1] && coordY >= ranges[1][0] && coordY <= ranges[1][1]) {
+    return true
   }
   return false
 }
 
+
+const objectExists = function (coordX, coordY) {
+  let layout = JSON.parse(localStorage.getItem('layout'))
+  let pass = false
+
+  for (let i = 0; i < layout.length; i += 1) {
+    if (inRange([coordX, coordY], layout[i])) {
+      pass = true
+    }
+  }
+  return pass
+}
+
 const detectObject = function (coordX, coordY) {
+  let detected = false
+  let layout = JSON.parse(localStorage.getItem('layout'))
+
+  if (coordX + (cursor[0] - 1) >= TILE_WIDTH || coordY + (cursor[1] - 1) >= TILE_HEIGHT) return true
+
+  if (layout.length === 0) return false
+
   for (let i = coordX; i <= coordX + cursor[0] - 1; i += 1) {
-    if (objectExists(i, coordY)) {
-      return true
+    for (let j = coordY; j <= coordY + cursor[1] - 1; j += 1) {
+      if (objectExists(i, j)) detected = true
     }
   }
-  for (let i = coordY; i <= coordY + cursor[1] - 1; i += 1) {
-    if (objectExists(coordX, i)) {
-      return true
-    }
-  }
-  return false
+  return detected
 }
 
 document.addEventListener('mousemove', (event) => {
@@ -141,7 +161,7 @@ desk3.src = "./desk3.png";
 const desk4 = document.createElement('img');
 desk4.src = "./desk4.png";
 const desk5 = document.createElement('img');
-desk5.src = "./desk5.png";
+desk5.c = "./desk5.png";
 
 const inventory = {
   0: amazonServer,
@@ -169,6 +189,8 @@ document.getElementById('map').addEventListener('click', function (event) {
     const [coordX, coordY] = [Math.floor(mousex / 64), Math.floor(mousey / 64)]
 
     if (!detectObject(coordX, coordY)) {
+      let layout = JSON.parse(localStorage.getItem('layout'))
+
       localStorage.setItem('balance', newPrice)
       document.getElementById('balance-amount').innerText = newPrice
 
@@ -177,6 +199,7 @@ document.getElementById('map').addEventListener('click', function (event) {
       objectsCtx.drawImage(inventory[storageSelected], coordX * 64, coordY * 64, 64 * cursor[0], 64 * cursor[1])
 
       layout.push([[coordX, coordX + cursor[0] - 1], [coordY, coordY + cursor[1] - 1]])
+      localStorage.setItem('layout', JSON.stringify(layout))
 
       localStorage.removeItem('selected')
     }
@@ -209,8 +232,6 @@ const renderProducts = function (tab, balance) {
   const shop = document.getElementById('shop');
 
   shop.innerHTML = null
-
-  console.log(balance)
 
   products[tab].forEach((product) => {
     const item = document.createElement('div')
@@ -290,7 +311,7 @@ const renderProducts = function (tab, balance) {
 
 
 
-document.getElementById('shop-button').addEventListener('click', () => {
+document.getElementById('content-shop').addEventListener('click', () => {
   balance = Number(localStorage.getItem('balance'))
   shopActive = true
 
@@ -316,4 +337,13 @@ function handleShopClose() {
 function setTab(newTab) {
   tab = newTab
   renderProducts(tab, balance)
+
+  TABS.forEach((tab) => {
+    console.log(tab, newTab)
+    if (tab === newTab) {
+      document.getElementById(`item-${tab}`).setAttribute('active', true)
+    } else {
+      document.getElementById(`item-${tab}`).setAttribute('active', false)
+    }
+  })
 }
