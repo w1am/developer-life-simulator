@@ -34,7 +34,7 @@ body {
 #frame {
   image-rendering: -moz-crisp-edges;
   image-rendering: pixelated;
-  background-image: url("./frame.png");
+  background-image: url("./assets/frame.png");
   background-repeat: no-repeat;
   background-size: contain;
   background-position: center;
@@ -48,7 +48,7 @@ body {
   background-color: none;
   height: calc(var(--tile-size) * 10);
   width: calc(var(--tile-size) * 10);
-  background-image: url("./tiles.png");
+  background-image: url("./assets/tiles.png");
   cursor: pointer;
   position: relative;
   padding: 10px;
@@ -139,7 +139,7 @@ div#info-container div.button {
 div#info-container div.button div#content-shop {
   image-rendering: -moz-crisp-edges;
   image-rendering: pixelated;
-  background-image: url("./shop.png");
+  background-image: url("./assets/shop.png");
   background-repeat: no-repeat;
   background-size: contain;
   background-position: center;
@@ -151,7 +151,7 @@ div#info-container div.button div#content-shop {
 div#info-container div.button div#content-job {
   image-rendering: -moz-crisp-edges;
   image-rendering: pixelated;
-  background-image: url("./job.png");
+  background-image: url("./assets/job.png");
   background-repeat: no-repeat;
   background-size: contain;
   background-position: center;
@@ -163,7 +163,7 @@ div#info-container div.button div#content-job {
 div#info-container div.button div#content-cart {
   image-rendering: -moz-crisp-edges;
   image-rendering: pixelated;
-  background-image: url("./cart.png");
+  background-image: url("./assets/cart.png");
   background-repeat: no-repeat;
   background-size: contain;
   background-position: center;
