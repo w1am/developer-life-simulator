@@ -6,6 +6,8 @@ const gridCtx = gridCanvas.getContext("2d");
 const objectsCtx = objectsCanvas.getContext("2d");
 const devCtx = devCanvas.getContext("2d");
 
+const test = 3
+
 const PIXELS = 2
 const TILE_SIZE = PIXELS * 32
 const [TILE_WIDTH_COUNT, TILE_HEIGHT_COUNT] = [10, 10]
@@ -33,7 +35,6 @@ document.addEventListener('mousemove', (event) => {
   clearRect()
   let selected = customStorage.getter(null, STORAGE.SELECTED)
   const { coordX, coordY } = relativeCoordinates(event)
-
   if (detectObject(coordX, coordY)) return
 
   gridCtx.strokeStyle = "white";
