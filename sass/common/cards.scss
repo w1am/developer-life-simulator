@@ -1,0 +1,37 @@
+@import "../palette.scss";
+
+card {
+  background-color: $color-white;
+  display: inline-block;
+  padding: 20px;
+  border: 1px solid $color-stroke-primary;
+  border-radius: 5px;
+
+  h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  form {
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    button[type="submit"] {
+      background-color: $color-primary;
+      border: 1px solid $color-primary;
+      color: $color-white;
+      padding: 10px 20px;
+      width: 100%;
+      font-size: 16px;
+      border-radius: 5px;
+      margin: 0px;
+      cursor: pointer;
+
+      &:hover {
+        background-color: $color-secondary;
+      }
+    }
+  }
+}

@@ -1,0 +1,38 @@
+@import "palette.scss";
+
+$link-space-x: 8px;
+$link-space-y: 20px;
+$navbar-space-x: 20px;
+
+#navbar {
+  background-color: $color-primary;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding-left: 20px;
+  padding-right: calc($navbar-space-x - $link-space-x);
+
+  #logo {
+    display: block;
+    margin: auto 0px;
+
+    img {
+      height: 40px;
+    }
+  }
+
+  #links {
+    display: flex;
+    flex-direction: row;
+    padding: 0px;
+
+    li {
+      padding: $link-space-y $link-space-x;
+    }
+
+    a {
+      color: $color-white;
+      text-decoration: none;
+    }
+  }
+}

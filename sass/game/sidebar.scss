@@ -1,0 +1,44 @@
+@import "../mixins/sidebar.scss";
+
+#info-container {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  cursor: pointer;
+  background-color: #5c584d;
+  height: 100vh;
+  padding: 10px;
+  width: 85px;
+  row-gap: 20px;
+
+  .button {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    opacity: 0.8;
+
+    #content-shop {
+      @include renderIcon("/developer-life-simulator/assets/shop.png");
+    }
+
+    #content-job {
+      @include renderIcon("/developer-life-simulator/assets/job.png");
+    }
+
+    &:hover {
+      opacity: 1;
+    }
+
+    p {
+      text-transform: uppercase;
+      margin: 0px;
+      margin-top: 5px;
+      color: rgb(238, 238, 238);
+      font-weight: 600;
+      font-size: 12px;
+      text-align: center;
+    }
+  }
+}

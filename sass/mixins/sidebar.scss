@@ -1,0 +1,11 @@
+@mixin renderIcon($url) {
+  image-rendering: -moz-crisp-edges;
+  image-rendering: pixelated;
+  background-image: url($url);
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  margin: 0 auto;
+  height: 40px;
+  width: 40px;
+}

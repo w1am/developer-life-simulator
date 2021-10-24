@@ -6,8 +6,6 @@ const gridCtx = gridCanvas.getContext("2d");
 const objectsCtx = objectsCanvas.getContext("2d");
 const devCtx = devCanvas.getContext("2d");
 
-const test = 2
-
 const PIXELS = 2
 const TILE_SIZE = PIXELS * 32
 const [TILE_WIDTH_COUNT, TILE_HEIGHT_COUNT] = [10, 10]

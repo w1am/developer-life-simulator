@@ -1,21 +1,24 @@
-:root {
-  --pixels: 2px;
-  --tile-size: calc(var(--pixels) * 32);
+@import "./sidebar.scss";
+
+$pixels: 2px;
+$tile-size: 64px;
+$room-padding: 10px;
+
+#game-page {
+  background-color: black;
 }
 
-html,
-body {
+#game-frame {
+  position: relative;
   height: 100%;
-  background-color: #010101;
-  margin: 0px;
-  font-family: Arial, Helvetica, sans-serif;
 }
 
-.game {
+#game {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100%;
+  width: 100%;
 }
 
 #grid {
@@ -34,7 +37,7 @@ body {
 #frame {
   image-rendering: -moz-crisp-edges;
   image-rendering: pixelated;
-  background-image: url("./assets/frame.png");
+  background-image: url("/developer-life-simulator/assets/frame.png");
   background-repeat: no-repeat;
   background-size: contain;
   background-position: center;
@@ -46,12 +49,12 @@ body {
   image-rendering: pixelated;
   background-size: 100%;
   background-color: none;
-  height: calc(var(--tile-size) * 10);
-  width: calc(var(--tile-size) * 10);
-  background-image: url("./assets/tiles.png");
+  height: calc($tile-size * 10 + ($room-padding * 2));
+  width: calc($tile-size * 10 + ($room-padding * 2));
+  background-image: url("/developer-life-simulator/assets/tiles.png");
   cursor: pointer;
   position: relative;
-  padding: 10px;
+  padding: $room-padding;
 }
 
 div#job-container {
@@ -113,77 +116,6 @@ div#balance-amount {
 
 div#balance-amount::before {
   content: "$ ";
-}
-
-div#info-container {
-  display: flex;
-  flex-direction: column;
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  cursor: pointer;
-  background-color: #5c584d;
-  height: 100%;
-  padding: 10px;
-  width: 50px;
-  row-gap: 20px;
-}
-
-div#info-container div.button {
-  display: flex;
-  flex-direction: column;
-  cursor: pointer;
-  opacity: 0.8;
-}
-
-div#info-container div.button div#content-shop {
-  image-rendering: -moz-crisp-edges;
-  image-rendering: pixelated;
-  background-image: url("./assets/shop.png");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-  margin: 0 auto;
-  height: 40px;
-  width: 40px;
-}
-
-div#info-container div.button div#content-job {
-  image-rendering: -moz-crisp-edges;
-  image-rendering: pixelated;
-  background-image: url("./assets/job.png");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-  margin: 0 auto;
-  height: 40px;
-  width: 40px;
-}
-
-div#info-container div.button div#content-cart {
-  image-rendering: -moz-crisp-edges;
-  image-rendering: pixelated;
-  background-image: url("./assets/cart.png");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-  margin: 0 auto;
-  height: 40px;
-  width: 40px;
-}
-
-div#info-container div.button:hover {
-  opacity: 1;
-}
-
-div#info-container div.button p {
-  text-transform: uppercase;
-  margin: 0px;
-  margin-top: 5px;
-  color: rgb(238, 238, 238);
-  font-weight: 600;
-  font-size: 12px;
-  text-align: center;
 }
 
 #job-menu {

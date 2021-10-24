@@ -1,0 +1,33 @@
+@import "./palette.scss";
+
+button {
+  border: 0px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+
+  &.primary {
+    background-color: $color-primary;
+  }
+
+  &.success {
+    background-color: $color-success-primary;
+  }
+
+  &:hover {
+    &.primary {
+      background-color: $color-secondary;
+    }
+    &.success {
+      background-color: $color-success-secondary;
+    }
+  }
+
+  a {
+    padding: 10px 10px;
+    display: block;
+    color: $color-white;
+    text-decoration: none;
+  }
+}

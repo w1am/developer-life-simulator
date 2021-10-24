@@ -1,0 +1,15 @@
+@import "palette.scss";
+
+$footer-space: 20px;
+
+#footer {
+  background-color: #1f2b31;
+  display: flex;
+  flex-direction: row;
+  padding: $footer-space;
+
+  a {
+    color: $color-white;
+    text-decoration: none;
+  }
+}

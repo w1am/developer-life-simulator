@@ -1,0 +1,63 @@
+@mixin handleSpace($size, $type: "vertical") {
+  > * {
+    @if $size == "xs" {
+      @if $type == "vertical" {
+        margin: 10px 0px;
+      } @else {
+        margin: 0px 10px;
+      }
+    } @else if $size == "sm" {
+      @if $type == "vertical" {
+        margin: 15px 0px;
+      } @else {
+        margin: 0px 15px;
+      }
+    } @else if $size == "md" {
+      @if $type == "vertical" {
+        margin: 20px 0px;
+      } @else {
+        margin: 0px 20px;
+      }
+    } @else {
+      @if $type == "vertical" {
+        margin: 25px 0px;
+      } @else {
+        margin: 0px 25px;
+      }
+    }
+
+    &:first-child {
+      @if $type == "vertical" {
+        margin-top: 0px;
+      } @else {
+        margin-left: 0px;
+      }
+    }
+
+    &:last-child {
+      @if $type {
+        margin-bottom: 0px;
+      } @else {
+        margin-right: 0px;
+      }
+    }
+  }
+}
+
+@mixin handleInput() {
+  &.xs {
+    width: 200px;
+  }
+
+  &.sm {
+    width: 300px;
+  }
+
+  &.md {
+    width: 400px;
+  }
+
+  &.full {
+    width: 100%;
+  }
+}

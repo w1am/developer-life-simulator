@@ -1,0 +1,159 @@
+@import "palette.scss";
+@import "mixins/responsive";
+
+html,
+body {
+  height: 100%;
+  margin: 0px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  color: rgb(7, 100, 207);
+}
+
+ul {
+  list-style-type: none;
+  margin: 0px;
+  padding: 0px;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0px;
+}
+
+p {
+  margin: 0px;
+}
+
+input {
+  border: 1px solid $color-stroke-input;
+  padding: 12px 10px;
+  border-radius: 5px;
+  transition: all 0.18s;
+
+  &::placeholder {
+    font-size: 16px;
+  }
+
+  &:focus {
+    outline: none !important;
+    border: 1px solid rgb(158, 195, 252);
+    box-shadow: 0 0 4px #719ece;
+  }
+
+  @include handleInput();
+}
+
+.space-y-xs {
+  @include handleSpace("xs", "vertical");
+}
+
+.space-y-sm {
+  @include handleSpace("sm", "vertical");
+}
+
+.space-y-md {
+  @include handleSpace("md", "vertical");
+}
+
+.space-x-xs {
+  @include handleSpace("xs", "horizontal");
+}
+
+.space-x-sm {
+  @include handleSpace("sm", "horizontal");
+}
+
+.space-x-md {
+  @include handleSpace("md", "horizontal");
+}
+
+.flex {
+  display: flex;
+  flex-direction: row;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.p-xs {
+  padding: 5px;
+}
+
+.p-sm {
+  padding: 10px;
+}
+
+.p-md {
+  padding: 15px;
+}
+
+.p-x-xs {
+  padding: 0px 5px;
+}
+
+.p-x-sm {
+  padding: 0px 10px;
+}
+
+.p-x-md {
+  padding: 0px 15px;
+}
+
+.p-y-xs {
+  padding: 5px 0px;
+}
+
+.p-y-sm {
+  padding: 10px 0px;
+}
+
+.p-y-md {
+  padding: 15px 0px;
+}
+
+.m-xs {
+  margin: 5px;
+}
+
+.m-sm {
+  margin: 10px;
+}
+
+.m-md {
+  margin: 15px;
+}
+
+.m-x-xs {
+  margin: 0px 5px;
+}
+
+.m-x-sm {
+  margin: 0px 10px;
+}
+
+.m-x-md {
+  margin: 0px 15px;
+}
+
+.m-y-xs {
+  margin: 5px 0px;
+}
+
+.m-y-sm {
+  margin: 10px 0px;
+}
+
+.m-y-md {
+  margin: 15px 0px;
+}
