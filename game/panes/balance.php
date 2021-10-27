@@ -1,0 +1,1 @@
+<div id="balance-amount">0</div>

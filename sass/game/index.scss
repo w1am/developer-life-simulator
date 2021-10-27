@@ -1,4 +1,7 @@
 @import "./sidebar.scss";
+@import "./menu.scss";
+@import "./job.scss";
+@import "./logs.scss";
 
 $pixels: 2px;
 $tile-size: 64px;
@@ -57,51 +60,6 @@ $room-padding: 10px;
   padding: $room-padding;
 }
 
-div#job-container {
-  color: black;
-  position: absolute;
-  top: 50px;
-  right: 0;
-  margin: 15px;
-  background-color: #ececec;
-  padding: 1px;
-}
-
-div.dashboard {
-  position: relative;
-  background-color: #367897;
-  padding: 10px 5px;
-  font-size: 14px;
-  border-bottom: 3px solid #316c88;
-  text-align: center;
-  margin: 0px;
-  color: white;
-  font-weight: bold;
-}
-
-div.dashboard-content {
-  padding: 10px 5px;
-}
-
-.job-profile {
-  padding: 5px;
-}
-
-.dashboardInformationContent {
-  background-color: none;
-  padding-bottom: 5px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
-  max-width: 200px;
-  min-width: 200px;
-}
-
-.jobTitle {
-  margin: 0px;
-  font-weight: bold;
-  margin-bottom: 5px;
-  font-size: 14px;
-}
-
 div#balance-amount {
   background-color: #5c584d;
   color: white;
@@ -118,255 +76,54 @@ div#balance-amount::before {
   content: "$ ";
 }
 
-#job-menu {
-  position: absolute;
-  margin: 10px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 600px;
-  background-color: rgb(240, 240, 240);
-  border: 3px solid #3a82a3;
-  border-radius: 4px;
-  z-index: 999999999999999;
-}
-
-#job-menu .content {
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: row;
-  max-height: 400px;
-  overflow: auto;
-}
-
-#job-menu .content #job-item {
-  width: calc(45% - 2px);
-  margin: 0.5%;
-  padding: 5px 2%;
-  border: 1px solid #cfcfcf;
-  display: flex;
-  flex-direction: column;
-  row-gap: 5px;
-}
-
-#job-menu .content #job-item #job-item-title {
-  font-weight: bold;
-}
-
-.job-item-requirements {
-  display: flex;
-  flex-direction: row;
-  column-gap: 5px;
-}
-
-.job-item-requirements-item {
-  padding: 5px;
-  font-size: 12px;
-  font-weight: bold;
-  border-radius: 2px;
-}
-
-#job-menu .content #job-item #job-item-company {
-  color: #0a6691;
-  margin: 5px 0px;
-}
-
-#job-menu .content #job-item p {
-  margin: 0px;
-}
-
-#job-menu .content #job-item button[status="claim"] {
-  background-color: rgb(33, 160, 33);
-  color: white;
-  font-weight: 600;
-  border: 2px solid rgb(29, 139, 29);
-  padding: 5px 10px;
-  font-size: 12px;
-  border-radius: 3px;
-  cursor: pointer;
-}
-
-#job-menu .content #job-item button[status="open"] {
-  background-color: rgb(23, 50, 72);
-  color: white;
-  font-weight: 600;
-  border: 2px solid rgb(15, 38, 58);
-  padding: 5px 10px;
-  font-size: 12px;
-  border-radius: 3px;
-  cursor: pointer;
-}
-
-#job-menu .content #job-item button:disabled {
-  opacity: 0.2;
-  cursor: not-allowed;
-}
-
-#job-menu .content #job-item button[status="claim"]:hover {
-  background-color: rgb(47, 184, 47);
-  border: 2px solid rgb(35, 136, 35);
-}
-
-#job-menu .content #job-item button[status="open"]:hover {
-  background-color: rgb(16, 39, 58);
-  border: 2px solid rgb(8, 24, 37);
-}
-
-.shop-menu {
-  position: absolute;
-  margin: 10px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 600px;
-  background-color: rgb(240, 240, 240);
-  border: 3px solid #3a82a3;
-  border-radius: 4px;
-  z-index: 999999999999999;
-}
-
-.shop-menu .parent {
-  display: flex;
-  flex-direction: row;
-  min-height: 300px;
-}
-
-.shop-menu .parent #sidebar {
-  background-color: rgb(228, 228, 228);
-  border-right: 1px solid rgb(216, 216, 216);
-  padding: 2px 1px;
-  width: 150px;
-}
-
-.shop-menu .parent #sidebar .item {
-  margin: 0px;
-  padding: 10px 5px;
-  font-size: 14px;
-  color: #353535;
-  margin: 1px 0px;
-  cursor: pointer;
-  border: 1px solid rgb(228, 228, 228);
-}
-
-.shop-menu .parent #sidebar .item[active="true"] {
-  background-color: rgb(241, 241, 241);
-  border: 1px solid rgb(204, 204, 204);
-}
-
-.shop-menu .parent #sidebar .item:hover[active="false"] {
-  background-color: rgb(241, 241, 241);
-  border: 1px solid rgb(204, 204, 204);
-}
-
-.shop-menu .parent .content {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  width: 100%;
-  max-height: 300px;
-  overflow: auto;
-}
-
-.shop-menu .parent .content .item {
-  width: 21%;
-  padding: 2%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 14px;
-  cursor: pointer;
-  flex-direction: column;
-  row-gap: 5px;
-  height: 150px;
-}
-
-.shop-menu .parent .content .item #item-buy {
-  background-color: rgb(33, 160, 33);
-  color: white;
-  font-weight: 600;
-  border: 2px solid rgb(29, 139, 29);
-  padding: 5px 10px;
-  font-size: 12px;
-  border-radius: 3px;
-  cursor: pointer;
-}
-
-.shop-menu .parent .content .item #item-buy:disabled {
-  opacity: 0.2;
-  cursor: not-allowed;
-}
-
-.shop-menu .parent .content .item #item-buy:hover {
-  background-color: rgb(47, 184, 47);
-  border: 2px solid rgb(35, 136, 35);
-}
-
 .header {
   position: relative;
   background-color: #367897;
   padding: 10px 5px;
   font-size: 14px;
   border-bottom: 3px solid #316c88;
-}
 
-.header .title {
-  text-align: center;
-  margin: 0px;
-  color: white;
-  font-weight: bold;
-}
+  .title {
+    text-align: center;
+    margin: 0px;
+    color: white;
+    font-weight: bold;
+  }
 
-.header button {
-  position: absolute;
-  text-align: center;
-  top: calc((36px / 2) - (27px / 2));
-  right: 5px;
-  cursor: pointer;
-  background-color: #bd3b2f;
-  color: white;
-  border: 1px solid rgb(71, 71, 71);
-  padding: 5px 10px;
-  border-radius: 2px;
-}
+  button {
+    position: absolute;
+    text-align: center;
+    top: calc((36px / 2) - (27px / 2));
+    right: 5px;
+    cursor: pointer;
+    background-color: #bd3b2f;
+    color: white;
+    border: 1px solid rgb(71, 71, 71);
+    padding: 5px 10px;
+    border-radius: 2px;
 
-.header button:hover {
-  background-color: #ca4134;
-}
-
-.progressbar-container {
-  width: 100%;
-  height: 30px;
-  background-color: rgb(219, 219, 219);
+    &:hover {
+      background-color: #ca4134;
+    }
+  }
 }
 
 .progressbar {
-  height: 30px;
-  color: white;
-  text-align: center;
-  line-height: 30px;
-  font-size: 14px;
-  font-weight: bold;
-  -webkit-box-shadow: inset 0px 1px 15px -4px rgba(0, 0, 0, 0.25);
-  box-shadow: inset 0px 1px 15px -4px rgba(0, 0, 0, 0.25);
-}
-
-.progressbar[completed="true"]:hover {
-  background-color: rgb(0, 148, 0) !important;
-}
-
-.locked {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  background-color: white;
-  height: 100%;
   width: 100%;
-  opacity: 0.8;
-  cursor: pointer;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  object-position: center;
-  margin: auto 0px;
-  line-height: 200px;
+  height: 30px;
+  background-color: rgb(219, 219, 219);
+  .bar {
+    height: 30px;
+    color: white;
+    text-align: center;
+    line-height: 30px;
+    font-size: 14px;
+    font-weight: bold;
+    -webkit-box-shadow: inset 0px 1px 15px -4px rgba(0, 0, 0, 0.25);
+    box-shadow: inset 0px 1px 15px -4px rgba(0, 0, 0, 0.25);
+
+    &[completed="true"]:hover {
+      background-color: rgb(0, 148, 0) !important;
+    }
+  }
 }

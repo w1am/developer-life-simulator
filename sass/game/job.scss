@@ -1,0 +1,63 @@
+@import "../mixins/status.scss";
+
+.clock {
+  color: rgb(94, 94, 94);
+}
+
+.flow {
+  display: flex;
+  column-gap: 5px;
+}
+
+.duration {
+  color: rgb(94, 94, 94);
+  font-weight: bold;
+}
+
+.job-item {
+  position: relative;
+  padding: 5px 5px;
+
+  .requirements {
+    display: flex;
+    flex-direction: row;
+    column-gap: 5px;
+    margin-bottom: 8px;
+
+    .requirements-item {
+      padding: 5px;
+      font-size: 12px;
+      font-weight: bold;
+      border-radius: 2px;
+      width: 20%;
+      text-align: center;
+    }
+  }
+
+  @include renderStatus("claim");
+  @include renderStatus("open");
+
+  .title {
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .job-requirements-title {
+    font-size: 14px;
+    font-weight: bold;
+    margin: 5px 0px;
+    padding-top: 8px;
+    color: rgba(0, 0, 0, 0.8);
+    border-top: 1px solid rgba(0, 0, 0, 0.15);
+  }
+}
+
+#active-jobs {
+  color: black;
+  position: absolute;
+  top: 50px;
+  right: 0;
+  margin: 15px;
+  background-color: #ececec;
+  padding: 1px;
+}

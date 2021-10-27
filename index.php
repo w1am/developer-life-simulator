@@ -4,7 +4,7 @@
 <!-- Redirect to home page -->
 
 <?php
-header("Location: http://localhost:8080/developer-life-simulator/home");
+header("Location: http://localhost:1111/developer-life-simulator/home");
 exit();
 ?>
 

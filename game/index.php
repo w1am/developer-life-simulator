@@ -1,64 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <?php
-include('../shared/header.php');
+include_once('../shared/header.php');
 
 print renderHeader('Play');
 print loadGameScripts();
 ?>
 
 <body id="game-page">
-  <?php include('../components/navbar.php') ?>
+  <?php include_once('../components/navbar.php') ?>
 
   <div id="game-frame">
+    <!-- SIDEBAR -->
     <?php include('./sidebar.php') ?>
 
-    <div hidden id="job-menu">
-      <div id="job-header" class="header">
-        <p class="title">Jobs</p>
-        <button onclick="handleJobClose()">X</button>
-      </div>
+    <!-- MENUS -->
+    <?php include('./menus/jobs.php') ?>
+    <?php include('./menus/shop.php') ?>
 
-      <div id="job" class="content"></div>
-    </div>
+    <!-- PANES -->
+    <?php include('./panes/balance.php') ?>
+    <?php include('./panes/active_jobs.php') ?>
+    <?php include('./panes/logs.php') ?>
 
-
-    <div hidden id="shop-menu" class="shop-menu">
-      <div id="shop-header" class="header">
-        <p class="title">Shop</p>
-        <button onclick="handleShopClose()">X</button>
-      </div>
-
-      <div class="parent">
-        <div id="sidebar">
-          <div active="true" onclick="setTab('servers')" id="item-servers" class="item">
-            Servers
-          </div>
-          <div active="false" onclick="setTab('developers')" id="item-developers" class="item">
-            Developers
-          </div>
-          <div active="false" onclick="setTab('entertainments')" id="item-entertainments" class="item">
-            Entertainments
-          </div>
-          <div active="false" onclick="setTab('services')" id="item-services" class="item">
-            Services
-          </div>
-        </div>
-        <div id="shop" class="content"></div>
-      </div>
-    </div>
-
-
-    <div id="balance-amount">0</div>
-
-    <div id="job-container">
-      <div class="dashboard">Active Jobs</div>
-      <div id="dashboard-content" class="dashboard-content"></div>
-    </div>
-
-
-
-
+    <!-- MAP -->
     <div id="game">
       <div id="frame">
         <div id="map" class="map">

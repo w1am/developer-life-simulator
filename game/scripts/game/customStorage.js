@@ -3,13 +3,13 @@ class CustomStorage {
   }
 
   getter = function (initialState, key) {
-    let state = JSON.parse(localStorage.getItem(key)) || initialState
+    let state = localStorage.getItem(key) || initialState
 
     // Convert to number data type if state looks like it is a number
     if (isNaN(Number(state))) {
-      return state
+      return JSON.parse(state)
     } else {
-      return Number(state)
+      return Number(JSON.parse(state))
     }
   }
 
