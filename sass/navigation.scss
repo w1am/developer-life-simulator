@@ -28,6 +28,20 @@ $navbar-space-x: 20px;
 
     li {
       padding: $link-space-y $link-space-x;
+
+      &.auth {
+        display: block;
+        &[authenticated="true"] {
+          display: none;
+        }
+      }
+
+      &.signout {
+        display: none;
+        &[authenticated="true"] {
+          display: block;
+        }
+      }
     }
 
     a {

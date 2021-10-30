@@ -1,3 +1,6 @@
+let isAuthed = customStorage.getter(null, AUTHENTICATION_STORAGE.AUTHENTICATED_USER);
+if (!isAuthed) window.location.pathname = '/developer-life-simulator'
+
 var gridCanvas = /** @type {HTMLCanvasElement} */ (
   document.querySelector("#grid")
 );
@@ -23,25 +26,25 @@ let cursor = [1, 1];
 let tab = [TABS.SERVER];
 
 // On mount
-customStorage.setter(STORAGE.LAYOUT, []);
-customStorage.setter(STORAGE.BALANCE, 122000);
-customStorage.setter(TABS.DEVELOPER, {});
 customStorage.setter(STORAGE.EVENTS, {
-  0: new Job(0, "Coffee review Website", 10000, "frestea", 0.1, [
+  0: new Job(0, "Coffee review Website", 10000, "frestea", 2, [
     new Requirement("Python", "", "PY", ["#173248", "white"]),
     new Requirement("Javascript", "", "JS", ["#EAD41B", "#000000"]),
   ]),
-  1: new Job(1, "Ecommerce Website", 45000, "econovu", 0.1, [
+  1: new Job(1, "Ecommerce Website", 45000, "econovu", 2, [
     new Requirement("Javascript", "", "JS", ["#EAD41B", "#000000"]),
   ]),
-  2: new Job(2, "Alt coin trading platform", 75000, "traderex", 0.1, [
+  2: new Job(2, "Alt coin trading platform", 75000, "traderex", 2, [
     new Requirement("Scala", "", "Scala", ["#D12F2D", "#000000"]),
     new Requirement("Java", "", "Java", ["#E97B18", "#4A738E"]),
   ]),
 });
 
-document.getElementById("balance-amount").innerText = 122000;
-let balance = customStorage.getter(0, STORAGE.BALANCE);
+let authed_user = customStorage.getter({}, AUTHENTICATION_STORAGE.AUTHENTICATED_USER);
+
+let balance = getAccountProperty(STORAGE.BALANCE);
+
+document.getElementById("balance-amount").innerText = balance;
 
 document.addEventListener("mousemove", (event) => {
   clearRect();
@@ -68,15 +71,57 @@ document.addEventListener("mousemove", (event) => {
     );
 });
 
+function updateAccountProperty(field, newValue) {
+  let accounts = customStorage.getter({}, AUTHENTICATION_STORAGE.ACCOUNTS);
+  accounts[authed_user][field] = newValue;
+  customStorage.setter(AUTHENTICATION_STORAGE.ACCOUNTS, accounts);
+}
+
+function getAccountProperty(field) {
+  if (isAuthed) {
+    let accounts = customStorage.getter({}, AUTHENTICATION_STORAGE.ACCOUNTS);
+    return accounts[authed_user][field]
+  }
+}
+
+let objects = getAccountProperty(STORAGE.OBJECTS)
+
+setTimeout(() => {
+  let developers = getAccountProperty(STORAGE.DEVELOPERS);
+
+  Object.keys(objects).map((coords) => {
+    if (objects[coords].isDeveloper && developers[parseInt(objects[coords].selected)].active) {
+      drawImage(
+        objectsCtx,
+        DISABLED_INVENTORY[parseInt(objects[coords].selected)],
+        objects[coords].x,
+        objects[coords].y,
+        objects[coords].cursor[0],
+        objects[coords].cursor[1]
+      );
+    } else {
+      drawImage(
+        objectsCtx,
+        INVENTORY[parseInt(objects[coords].selected)],
+        objects[coords].x,
+        objects[coords].y,
+        objects[coords].cursor[0],
+        objects[coords].cursor[1]
+      );
+    }
+  })
+}, 100)
+
 document.getElementById("map").addEventListener("click", function (event) {
   if (shopActive || !grabbed) return;
   const { coordX, coordY } = relativeCoordinates(event);
 
   if (detectObject(coordX, coordY)) return;
 
-  let layout = JSON.parse(localStorage.getItem(STORAGE.LAYOUT));
+  let layout = getAccountProperty(STORAGE.LAYOUT)
+  let objects = getAccountProperty(STORAGE.OBJECTS)
 
-  localStorage.setItem(STORAGE.BALANCE, newPrice);
+  updateAccountProperty(STORAGE.BALANCE, newPrice);
   let obj = document.getElementById("balance-amount");
 
   animateValue(obj, Number(balance), Number(newPrice), 1000);
@@ -92,14 +137,24 @@ document.getElementById("map").addEventListener("click", function (event) {
     cursor[1]
   );
 
+  objects[[coordX, coordY]] = {
+    x: coordX,
+    y: coordY,
+    cursor,
+    isDeveloper: PRODUCT_LIST[storageSelected].type === TYPES.DEVELOPER,
+    selected: storageSelected
+  }
+
   layout.push([
     [coordX, coordX + cursor[0] - 1],
     [coordY, coordY + cursor[1] - 1],
   ]);
-  localStorage.setItem(STORAGE.LAYOUT, JSON.stringify(layout));
+
+  updateAccountProperty(STORAGE.LAYOUT, layout)
+  updateAccountProperty(STORAGE.OBJECTS, objects)
 
   if (PRODUCT_LIST[storageSelected].type === TYPES.DEVELOPER) {
-    let developers = customStorage.getter({}, TABS.DEVELOPER);
+    let developers = getAccountProperty(STORAGE.DEVELOPERS)
 
     developers[PRODUCT_LIST[storageSelected].id] = {
       id: PRODUCT_LIST[storageSelected].id,
@@ -111,7 +166,7 @@ document.getElementById("map").addEventListener("click", function (event) {
       image: storageSelected,
     };
 
-    localStorage.setItem(TABS.DEVELOPER, JSON.stringify(developers));
+    updateAccountProperty(STORAGE.DEVELOPERS, developers)
   }
 
   localStorage.removeItem(STORAGE.SELECTED);
@@ -128,8 +183,8 @@ let products = {
 };
 
 const isJobDisabled = function (work) {
-  let developers = customStorage.getter({}, TABS.DEVELOPER);
-  let jobs = customStorage.getter([], STORAGE.JOBS);
+  let developers = getAccountProperty(TABS.DEVELOPER)
+  let jobs = getAccountProperty(STORAGE.JOBS)
 
   const requirements = work.requirements;
 
@@ -151,7 +206,7 @@ const isJobDisabled = function (work) {
 };
 
 const makeWorkerBusy = (requirements, jobId) => {
-  let developers = customStorage.getter({}, STORAGE.DEVELOPERS);
+  let developers = getAccountProperty(STORAGE.DEVELOPERS)
 
   let pass = false;
   let selected = null;
@@ -184,11 +239,12 @@ const makeWorkerBusy = (requirements, jobId) => {
     TILE_SIZE * developers[selected].cursor[1]
   );
   developers[selected] = { ...developers[selected], active: true, jobId };
-  localStorage.setItem(STORAGE.DEVELOPERS, JSON.stringify(developers));
+
+  updateAccountProperty(STORAGE.DEVELOPERS, developers)
 };
 
 const makeWorkerFree = (jobId) => {
-  let developers = customStorage.getter({}, TABS.DEVELOPER);
+  let developers = getAccountProperty(STORAGE.DEVELOPERS)
   let selected = null;
 
   return Object.keys(developers).forEach((id) => {
@@ -214,7 +270,8 @@ const makeWorkerFree = (jobId) => {
         active: false,
         jobId: null,
       };
-      localStorage.setItem(TABS.DEVELOPER, JSON.stringify(developers));
+
+      updateAccountProperty(STORAGE.DEVELOPERS, developers)
       return;
     }
   });
@@ -224,7 +281,8 @@ const renderJobs = () => {
   const job = document.getElementById("job");
   job.innerHTML = null;
 
-  let storageJobs = customStorage.getter({}, STORAGE.JOBS);
+  let storageJobs = getAccountProperty(STORAGE.JOBS)
+
   let events = customStorage.getter({}, "events");
 
   Object.keys(events).forEach((work) => {
@@ -266,15 +324,15 @@ const renderJobs = () => {
     });
 
     const accept = document.createElement("button");
+
     let jobEnded = storageJobs[work] && storageJobs[work].ended;
 
     accept.innerText = jobEnded ? "Claim reward" : "Accept job";
     accept.setAttribute("status", jobEnded ? "claim" : "open");
-    if (!jobEnded) accept.disabled = isJobDisabled(events[work]);
+    if (!jobEnded) accept.disabled = isJobDisabled(events[work])
     accept.onclick = function () {
-      if (storageJobs[work] && storageJobs[work].ended) {
+      if (jobEnded) {
         claim(storageJobs, work, events[work].reward);
-
         renderJobs();
       } else {
         storageJobs[work] = {
@@ -286,21 +344,21 @@ const renderJobs = () => {
           ended: false,
         };
 
-        localStorage.setItem(STORAGE.JOBS, JSON.stringify(storageJobs));
+        updateAccountProperty(STORAGE.JOBS, storageJobs)
 
         const jobMenu = document.getElementById("job-menu");
         jobMenu.hidden = true;
+
+        updateLog({
+          timestamp: moment().format("h:m"),
+          message: `started working`
+        })
+
+        renderActiveJobs();
+
+        makeWorkerBusy(events[work].requirements, work);
+        isJobDisabled(events[work]);
       }
-
-      renderActiveJobs();
-
-      updateLog({
-        timestamp: moment().format("h:m"),
-        message: `started working`
-      })
-
-      makeWorkerBusy(events[work].requirements, work);
-      isJobDisabled(events[work]);
     };
 
     const requirementTitle = document.createElement("p");
@@ -320,7 +378,7 @@ const renderJobs = () => {
   });
 };
 
-const renderProducts = (tab, balance) => {
+const renderProducts = (tab) => {
   const shop = document.getElementById("shop");
   shop.innerHTML = null;
 
@@ -402,13 +460,12 @@ const renderProducts = (tab, balance) => {
 document
   .getElementById("content-shop")
   .parentElement.addEventListener("click", () => {
-    balance = Number(localStorage.getItem(STORAGE.BALANCE));
     shopActive = true;
 
     document.getElementById("shop-menu").hidden = false;
     document.getElementById("grid").hidden = true;
 
-    renderProducts(tab, balance);
+    renderProducts(tab);
   });
 
 document
@@ -432,22 +489,20 @@ function setTab(newTab) {
 
   Object.values(TABS).forEach((tab) => {
     let active = tab === newTab;
-    if (active) renderProducts(tab, balance);
+    if (active) renderProducts(tab);
     document.getElementById(`item-${tab}`).setAttribute("active", active);
   });
 }
 
 const claim = function (storageJobs, job, reward) {
   let events = customStorage.getter({}, STORAGE.EVENTS);
-
-  const balance = localStorage.getItem(STORAGE.BALANCE);
-  const newBalance = Number(balance) + Number(reward);
-  localStorage.setItem(STORAGE.BALANCE, newBalance);
+  const newBalance = balance + Number(reward);
+  updateAccountProperty(STORAGE.BALANCE, newBalance)
 
   const obj = document.getElementById("balance-amount");
 
   delete storageJobs[job];
-  localStorage.setItem(STORAGE.JOBS, JSON.stringify(storageJobs));
+  updateAccountProperty(STORAGE.JOBS, storageJobs)
 
   delete events[job];
   localStorage.setItem(STORAGE.EVENTS, JSON.stringify(events));
@@ -456,13 +511,13 @@ const claim = function (storageJobs, job, reward) {
 };
 
 const endJob = (workId) => {
-  const jobs = customStorage.getter({}, STORAGE.JOBS);
+  let jobs = getAccountProperty(STORAGE.JOBS)
   jobs[workId] = { ...jobs[workId], ended: true };
-  localStorage.setItem(STORAGE.JOBS, JSON.stringify(jobs));
+  updateAccountProperty(STORAGE.JOBS, jobs)
 };
 
 const renderProgressbar = function (final, current, reward, job) {
-  let storageJobs = customStorage.getter({}, STORAGE.JOBS);
+  let storageJobs = getAccountProperty(STORAGE.JOBS)
 
   const container = document.createElement("div");
   container.className = "progressbar";
@@ -496,9 +551,7 @@ const renderProgressbar = function (final, current, reward, job) {
 };
 
 const renderActiveJobs = function () {
-  let storageJobs = {};
-  const previousJobs = JSON.parse(localStorage.getItem(STORAGE.JOBS));
-  if (previousJobs) storageJobs = previousJobs;
+  let storageJobs = getAccountProperty(STORAGE.JOBS)
 
   const empty = document.createElement("p");
   empty.style.color = "rgba(0,0,0,0.8)";
@@ -571,4 +624,4 @@ const updateLog = (log) => {
   content.append(container)
 }
 
-setInterval(() => renderActiveJobs(), 1000);
+setInterval(() => renderActiveJobs(), 500);

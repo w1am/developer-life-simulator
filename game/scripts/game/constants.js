@@ -12,6 +12,7 @@ const STORAGE = {
   JOBS: 'jobs',
   DEVELOPERS: 'developers',
   EVENTS: 'events',
+  OBJECTS: 'objects'
 }
 
 const TYPES = {

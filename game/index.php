@@ -1,14 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
-<?php
-include_once('../shared/header.php');
+<header>
+  <?php
+  include_once('../shared/header.php');
 
-print renderHeader('Play');
-print loadGameScripts();
-?>
+  print renderHeader('Play');
+  print loadGameScripts();
+  print checkAuthenticationStatus();
+  ?>
+</header>
 
 <body id="game-page">
-  <?php include_once('../components/navbar.php') ?>
+  <?php
+  include('../components/navbar.php');
+  echo renderNavbar();
+  ?>
 
   <div id="game-frame">
     <!-- SIDEBAR -->

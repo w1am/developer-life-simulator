@@ -44,6 +44,14 @@ input:focus {
   border: 1px solid #9ec3fc;
   box-shadow: 0 0 4px #719ece;
 }
+input.error {
+  border: 1px solid #fc6f6f;
+  box-shadow: 0 0 2px #ce7171;
+}
+input[type=password] {
+  font: small-caption;
+  font-size: 20px;
+}
 input.xs {
   width: 200px;
 }
@@ -221,6 +229,18 @@ input.full {
 }
 #navbar #links li {
   padding: 20px 8px;
+}
+#navbar #links li.auth {
+  display: block;
+}
+#navbar #links li.auth[authenticated=true] {
+  display: none;
+}
+#navbar #links li.signout {
+  display: none;
+}
+#navbar #links li.signout[authenticated=true] {
+  display: block;
 }
 #navbar #links a {
   color: #ffffff;

@@ -1,14 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<?php
-include('../shared/header.php');
-print renderHeader("Home");
-?>
+<header>
+  <?php
+  include('../shared/header.php');
+  echo renderHeader("Home");
+  echo checkAuthenticationStatus()
+  ?>
+</header>
 
 <body>
   <flex-wrapper>
-    <?php include('../components/navbar.php') ?>
+    <?php
+    include('../components/navbar.php');
+    echo renderNavbar();
+    ?>
 
 
     <page-wrapper>

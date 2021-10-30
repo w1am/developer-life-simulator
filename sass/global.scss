@@ -49,6 +49,16 @@ input {
     box-shadow: 0 0 4px #719ece;
   }
 
+  &.error {
+    border: 1px solid rgb(252, 111, 111);
+    box-shadow: 0 0 2px #ce7171;
+  }
+
+  &[type="password"] {
+    font: small-caption;
+    font-size: 20px;
+  }
+
   @include handleInput();
 }
 

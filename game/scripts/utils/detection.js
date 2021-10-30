@@ -5,7 +5,8 @@ const inRange = function (num, ranges) {
 }
 
 const objectExists = function (coordX, coordY) {
-  let layout = JSON.parse(localStorage.getItem(STORAGE.LAYOUT))
+  // let layout = JSON.parse(localStorage.getItem(STORAGE.LAYOUT))
+  let layout = getAccountProperty(STORAGE.LAYOUT)
   let pass = false
 
   for (let i = 0; i < layout.length; i += 1) {
@@ -27,7 +28,8 @@ const objectExists = function (coordX, coordY) {
 
 const detectObject = function (coordX, coordY) {
   let detected = false
-  let layout = JSON.parse(localStorage.getItem(STORAGE.LAYOUT))
+  // let layout = JSON.parse(localStorage.getItem(STORAGE.LAYOUT))
+  let layout = getAccountProperty(STORAGE.LAYOUT)
 
   if (coordX + (cursor[0] - 1) >= TILE_WIDTH_COUNT || coordY + (cursor[1] - 1) >= TILE_HEIGHT_COUNT) return true
 
