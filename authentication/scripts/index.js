@@ -129,7 +129,7 @@ function handleSubmit(type) {
       return
     } else {
       const { email, firstName, lastName, password } = formValue.register;
-      accounts[email] = { firstName, lastName, password, balance: 200000, developers: {}, layout: [], objects: {}, jobs: {} }
+      accounts[email] = { firstName, lastName, password, balance: 200000, developers: {}, layout: [], objects: {}, jobs: {}, assets: 0 }
       customStorage.setter(AUTHENTICATION_STORAGE.ACCOUNTS, accounts)
       customStorage.setter(AUTHENTICATION_STORAGE.AUTHENTICATED_USER, email)
 

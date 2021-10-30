@@ -8,8 +8,8 @@ function renderNavbar()
 
   echo '<ul id="links">';
   $urls = array(
-    'Tutorial' => '/tutorial',
-    'Leaderboard' => '/leaderboard',
+    'Tutorial' => '/developer-life-simulator/tutorial',
+    'Leaderboard' => '/developer-life-simulator/leaderboard',
     'Register' => '/developer-life-simulator/authentication/register',
     'Login' => '/developer-life-simulator/authentication/login',
     'Signout' => '/developer-life-simulator/authentication/signout'

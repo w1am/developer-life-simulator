@@ -125,6 +125,12 @@ input.full {
   margin-bottom: 0px;
 }
 
+.center {
+  align-content: center;
+  justify-content: center;
+  display: flex;
+}
+
 .flex {
   display: flex;
   flex-direction: row;
@@ -205,6 +211,33 @@ input.full {
 
 .m-y-md {
   margin: 15px 0px;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th {
+  background: linear-gradient(180deg, #6996ac -55.32%, #0e6c9a 110.16%);
+  color: white;
+  text-align: left;
+}
+
+td,
+th {
+  padding: 10px;
+  border: 1px solid #a6a6a6;
+}
+
+tr:nth-child(even) {
+  background-color: rgba(219, 219, 219, 0.5);
+}
+
+#register-image,
+#login-image {
+  margin-left: 120px;
+  object-fit: contain;
 }
 
 #navbar {
@@ -555,22 +588,34 @@ card form button[type=submit]:hover {
 }
 
 #logs {
-  color: black;
+  background-color: black;
   position: absolute;
   top: 50px;
   left: 100px;
   width: 300px;
   margin: 15px;
-  background-color: #ececec;
-  padding: 1px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 5px;
+  max-height: 200px;
+  overflow-y: auto;
+  padding-right: 10px;
 }
 #logs .item {
+  margin: auto 0;
+  background-color: black;
+  display: flex;
+  flex-direction: row;
   justify-content: space-between;
-  padding: 10px 5px;
+}
+#logs .item .heading {
+  margin: auto 0;
+  color: #ececec;
 }
 #logs .item .timestamp {
-  color: #367897;
-  font-weight: bold;
+  margin: auto 0;
+  color: #ead707;
+  white-space: nowrap;
 }
 
 #game-page {
@@ -601,6 +646,11 @@ card form button[type=submit]:hover {
 
 #objects {
   position: absolute;
+}
+
+#labels {
+  position: absolute;
+  z-index: 99999;
 }
 
 #frame {

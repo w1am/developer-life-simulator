@@ -37,6 +37,11 @@ $room-padding: 10px;
   position: absolute;
 }
 
+#labels {
+  position: absolute;
+  z-index: 99999;
+}
+
 #frame {
   image-rendering: -moz-crisp-edges;
   image-rendering: pixelated;

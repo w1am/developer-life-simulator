@@ -1,5 +1,8 @@
-let isAuthed = customStorage.getter(null, AUTHENTICATION_STORAGE.AUTHENTICATED_USER);
-if (!isAuthed) window.location.pathname = '/developer-life-simulator'
+let isAuthed = customStorage.getter(
+  null,
+  AUTHENTICATION_STORAGE.AUTHENTICATED_USER
+);
+if (!isAuthed) window.location.pathname = "/developer-life-simulator";
 
 var gridCanvas = /** @type {HTMLCanvasElement} */ (
   document.querySelector("#grid")
@@ -10,10 +13,14 @@ var objectsCanvas = /** @type {HTMLCanvasElement} */ (
 var devCanvas = /** @type {HTMLCanvasElement} */ (
   document.querySelector("#dev")
 );
+var labelsCanvas = /** @type {HTMLCanvasElement} */ (
+  document.querySelector("#labels")
+);
 
 const gridCtx = gridCanvas.getContext("2d");
 const objectsCtx = objectsCanvas.getContext("2d");
 const devCtx = devCanvas.getContext("2d");
+const labelsCtx = labelsCanvas.getContext("2d");
 
 const PIXELS = 2;
 const TILE_SIZE = PIXELS * 32;
@@ -27,24 +34,27 @@ let tab = [TABS.SERVER];
 
 // On mount
 customStorage.setter(STORAGE.EVENTS, {
-  0: new Job(0, "Coffee review Website", 10000, "frestea", 2, [
+  0: new Job(0, "Coffee review Website", 10000, "frestea", 0.1, [
     new Requirement("Python", "", "PY", ["#173248", "white"]),
     new Requirement("Javascript", "", "JS", ["#EAD41B", "#000000"]),
   ]),
-  1: new Job(1, "Ecommerce Website", 45000, "econovu", 2, [
+  1: new Job(1, "Ecommerce Website", 45000, "econovu", 0.1, [
     new Requirement("Javascript", "", "JS", ["#EAD41B", "#000000"]),
   ]),
-  2: new Job(2, "Alt coin trading platform", 75000, "traderex", 2, [
+  2: new Job(2, "Alt coin trading platform", 75000, "traderex", 0.1, [
     new Requirement("Scala", "", "Scala", ["#D12F2D", "#000000"]),
     new Requirement("Java", "", "Java", ["#E97B18", "#4A738E"]),
   ]),
 });
 
-let authed_user = customStorage.getter({}, AUTHENTICATION_STORAGE.AUTHENTICATED_USER);
+let authed_user = customStorage.getter(
+  {},
+  AUTHENTICATION_STORAGE.AUTHENTICATED_USER
+);
 
 let balance = getAccountProperty(STORAGE.BALANCE);
 
-document.getElementById("balance-amount").innerText = balance;
+document.getElementById("balance-amount").innerText = formatNumber(balance);
 
 document.addEventListener("mousemove", (event) => {
   clearRect();
@@ -80,17 +90,22 @@ function updateAccountProperty(field, newValue) {
 function getAccountProperty(field) {
   if (isAuthed) {
     let accounts = customStorage.getter({}, AUTHENTICATION_STORAGE.ACCOUNTS);
-    return accounts[authed_user][field]
+    return accounts[authed_user][field];
   }
 }
 
-let objects = getAccountProperty(STORAGE.OBJECTS)
+let objects = getAccountProperty(STORAGE.OBJECTS);
 
 setTimeout(() => {
   let developers = getAccountProperty(STORAGE.DEVELOPERS);
 
   Object.keys(objects).map((coords) => {
-    if (objects[coords].isDeveloper && developers[parseInt(objects[coords].selected)].active) {
+    drawText(objects[coords].name, "green", objects[coords].x, objects[coords].y, objects[coords].cursor)
+
+    if (
+      objects[coords].isDeveloper &&
+      developers[parseInt(objects[coords].selected)].active
+    ) {
       drawImage(
         objectsCtx,
         DISABLED_INVENTORY[parseInt(objects[coords].selected)],
@@ -109,8 +124,8 @@ setTimeout(() => {
         objects[coords].cursor[1]
       );
     }
-  })
-}, 100)
+  });
+}, 100);
 
 document.getElementById("map").addEventListener("click", function (event) {
   if (shopActive || !grabbed) return;
@@ -118,8 +133,8 @@ document.getElementById("map").addEventListener("click", function (event) {
 
   if (detectObject(coordX, coordY)) return;
 
-  let layout = getAccountProperty(STORAGE.LAYOUT)
-  let objects = getAccountProperty(STORAGE.OBJECTS)
+  let layout = getAccountProperty(STORAGE.LAYOUT);
+  let objects = getAccountProperty(STORAGE.OBJECTS);
 
   updateAccountProperty(STORAGE.BALANCE, newPrice);
   let obj = document.getElementById("balance-amount");
@@ -137,24 +152,27 @@ document.getElementById("map").addEventListener("click", function (event) {
     cursor[1]
   );
 
+  drawText(PRODUCT_LIST[storageSelected].name, "green", coordX, coordY, cursor)
+
   objects[[coordX, coordY]] = {
     x: coordX,
     y: coordY,
     cursor,
     isDeveloper: PRODUCT_LIST[storageSelected].type === TYPES.DEVELOPER,
-    selected: storageSelected
-  }
+    selected: storageSelected,
+    name: PRODUCT_LIST[storageSelected].name
+  };
 
   layout.push([
     [coordX, coordX + cursor[0] - 1],
     [coordY, coordY + cursor[1] - 1],
   ]);
 
-  updateAccountProperty(STORAGE.LAYOUT, layout)
-  updateAccountProperty(STORAGE.OBJECTS, objects)
+  updateAccountProperty(STORAGE.LAYOUT, layout);
+  updateAccountProperty(STORAGE.OBJECTS, objects);
 
   if (PRODUCT_LIST[storageSelected].type === TYPES.DEVELOPER) {
-    let developers = getAccountProperty(STORAGE.DEVELOPERS)
+    let developers = getAccountProperty(STORAGE.DEVELOPERS);
 
     developers[PRODUCT_LIST[storageSelected].id] = {
       id: PRODUCT_LIST[storageSelected].id,
@@ -166,7 +184,7 @@ document.getElementById("map").addEventListener("click", function (event) {
       image: storageSelected,
     };
 
-    updateAccountProperty(STORAGE.DEVELOPERS, developers)
+    updateAccountProperty(STORAGE.DEVELOPERS, developers);
   }
 
   localStorage.removeItem(STORAGE.SELECTED);
@@ -183,8 +201,8 @@ let products = {
 };
 
 const isJobDisabled = function (work) {
-  let developers = getAccountProperty(TABS.DEVELOPER)
-  let jobs = getAccountProperty(STORAGE.JOBS)
+  let developers = getAccountProperty(TABS.DEVELOPER);
+  let jobs = getAccountProperty(STORAGE.JOBS);
 
   const requirements = work.requirements;
 
@@ -206,7 +224,7 @@ const isJobDisabled = function (work) {
 };
 
 const makeWorkerBusy = (requirements, jobId) => {
-  let developers = getAccountProperty(STORAGE.DEVELOPERS)
+  let developers = getAccountProperty(STORAGE.DEVELOPERS);
 
   let pass = false;
   let selected = null;
@@ -225,6 +243,11 @@ const makeWorkerBusy = (requirements, jobId) => {
 
   if (!pass) return false;
 
+  updateLog({
+    timestamp: moment().format("LT"),
+    message: `${PRODUCT_LIST[selected].name} started working`,
+  });
+
   objectsCtx.clearRect(
     developers[selected].tile[0] * TILE_SIZE,
     developers[selected].tile[1] * TILE_SIZE,
@@ -240,16 +263,21 @@ const makeWorkerBusy = (requirements, jobId) => {
   );
   developers[selected] = { ...developers[selected], active: true, jobId };
 
-  updateAccountProperty(STORAGE.DEVELOPERS, developers)
+  updateAccountProperty(STORAGE.DEVELOPERS, developers);
 };
 
 const makeWorkerFree = (jobId) => {
-  let developers = getAccountProperty(STORAGE.DEVELOPERS)
+  let developers = getAccountProperty(STORAGE.DEVELOPERS);
   let selected = null;
 
   return Object.keys(developers).forEach((id) => {
     if (developers[id].jobId === jobId) {
       selected = Number(id);
+
+      updateLog({
+        timestamp: moment().format("LT"),
+        message: `${PRODUCT_LIST[selected].name} stopped working`,
+      });
 
       objectsCtx.clearRect(
         developers[selected].tile[0] * TILE_SIZE,
@@ -271,7 +299,7 @@ const makeWorkerFree = (jobId) => {
         jobId: null,
       };
 
-      updateAccountProperty(STORAGE.DEVELOPERS, developers)
+      updateAccountProperty(STORAGE.DEVELOPERS, developers);
       return;
     }
   });
@@ -281,7 +309,7 @@ const renderJobs = () => {
   const job = document.getElementById("job");
   job.innerHTML = null;
 
-  let storageJobs = getAccountProperty(STORAGE.JOBS)
+  let storageJobs = getAccountProperty(STORAGE.JOBS);
 
   let events = customStorage.getter({}, "events");
 
@@ -291,10 +319,10 @@ const renderJobs = () => {
 
     const title = document.createElement("p");
     title.innerText = events[work].title;
-    title.className = 'title'
+    title.className = "title";
 
     const reward = document.createElement("p");
-    reward.innerText = "$ " + events[work].reward;
+    reward.innerText = "$ " + formatNumber(events[work].reward);
 
     const company = document.createElement("company");
     company.innerText = "By " + events[work].company;
@@ -302,7 +330,8 @@ const renderJobs = () => {
 
     const flow = document.createElement("div");
     flow.className = "flow";
-    const duration = (document.createElement("p").innerText = events[work].duration + " Minutes");
+    const duration = (document.createElement("p").innerText =
+      events[work].duration + " Minutes");
 
     const clock = document.createElement("i");
     clock.className = "fa fa-clock-o clock";
@@ -329,7 +358,7 @@ const renderJobs = () => {
 
     accept.innerText = jobEnded ? "Claim reward" : "Accept job";
     accept.setAttribute("status", jobEnded ? "claim" : "open");
-    if (!jobEnded) accept.disabled = isJobDisabled(events[work])
+    if (!jobEnded) accept.disabled = isJobDisabled(events[work]);
     accept.onclick = function () {
       if (jobEnded) {
         claim(storageJobs, work, events[work].reward);
@@ -344,15 +373,10 @@ const renderJobs = () => {
           ended: false,
         };
 
-        updateAccountProperty(STORAGE.JOBS, storageJobs)
+        updateAccountProperty(STORAGE.JOBS, storageJobs);
 
         const jobMenu = document.getElementById("job-menu");
         jobMenu.hidden = true;
-
-        updateLog({
-          timestamp: moment().format("h:m"),
-          message: `started working`
-        })
 
         renderActiveJobs();
 
@@ -404,7 +428,7 @@ const renderProducts = (tab) => {
 
     const price = document.createElement("p");
     price.style.margin = 0;
-    price.innerText = `$ ${product.price}`;
+    price.innerText = `$ ${formatNumber(product.price)}`;
 
     content.append(title, price);
 
@@ -450,6 +474,9 @@ const renderProducts = (tab) => {
         document.getElementById("grid").hidden = false;
 
         newPrice = balance - product.price;
+
+        let assets = getAccountProperty(STORAGE.ASSETS);
+        updateAccountProperty(STORAGE.ASSETS, (assets += product.price));
       }
     };
 
@@ -497,27 +524,32 @@ function setTab(newTab) {
 const claim = function (storageJobs, job, reward) {
   let events = customStorage.getter({}, STORAGE.EVENTS);
   const newBalance = balance + Number(reward);
-  updateAccountProperty(STORAGE.BALANCE, newBalance)
+  updateAccountProperty(STORAGE.BALANCE, newBalance);
 
   const obj = document.getElementById("balance-amount");
 
-  delete storageJobs[job];
-  updateAccountProperty(STORAGE.JOBS, storageJobs)
+  updateLog({
+    timestamp: moment().format("LT"),
+    message: `$ ${formatNumber(reward)} claimed`
+  });
 
-  delete events[job];
-  localStorage.setItem(STORAGE.EVENTS, JSON.stringify(events));
+  delete storageJobs[job];
+  updateAccountProperty(STORAGE.JOBS, storageJobs);
+
+  // delete events[job];
+  // localStorage.setItem(STORAGE.EVENTS, JSON.stringify(events));
 
   animateValue(obj, Number(balance), Number(newBalance), 1000);
 };
 
 const endJob = (workId) => {
-  let jobs = getAccountProperty(STORAGE.JOBS)
+  let jobs = getAccountProperty(STORAGE.JOBS);
   jobs[workId] = { ...jobs[workId], ended: true };
-  updateAccountProperty(STORAGE.JOBS, jobs)
+  updateAccountProperty(STORAGE.JOBS, jobs);
 };
 
 const renderProgressbar = function (final, current, reward, job) {
-  let storageJobs = getAccountProperty(STORAGE.JOBS)
+  let storageJobs = getAccountProperty(STORAGE.JOBS);
 
   const container = document.createElement("div");
   container.className = "progressbar";
@@ -551,7 +583,7 @@ const renderProgressbar = function (final, current, reward, job) {
 };
 
 const renderActiveJobs = function () {
-  let storageJobs = getAccountProperty(STORAGE.JOBS)
+  let storageJobs = getAccountProperty(STORAGE.JOBS);
 
   const empty = document.createElement("p");
   empty.style.color = "rgba(0,0,0,0.8)";
@@ -573,7 +605,7 @@ const renderActiveJobs = function () {
 
       const jobTitle = document.createElement("p");
       jobTitle.innerText = storageJobs[job].title;
-      jobTitle.className = 'title'
+      jobTitle.className = "title";
 
       const progress = renderProgressbar(
         storageJobs[job].duration * 60,
@@ -599,29 +631,41 @@ const renderActiveJobs = function () {
       jobItem.append(requirements);
       jobItem.append(progress);
 
-
       activeJobsContent.append(jobItem);
     });
   }
 };
 
 const updateLog = (log) => {
-  let content = document.getElementById('logs-content');
+  let content = document.getElementById("logs");
 
-  let heading = document.createElement('p');
-  let timestamp = document.createElement('p');
-  timestamp.className = 'timestamp'
+  let heading = document.createElement("p");
+  heading.className = "heading";
+  let timestamp = document.createElement("p");
+  timestamp.className = "timestamp";
 
-  let container = document.createElement('div');
+  let container = document.createElement("div");
 
-  heading.append(log.message)
-  timestamp.append(log.timestamp)
+  heading.append(log.message);
+  timestamp.append(log.timestamp);
 
-  container.append(heading, timestamp)
+  container.append(heading, timestamp);
 
-  container.className = 'item'
+  container.className = "item";
 
-  content.append(container)
-}
+  content.append(container);
+};
 
-setInterval(() => renderActiveJobs(), 500);
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    grabbed = false;
+    cursor = [1, 1];
+  }
+})
+
+window.setInterval(() => renderActiveJobs(), 1000);
+
+window.setInterval(function () {
+  var elem = document.getElementById('logs');
+  elem.scrollTop = elem.scrollHeight;
+}, 200);

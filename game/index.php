@@ -6,6 +6,7 @@
 
   print renderHeader('Play');
   print loadGameScripts();
+  print loadFormatters();
   print checkAuthenticationStatus();
   ?>
 </header>
@@ -18,16 +19,16 @@
 
   <div id="game-frame">
     <!-- SIDEBAR -->
-    <?php include('./sidebar.php') ?>
+    <?php include_once('./sidebar.php') ?>
 
     <!-- MENUS -->
-    <?php include('./menus/jobs.php') ?>
-    <?php include('./menus/shop.php') ?>
+    <?php include_once('./menus/jobs.php') ?>
+    <?php include_once('./menus/shop.php') ?>
 
     <!-- PANES -->
-    <?php include('./panes/balance.php') ?>
-    <?php include('./panes/active_jobs.php') ?>
-    <?php include('./panes/logs.php') ?>
+    <?php include_once('./panes/balance.php') ?>
+    <?php include_once('./panes/active_jobs.php') ?>
+    <?php include_once('./panes/logs.php') ?>
 
     <!-- MAP -->
     <div id="game">
@@ -36,6 +37,7 @@
           <canvas id="dev" width="640" height="640"> </canvas>
           <canvas id="grid" width="640" height="640"> </canvas>
           <canvas id="objects" width="640" height="640"></canvas>
+          <canvas id="labels" width="640" height="640"></canvas>
         </div>
       </div>
     </div>

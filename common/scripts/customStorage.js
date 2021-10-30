@@ -18,4 +18,4 @@ class CustomStorage {
   }
 }
 
-const customStorage = new CustomStorage()
+let customStorage = new CustomStorage()

@@ -12,7 +12,8 @@ const STORAGE = {
   JOBS: 'jobs',
   DEVELOPERS: 'developers',
   EVENTS: 'events',
-  OBJECTS: 'objects'
+  OBJECTS: 'objects',
+  ASSETS: 'assets'
 }
 
 const TYPES = {

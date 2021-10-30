@@ -1,7 +1,6 @@
 <meta charset="UTF-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="stylesheet" href="../style.css">
 <link rel="icon" href="../assets/favicon.ico">
 
 <?php
@@ -9,13 +8,26 @@ function renderHeader($title)
 {
   return '
     <link rel="stylesheet" href="../style.css">
-    <link rel="icon" href="../assets/favicon.ico">
   ' . '<title> Developer Life | ' . $title . '</title>';
 };
 
 function checkAuthenticationStatus()
 {
   return '<script src="../common/scripts/authentication.js" type="text/javascript"></script>';
+};
+
+function loadCustomStorage()
+{
+  return '
+    <script src="../common/scripts/customStorage.js" type="text/javascript"></script>
+  ';
+};
+
+function loadFormatters()
+{
+  return '
+    <script src="../common/utils/formatNumber.js" type="text/javascript"></script>
+  ';
 };
 
 function loadGameScripts()
@@ -25,6 +37,7 @@ function loadGameScripts()
       src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
       type="text/javascript"
     ></script>
+    <script src="https://kit.fontawesome.com/f2f51db1ed.js" crossorigin="anonymous"></script>
     <script src="./scripts/game/items.js" type="text/javascript"></script>
     <script src="./scripts/game/constants.js" type="text/javascript"></script>
     <script src="./scripts/game/objects.js" type="text/javascript"></script>
@@ -41,6 +54,7 @@ function loadGameScripts()
       type="text/javascript"
     ></script>
     <script src="./scripts/utils/drawImage.js" type="text/javascript"></script>
+    <script src="./scripts/utils/drawText.js" type="text/javascript"></script>
   ';
 };
 ?>

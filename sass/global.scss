@@ -86,6 +86,12 @@ input {
   @include handleSpace("md", "horizontal");
 }
 
+.center {
+  align-content: center;
+  justify-content: center;
+  display: flex;
+}
+
 .flex {
   display: flex;
   flex-direction: row;
@@ -166,4 +172,33 @@ input {
 
 .m-y-md {
   margin: 15px 0px;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th {
+  background: linear-gradient(180deg, #6996ac -55.32%, #0e6c9a 110.16%);
+  color: white;
+  text-align: left;
+}
+
+td,
+th {
+  padding: 10px;
+  border: 1px solid #a6a6a6;
+}
+
+tr {
+  &:nth-child(even) {
+    background-color: rgb(219, 219, 219, 0.5);
+  }
+}
+
+#register-image,
+#login-image {
+  margin-left: 120px;
+  object-fit: contain;
 }

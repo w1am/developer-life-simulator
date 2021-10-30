@@ -1,20 +1,33 @@
 #logs {
-  color: black;
+  background-color: black;
   position: absolute;
   top: 50px;
   left: 100px;
   width: 300px;
   margin: 15px;
-  background-color: #ececec;
-  padding: 1px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 5px;
+  max-height: 200px;
+  overflow-y: auto;
+  padding-right: 10px;
 
   .item {
+    margin: auto 0;
+    background-color: black;
+    display: flex;
+    flex-direction: row;
     justify-content: space-between;
-    padding: 10px 5px;
+
+    .heading {
+      margin: auto 0;
+      color: rgb(236, 236, 236);
+    }
 
     .timestamp {
-      color: #367897;
-      font-weight: bold;
+      margin: auto 0;
+      color: #ead707;
+      white-space: nowrap;
     }
   }
 }
