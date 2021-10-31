@@ -8,12 +8,16 @@
     overflow: auto;
     width: 100%;
   }
+  user-select: none;
 }
 
 #job-menu {
-  @include menu;
+  @include menu(20vh, 50vw);
 
   .content {
+    max-height: 400px;
+    overflow: auto;
+
     .job-item {
       width: calc(50% - 2px);
       margin: 1px;
@@ -36,7 +40,7 @@
 }
 
 #shop-menu {
-  @include menu;
+  @include menu(30vh, 10vw);
 
   .parent {
     display: flex;

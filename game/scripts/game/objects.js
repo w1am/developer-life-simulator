@@ -24,13 +24,14 @@ class Developer extends Item {
 }
 
 class Job {
-  constructor(id, title, reward, company, duration, requirements) {
+  constructor(id, title, reward, company, duration, requirements, points) {
     this.id = id;
     this.title = title;
     this.reward = reward
     this.company = company
     this.duration = duration
     this.requirements = requirements
+    this.points = points
     this.type = TYPES.JOB
   }
 }

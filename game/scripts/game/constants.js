@@ -13,7 +13,9 @@ const STORAGE = {
   DEVELOPERS: 'developers',
   EVENTS: 'events',
   OBJECTS: 'objects',
-  ASSETS: 'assets'
+  ASSETS: 'assets',
+  LEVEL_PROGRESS: 'level_progress',
+  LEVEL: 'level'
 }
 
 const TYPES = {

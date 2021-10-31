@@ -27,6 +27,7 @@
             <tr>
               <th>Name</th>
               <th>Employees</th>
+              <th>Level</th>
               <th>Net worth</th>
             </tr>
           </thead>

@@ -1,12 +1,11 @@
-@mixin menu {
+@mixin menu($initialTop, $initialLeft) {
   position: absolute;
-  margin: 10px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  top: $initialTop;
+  left: $initialLeft;
   width: 600px;
   background-color: rgb(240, 240, 240);
   border: 3px solid #3a82a3;
   border-radius: 4px;
   z-index: 999999999999999;
+  opacity: 1;
 }

@@ -17,17 +17,20 @@
   echo renderNavbar();
   ?>
 
+  <!-- MENUS -->
+  <?php include_once('./menus/jobs.php') ?>
+  <?php include_once('./menus/shop.php') ?>
+
   <div id="game-frame">
     <!-- SIDEBAR -->
     <?php include_once('./sidebar.php') ?>
 
-    <!-- MENUS -->
-    <?php include_once('./menus/jobs.php') ?>
-    <?php include_once('./menus/shop.php') ?>
-
     <!-- PANES -->
-    <?php include_once('./panes/balance.php') ?>
-    <?php include_once('./panes/active_jobs.php') ?>
+    <div id="information-pane">
+      <?php include_once('./panes/balance.php') ?>
+      <?php include_once('./panes/level.php') ?>
+      <?php include_once('./panes/active_jobs.php') ?>
+    </div>
     <?php include_once('./panes/logs.php') ?>
 
     <!-- MAP -->

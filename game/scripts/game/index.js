@@ -34,17 +34,17 @@ let tab = [TABS.SERVER];
 
 // On mount
 customStorage.setter(STORAGE.EVENTS, {
-  0: new Job(0, "Coffee review Website", 10000, "frestea", 0.1, [
+  0: new Job(0, "Coffee review Website", 10000, "frestea", 5, [
     new Requirement("Python", "", "PY", ["#173248", "white"]),
     new Requirement("Javascript", "", "JS", ["#EAD41B", "#000000"]),
-  ]),
+  ], 80),
   1: new Job(1, "Ecommerce Website", 45000, "econovu", 0.1, [
     new Requirement("Javascript", "", "JS", ["#EAD41B", "#000000"]),
-  ]),
+  ], 90),
   2: new Job(2, "Alt coin trading platform", 75000, "traderex", 0.1, [
     new Requirement("Scala", "", "Scala", ["#D12F2D", "#000000"]),
     new Requirement("Java", "", "Java", ["#E97B18", "#4A738E"]),
-  ]),
+  ], 60),
 });
 
 let authed_user = customStorage.getter(
@@ -53,6 +53,17 @@ let authed_user = customStorage.getter(
 );
 
 let balance = getAccountProperty(STORAGE.BALANCE);
+
+let level = getAccountProperty(STORAGE.LEVEL);
+document.querySelector("#level").firstElementChild.innerHTML = `LEVEL ${level}`
+
+const updateLevel = (before, after) => {
+  const levelProgress = document.getElementById("level-progress-bar");
+
+  animateValue(levelProgress, before, (200 / 100) * after, 1000, true)
+}
+
+updateLevel(0, getAccountProperty(STORAGE.LEVEL_PROGRESS));
 
 document.getElementById("balance-amount").innerText = formatNumber(balance);
 
@@ -223,7 +234,7 @@ const isJobDisabled = function (work) {
   return false;
 };
 
-const makeWorkerBusy = (requirements, jobId) => {
+const findDeveloper = (requirements) => {
   let developers = getAccountProperty(STORAGE.DEVELOPERS);
 
   let pass = false;
@@ -241,7 +252,31 @@ const makeWorkerBusy = (requirements, jobId) => {
     });
   });
 
-  if (!pass) return false;
+  if (pass) return selected
+  else return null
+}
+
+const makeWorkerBusy = (requirements, jobId) => {
+  let developers = getAccountProperty(STORAGE.DEVELOPERS);
+
+  // let pass = false;
+  // let selected = null;
+
+  // requirements.forEach((requirement, count) => {
+  //   Object.keys(developers).forEach((id) => {
+  //     if (
+  //       developers[id].skills.includes(requirement.title) &&
+  //       count == requirements.length - 1
+  //     ) {
+  //       pass = true;
+  //       selected = id;
+  //     }
+  //   });
+  // });
+
+  let selected = findDeveloper(requirements)
+
+  if (!selected) return false
 
   updateLog({
     timestamp: moment().format("LT"),
@@ -364,6 +399,8 @@ const renderJobs = () => {
         claim(storageJobs, work, events[work].reward);
         renderJobs();
       } else {
+        let selected = findDeveloper(events[work].requirements);
+
         storageJobs[work] = {
           title: events[work].title,
           reward: events[work].reward,
@@ -371,6 +408,7 @@ const renderJobs = () => {
           finish: moment().add(events[work].duration, "minute"),
           duration: events[work].duration,
           ended: false,
+          developer: selected
         };
 
         updateAccountProperty(STORAGE.JOBS, storageJobs);
@@ -521,16 +559,38 @@ function setTab(newTab) {
   });
 }
 
-const claim = function (storageJobs, job, reward) {
+const claim = function (storageJobs, job, reward, expense) {
   let events = customStorage.getter({}, STORAGE.EVENTS);
-  const newBalance = balance + Number(reward);
+  const newBalance = (balance + Number(reward)) - expense;
   updateAccountProperty(STORAGE.BALANCE, newBalance);
+
+  let levelProgress = getAccountProperty(STORAGE.LEVEL_PROGRESS);
+  let level = getAccountProperty(STORAGE.LEVEL);
+
+  let newLevelProgress = levelProgress + events[job].points;
+
+  if (newLevelProgress >= 100) {
+    let newLevel = level + 1
+
+    updateLevel(0, newLevelProgress - 100)
+    updateAccountProperty(STORAGE.LEVEL_PROGRESS, newLevelProgress - 100)
+    document.querySelector("#level").firstElementChild.innerHTML = `LEVEL ${newLevel}`
+    updateAccountProperty(STORAGE.LEVEL, newLevel)
+  } else {
+    updateLevel(levelProgress, newLevelProgress);
+    updateAccountProperty(STORAGE.LEVEL_PROGRESS, newLevelProgress)
+  }
 
   const obj = document.getElementById("balance-amount");
 
   updateLog({
     timestamp: moment().format("LT"),
     message: `$ ${formatNumber(reward)} claimed`
+  });
+
+  updateLog({
+    timestamp: moment().format("LT"),
+    message: `-$ ${formatNumber(expense)} in expense`
   });
 
   delete storageJobs[job];
@@ -567,7 +627,7 @@ const renderProgressbar = function (final, current, reward, job) {
     bar.style.cursor = "pointer";
     bar.onclick = function (event) {
       event.preventDefault();
-      claim(storageJobs, job, reward);
+      claim(storageJobs, job, reward, PRODUCT_LIST[parseInt(storageJobs[job].developer)].price);
       renderJobs();
     };
     bar.setAttribute("completed", true);
@@ -669,3 +729,65 @@ window.setInterval(function () {
   var elem = document.getElementById('logs');
   elem.scrollTop = elem.scrollHeight;
 }, 200);
+
+let menus = ["shop-menu", "job-menu"]
+let dragged = null
+
+function dragMenu(menuId) {
+  let elm = document.querySelector(`#${menuId}`).querySelector(".header")
+
+  elm.lastElementChild.onmousedown = () => {
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+
+  elm.lastElementChild.onmousemove = () => {
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+
+  elm.onmousedown = (e) => {
+    let menu = document.querySelector(`#${menuId}`)
+    dragged = menuId
+
+    menus.forEach((m, mIndex) => {
+      if (menus[mIndex] === dragged) {
+        menu.style.zIndex = "9999999999999999999999"
+        menu.querySelector(".header").setAttribute('active', true)
+      } else {
+        document.querySelector(`#${m}`).style.zIndex = "99999999"
+        document.querySelector(`#${m}`).querySelector(".header").setAttribute('active', false)
+      }
+    })
+
+    document.onmousemove = (i) => {
+      if (i.clientY - e.offsetY < 0) {
+        menu.style.top = '0px'
+      } else {
+        menu.style.top = `${i.clientY - e.offsetY}px`
+      }
+
+      if (i.clientY + 440 > window.innerHeight) {
+        menu.style.top = `${window.innerHeight - 440}px`
+      }
+
+      if (i.clientX - e.offsetX < 0) {
+        menu.style.left = '0px'
+      } else {
+        menu.style.left = `${i.clientX - e.offsetX}px`
+      }
+
+      if (i.clientX + (600 - e.offsetX) > window.innerWidth) {
+        menu.style.left = `${window.innerWidth - 600}px`
+      }
+    }
+
+    document.onmouseup = () => {
+      document.onmouseup = null;
+      document.onmousemove = null;
+    }
+  }
+}
+
+dragMenu("shop-menu")
+dragMenu("job-menu")

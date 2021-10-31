@@ -23,6 +23,7 @@ ordered.forEach((email) => {
   let name = player.firstName
   let employeesCount = Object.keys(player.developers).length;
   let netWorth = player.assets + player.balance;
+  let level = player.level
 
   let tr = document.createElement('tr');
 
@@ -33,9 +34,12 @@ ordered.forEach((email) => {
   td2.innerText = formatNumber(employeesCount);
 
   let td3 = document.createElement('td');
-  td3.innerText = "$ " + formatNumber(netWorth);
+  td3.innerText = `LEVEL ${level}`
 
-  tr.append(td1, td2, td3);
+  let td4 = document.createElement('td');
+  td4.innerText = "$ " + formatNumber(netWorth);
+
+  tr.append(td1, td2, td3, td4);
 
   leaderboardItems.appendChild(tr)
 })
