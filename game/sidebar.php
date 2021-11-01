@@ -2,7 +2,7 @@
 
   <div class="button">
     <div id="content-shop"></div>
-    <p>Market</p>
+    <p>Shop</p>
   </div>
 
   <div class="button">

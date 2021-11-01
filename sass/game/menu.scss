@@ -11,7 +11,7 @@
   user-select: none;
 }
 
-#job-menu {
+#menu-job {
   @include menu(20vh, 50vw);
 
   .content {
@@ -39,7 +39,7 @@
   }
 }
 
-#shop-menu {
+#menu-shop {
   @include menu(30vh, 10vw);
 
   .parent {

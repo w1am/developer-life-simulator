@@ -413,7 +413,7 @@ const renderJobs = () => {
 
         updateAccountProperty(STORAGE.JOBS, storageJobs);
 
-        const jobMenu = document.getElementById("job-menu");
+        const jobMenu = document.getElementById("menu-job");
         jobMenu.hidden = true;
 
         renderActiveJobs();
@@ -508,7 +508,7 @@ const renderProducts = (tab) => {
 
         localStorage.setItem(STORAGE.SELECTED, product.id);
 
-        document.getElementById("shop-menu").hidden = true;
+        document.getElementById("menu-shop").hidden = true;
         document.getElementById("grid").hidden = false;
 
         newPrice = balance - product.price;
@@ -520,33 +520,6 @@ const renderProducts = (tab) => {
 
     shop.append(item);
   });
-};
-
-document
-  .getElementById("content-shop")
-  .parentElement.addEventListener("click", () => {
-    shopActive = true;
-
-    document.getElementById("shop-menu").hidden = false;
-    document.getElementById("grid").hidden = true;
-
-    renderProducts(tab);
-  });
-
-document
-  .getElementById("content-job")
-  .parentElement.addEventListener("click", () => {
-    document.getElementById("job-menu").hidden = false;
-    renderJobs();
-  });
-
-const handleJobClose = () =>
-  (document.getElementById("job-menu").hidden = true);
-
-const handleShopClose = () => {
-  shopActive = false;
-  document.getElementById("shop-menu").hidden = true;
-  document.getElementById("grid").hidden = false;
 };
 
 function setTab(newTab) {
@@ -729,65 +702,3 @@ window.setInterval(function () {
   var elem = document.getElementById('logs');
   elem.scrollTop = elem.scrollHeight;
 }, 200);
-
-let menus = ["shop-menu", "job-menu"]
-let dragged = null
-
-function dragMenu(menuId) {
-  let elm = document.querySelector(`#${menuId}`).querySelector(".header")
-
-  elm.lastElementChild.onmousedown = () => {
-    document.onmouseup = null;
-    document.onmousemove = null;
-  }
-
-  elm.lastElementChild.onmousemove = () => {
-    document.onmouseup = null;
-    document.onmousemove = null;
-  }
-
-  elm.onmousedown = (e) => {
-    let menu = document.querySelector(`#${menuId}`)
-    dragged = menuId
-
-    menus.forEach((m, mIndex) => {
-      if (menus[mIndex] === dragged) {
-        menu.style.zIndex = "9999999999999999999999"
-        menu.querySelector(".header").setAttribute('active', true)
-      } else {
-        document.querySelector(`#${m}`).style.zIndex = "99999999"
-        document.querySelector(`#${m}`).querySelector(".header").setAttribute('active', false)
-      }
-    })
-
-    document.onmousemove = (i) => {
-      if (i.clientY - e.offsetY < 0) {
-        menu.style.top = '0px'
-      } else {
-        menu.style.top = `${i.clientY - e.offsetY}px`
-      }
-
-      if (i.clientY + 440 > window.innerHeight) {
-        menu.style.top = `${window.innerHeight - 440}px`
-      }
-
-      if (i.clientX - e.offsetX < 0) {
-        menu.style.left = '0px'
-      } else {
-        menu.style.left = `${i.clientX - e.offsetX}px`
-      }
-
-      if (i.clientX + (600 - e.offsetX) > window.innerWidth) {
-        menu.style.left = `${window.innerWidth - 600}px`
-      }
-    }
-
-    document.onmouseup = () => {
-      document.onmouseup = null;
-      document.onmousemove = null;
-    }
-  }
-}
-
-dragMenu("shop-menu")
-dragMenu("job-menu")

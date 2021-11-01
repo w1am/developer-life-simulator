@@ -47,7 +47,7 @@
   </div>
 
   <script src="./scripts/game/index.js"></script>
-
+  <script src="./scripts/game/menus.js" type="text/javascript"></script>
 </body>
 
 </html>

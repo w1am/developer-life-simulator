@@ -1,4 +1,4 @@
-<div hidden id="job-menu" class="menu">
+<div hidden id="menu-job" class="menu">
   <div class="header">
     <p class="title">Jobs</p>
     <button onclick="handleJobClose()">X</button>

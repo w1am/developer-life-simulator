@@ -1,4 +1,4 @@
-<div hidden id="shop-menu" class="menu">
+<div hidden id="menu-shop" class="menu">
   <div class="header">
     <p class="title">Shop</p>
     <button onclick="handleShopClose()">X</button>

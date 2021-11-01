@@ -343,15 +343,22 @@ card form button[type=submit]:hover {
   cursor: pointer;
   background-color: #5c584d;
   height: 100vh;
-  padding: 10px;
-  width: 85px;
-  row-gap: 20px;
+  padding: 5px 3px;
+  width: 90px;
+  row-gap: 5px;
+  user-select: none;
 }
 #info-container .button {
   display: flex;
   flex-direction: column;
   cursor: pointer;
   opacity: 0.8;
+  background-color: none;
+  border-radius: 5px;
+  padding: 5px 5px;
+}
+#info-container .button.open {
+  background-color: #6b675d;
 }
 #info-container .button #content-shop {
   image-rendering: -moz-crisp-edges;
@@ -399,7 +406,7 @@ card form button[type=submit]:hover {
   width: 100%;
 }
 
-#job-menu {
+#menu-job {
   position: absolute;
   top: 20vh;
   left: 50vw;
@@ -410,11 +417,11 @@ card form button[type=submit]:hover {
   z-index: 999999999999999;
   opacity: 1;
 }
-#job-menu .content {
+#menu-job .content {
   max-height: 400px;
   overflow: auto;
 }
-#job-menu .content .job-item {
+#menu-job .content .job-item {
   width: calc(50% - 2px);
   margin: 1px;
   padding: 5px 2%;
@@ -423,15 +430,15 @@ card form button[type=submit]:hover {
   flex-direction: column;
   row-gap: 5px;
 }
-#job-menu .content .job-item p {
+#menu-job .content .job-item p {
   margin: 0px;
 }
-#job-menu .content .job-item .company {
+#menu-job .content .job-item .company {
   color: #0a6691;
   margin: 5px 0px;
 }
 
-#shop-menu {
+#menu-shop {
   position: absolute;
   top: 30vh;
   left: 10vw;
@@ -442,18 +449,18 @@ card form button[type=submit]:hover {
   z-index: 999999999999999;
   opacity: 1;
 }
-#shop-menu .parent {
+#menu-shop .parent {
   display: flex;
   flex-direction: row;
   min-height: 300px;
 }
-#shop-menu .parent #sidebar {
+#menu-shop .parent #sidebar {
   background-color: #e4e4e4;
   border-right: 1px solid #d8d8d8;
   padding: 2px 1px;
   width: 150px;
 }
-#shop-menu .parent #sidebar .item {
+#menu-shop .parent #sidebar .item {
   margin: 0px;
   padding: 10px 5px;
   font-size: 14px;
@@ -462,15 +469,15 @@ card form button[type=submit]:hover {
   cursor: pointer;
   border: 1px solid #e4e4e4;
 }
-#shop-menu .parent #sidebar .item[active=true] {
+#menu-shop .parent #sidebar .item[active=true] {
   background-color: #f1f1f1;
   border: 1px solid #cccccc;
 }
-#shop-menu .parent #sidebar .item:hover[active=false] {
+#menu-shop .parent #sidebar .item:hover[active=false] {
   background-color: #f1f1f1;
   border: 1px solid #cccccc;
 }
-#shop-menu .parent .content .item {
+#menu-shop .parent .content .item {
   width: 21%;
   padding: 2%;
   display: flex;
@@ -482,7 +489,7 @@ card form button[type=submit]:hover {
   row-gap: 5px;
   height: 150px;
 }
-#shop-menu .parent .content .item #item-buy {
+#menu-shop .parent .content .item #item-buy {
   background-color: #21a021;
   color: white;
   font-weight: 600;
@@ -492,11 +499,11 @@ card form button[type=submit]:hover {
   border-radius: 3px;
   cursor: pointer;
 }
-#shop-menu .parent .content .item #item-buy:disabled {
+#menu-shop .parent .content .item #item-buy:disabled {
   opacity: 0.2;
   cursor: not-allowed;
 }
-#shop-menu .parent .content .item #item-buy:hover {
+#menu-shop .parent .content .item #item-buy:hover {
   background-color: #2fb82f;
   border: 2px solid #238823;
 }
