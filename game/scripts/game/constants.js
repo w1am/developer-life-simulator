@@ -31,6 +31,7 @@ const DISABLED_INVENTORY = {
   5: desk3Off,
   6: desk4Off,
   7: desk5Off,
+  8: desk6Off,
 }
 
 const INVENTORY = {
@@ -42,6 +43,7 @@ const INVENTORY = {
   5: desk3,
   6: desk4,
   7: desk5,
-  8: cafeImage,
-  9: bordRoomImage
+  8: desk6,
+  9: cafeImage,
+  10: bordRoomImage
 }

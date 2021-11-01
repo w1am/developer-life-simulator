@@ -478,18 +478,30 @@ card form button[type=submit]:hover {
   border: 1px solid #cccccc;
 }
 #menu-shop .parent .content .item {
-  width: 21%;
-  padding: 2%;
+  width: 25%;
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 14px;
   cursor: pointer;
   flex-direction: column;
-  row-gap: 5px;
-  height: 150px;
+  height: 170px;
 }
-#menu-shop .parent .content .item #item-buy {
+#menu-shop .parent .content .item .remove {
+  background-color: #a02121;
+  color: white;
+  font-weight: 600;
+  border: 2px solid #8b1d1d;
+  padding: 5px 10px;
+  font-size: 12px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+#menu-shop .parent .content .item .remove:hover {
+  background-color: #b82f2f;
+  border: 2px solid #882323;
+}
+#menu-shop .parent .content .item .item-buy {
   background-color: #21a021;
   color: white;
   font-weight: 600;
@@ -499,11 +511,11 @@ card form button[type=submit]:hover {
   border-radius: 3px;
   cursor: pointer;
 }
-#menu-shop .parent .content .item #item-buy:disabled {
+#menu-shop .parent .content .item .item-buy:disabled {
   opacity: 0.2;
   cursor: not-allowed;
 }
-#menu-shop .parent .content .item #item-buy:hover {
+#menu-shop .parent .content .item .item-buy:hover {
   background-color: #2fb82f;
   border: 2px solid #238823;
 }
@@ -580,6 +592,17 @@ card form button[type=submit]:hover {
   font-weight: bold;
   margin-bottom: 10px;
 }
+.job-item .job-developer {
+  margin: 0px;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+.job-item .job-developer::before {
+  content: "Developer:";
+  margin-right: 3px;
+  font-weight: bold;
+  display: inline-block;
+}
 .job-item .job-requirements-title {
   font-size: 14px;
   font-weight: bold;
@@ -600,7 +623,7 @@ card form button[type=submit]:hover {
   position: absolute;
   top: 50px;
   left: 100px;
-  width: 300px;
+  width: 360px;
   margin: 15px;
   display: flex;
   flex-direction: column;
@@ -618,6 +641,7 @@ card form button[type=submit]:hover {
 }
 #logs .item .heading {
   margin: auto 0;
+  max-width: 300px;
   color: #ececec;
 }
 #logs .item .timestamp {
@@ -653,6 +677,7 @@ card form button[type=submit]:hover {
 #game-page {
   overflow: hidden;
   background-color: black;
+  user-select: none;
 }
 
 #game-frame {
@@ -820,6 +845,22 @@ button a {
   display: block;
   color: #ffffff;
   text-decoration: none;
+}
+
+.message {
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+  max-width: 400px;
+  margin: 50px auto;
+  align-items: center;
+  justify-content: center;
+}
+
+.check {
+  font-size: 100px;
+  color: #21a021;
+  margin-bottom: 20px;
 }
 
 /*# sourceMappingURL=style.css.map */

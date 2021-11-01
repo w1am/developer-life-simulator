@@ -11,6 +11,7 @@ $room-padding: 10px;
 #game-page {
   overflow: hidden;
   background-color: black;
+  user-select: none;
 }
 
 #game-frame {

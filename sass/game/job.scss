@@ -42,6 +42,19 @@
     margin-bottom: 10px;
   }
 
+  .job-developer {
+    margin: 0px;
+    margin-bottom: 10px;
+    font-size: 14px;
+
+    &::before {
+      content: "Developer:";
+      margin-right: 3px;
+      font-weight: bold;
+      display: inline-block;
+    }
+  }
+
   .job-requirements-title {
     font-size: 14px;
     font-weight: bold;

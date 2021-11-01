@@ -16,9 +16,10 @@ class Product extends Item {
 }
 
 class Developer extends Item {
-  constructor(id, name, icon, price, cursor, skills) {
+  constructor(id, name, icon, price, cursor, skills, expense) {
     super(id, name, icon, price, cursor)
     this.skills = skills
+    this.expense = expense
     this.type = TYPES.DEVELOPER
   }
 }

@@ -34,17 +34,39 @@ let tab = [TABS.SERVER];
 
 // On mount
 customStorage.setter(STORAGE.EVENTS, {
-  0: new Job(0, "Coffee review Website", 10000, "frestea", 5, [
-    new Requirement("Python", "", "PY", ["#173248", "white"]),
-    new Requirement("Javascript", "", "JS", ["#EAD41B", "#000000"]),
-  ], 80),
-  1: new Job(1, "Ecommerce Website", 45000, "econovu", 0.1, [
-    new Requirement("Javascript", "", "JS", ["#EAD41B", "#000000"]),
-  ], 90),
-  2: new Job(2, "Alt coin trading platform", 75000, "traderex", 0.1, [
-    new Requirement("Scala", "", "Scala", ["#D12F2D", "#000000"]),
-    new Requirement("Java", "", "Java", ["#E97B18", "#4A738E"]),
-  ], 60),
+  0: new Job(
+    0,
+    "Coffee review Website",
+    10000,
+    "frestea",
+    0.1,
+    [
+      new Requirement("Python", "", "PY", ["#173248", "white"]),
+      new Requirement("Javascript", "", "JS", ["#EAD41B", "#000000"]),
+    ],
+    25
+  ),
+  1: new Job(
+    1,
+    "Ecommerce Website",
+    45000,
+    "econovu",
+    0.1,
+    [new Requirement("Javascript", "", "JS", ["#EAD41B", "#000000"])],
+    30
+  ),
+  2: new Job(
+    2,
+    "Alt coin trading platform",
+    75000,
+    "traderex",
+    0.1,
+    [
+      new Requirement("Scala", "", "Scala", ["#D12F2D", "#000000"]),
+      new Requirement("Java", "", "Java", ["#E97B18", "#4A738E"]),
+    ],
+    45
+  ),
 });
 
 let authed_user = customStorage.getter(
@@ -52,20 +74,18 @@ let authed_user = customStorage.getter(
   AUTHENTICATION_STORAGE.AUTHENTICATED_USER
 );
 
-let balance = getAccountProperty(STORAGE.BALANCE);
-
 let level = getAccountProperty(STORAGE.LEVEL);
-document.querySelector("#level").firstElementChild.innerHTML = `LEVEL ${level}`
+document.querySelector("#level").firstElementChild.innerHTML = `LEVEL ${level}`;
 
 const updateLevel = (before, after) => {
   const levelProgress = document.getElementById("level-progress-bar");
 
-  animateValue(levelProgress, before, (200 / 100) * after, 1000, true)
-}
+  animateValue(levelProgress, before, (200 / 100) * after, 1000, true);
+};
 
 updateLevel(0, getAccountProperty(STORAGE.LEVEL_PROGRESS));
 
-document.getElementById("balance-amount").innerText = formatNumber(balance);
+document.getElementById("balance-amount").innerText = formatNumber(getAccountProperty(STORAGE.BALANCE));
 
 document.addEventListener("mousemove", (event) => {
   clearRect();
@@ -110,29 +130,27 @@ let objects = getAccountProperty(STORAGE.OBJECTS);
 setTimeout(() => {
   let developers = getAccountProperty(STORAGE.DEVELOPERS);
 
-  Object.keys(objects).map((coords) => {
-    drawText(objects[coords].name, "green", objects[coords].x, objects[coords].y, objects[coords].cursor)
-
+  Object.keys(objects).map((id) => {
     if (
-      objects[coords].isDeveloper &&
-      developers[parseInt(objects[coords].selected)].active
+      objects[id].isDeveloper &&
+      developers[Number(objects[id].selected)].active
     ) {
       drawImage(
         objectsCtx,
-        DISABLED_INVENTORY[parseInt(objects[coords].selected)],
-        objects[coords].x,
-        objects[coords].y,
-        objects[coords].cursor[0],
-        objects[coords].cursor[1]
+        DISABLED_INVENTORY[Number(objects[id].selected)],
+        objects[id].x,
+        objects[id].y,
+        objects[id].cursor[0],
+        objects[id].cursor[1]
       );
     } else {
       drawImage(
         objectsCtx,
-        INVENTORY[parseInt(objects[coords].selected)],
-        objects[coords].x,
-        objects[coords].y,
-        objects[coords].cursor[0],
-        objects[coords].cursor[1]
+        INVENTORY[Number(objects[id].selected)],
+        objects[id].x,
+        objects[id].y,
+        objects[id].cursor[0],
+        objects[id].cursor[1]
       );
     }
   });
@@ -154,6 +172,8 @@ document.getElementById("map").addEventListener("click", function (event) {
 
   const storageSelected = localStorage.getItem(STORAGE.SELECTED);
 
+  renderJobs()
+
   drawImage(
     objectsCtx,
     INVENTORY[storageSelected],
@@ -163,15 +183,14 @@ document.getElementById("map").addEventListener("click", function (event) {
     cursor[1]
   );
 
-  drawText(PRODUCT_LIST[storageSelected].name, "green", coordX, coordY, cursor)
-
-  objects[[coordX, coordY]] = {
+  objects[PRODUCT_LIST[storageSelected].id] = {
     x: coordX,
     y: coordY,
     cursor,
     isDeveloper: PRODUCT_LIST[storageSelected].type === TYPES.DEVELOPER,
     selected: storageSelected,
-    name: PRODUCT_LIST[storageSelected].name
+    name: PRODUCT_LIST[storageSelected].name,
+    id: PRODUCT_LIST[storageSelected].id,
   };
 
   layout.push([
@@ -206,8 +225,15 @@ document.getElementById("map").addEventListener("click", function (event) {
 
 let products = {
   [TABS.SERVER]: [product0, product1, product2],
-  [TABS.DEVELOPER]: [product3, product4, product5, product6, product7],
-  [TABS.ENTERTAINMENT]: [product8, product9],
+  [TABS.DEVELOPER]: [
+    product3,
+    product4,
+    product5,
+    product6,
+    product7,
+    product8,
+  ],
+  [TABS.ENTERTAINMENT]: [product9, product10],
   [TABS.SERVICE]: [],
 };
 
@@ -245,6 +271,7 @@ const findDeveloper = (requirements) => {
       if (
         developers[id].skills.includes(requirement.title) &&
         count == requirements.length - 1
+        && !developers[id].active
       ) {
         pass = true;
         selected = id;
@@ -252,31 +279,19 @@ const findDeveloper = (requirements) => {
     });
   });
 
-  if (pass) return selected
-  else return null
-}
+  if (pass) {
+    return selected
+  } else {
+    return null
+  }
+};
 
 const makeWorkerBusy = (requirements, jobId) => {
   let developers = getAccountProperty(STORAGE.DEVELOPERS);
 
-  // let pass = false;
-  // let selected = null;
+  let selected = findDeveloper(requirements);
 
-  // requirements.forEach((requirement, count) => {
-  //   Object.keys(developers).forEach((id) => {
-  //     if (
-  //       developers[id].skills.includes(requirement.title) &&
-  //       count == requirements.length - 1
-  //     ) {
-  //       pass = true;
-  //       selected = id;
-  //     }
-  //   });
-  // });
-
-  let selected = findDeveloper(requirements)
-
-  if (!selected) return false
+  if (!selected) return false;
 
   updateLog({
     timestamp: moment().format("LT"),
@@ -398,6 +413,7 @@ const renderJobs = () => {
       if (jobEnded) {
         claim(storageJobs, work, events[work].reward);
         renderJobs();
+        handleJobClose();
       } else {
         let selected = findDeveloper(events[work].requirements);
 
@@ -408,13 +424,12 @@ const renderJobs = () => {
           finish: moment().add(events[work].duration, "minute"),
           duration: events[work].duration,
           ended: false,
-          developer: selected
+          developer: selected,
         };
 
         updateAccountProperty(STORAGE.JOBS, storageJobs);
 
-        const jobMenu = document.getElementById("menu-job");
-        jobMenu.hidden = true;
+        handleJobClose()
 
         renderActiveJobs();
 
@@ -443,13 +458,19 @@ const renderJobs = () => {
 const renderProducts = (tab) => {
   const shop = document.getElementById("shop");
   shop.innerHTML = null;
+  let developers = getAccountProperty(STORAGE.DEVELOPERS)
+  let objects = getAccountProperty(STORAGE.OBJECTS);
+  let balance = getAccountProperty(STORAGE.BALANCE);
 
   products[tab].forEach((product) => {
+    let isAlreadyHired = Object.keys(developers).includes(String(product.id));
+    let isProductOnMap = Object.keys(objects).includes(String(product.id));
+
     const item = document.createElement("div");
 
     const buy = document.createElement("button");
-    buy.id = "item-buy";
-    buy.innerText = tab === TABS.DEVELOPER ? "HIRE" : "BUY";
+    buy.innerText = tab === TABS.DEVELOPER ? isAlreadyHired ? "FIRE" : "HIRE" : isProductOnMap ? "SELL" : "BUY";
+    buy.className = isAlreadyHired || isProductOnMap ? 'remove' : 'item-buy'
 
     if (product.price > balance) {
       buy.disabled = true;
@@ -499,22 +520,61 @@ const renderProducts = (tab) => {
     item.appendChild(imageContainer);
     item.appendChild(content);
     item.appendChild(buy);
+
     buy.onclick = function () {
-      if (product.price <= balance) {
-        cursor = product.cursor;
-
-        shopActive = false;
-        grabbed = true;
-
-        localStorage.setItem(STORAGE.SELECTED, product.id);
-
-        document.getElementById("menu-shop").hidden = true;
-        document.getElementById("grid").hidden = false;
-
-        newPrice = balance - product.price;
-
+      if (isAlreadyHired || isProductOnMap) {
         let assets = getAccountProperty(STORAGE.ASSETS);
-        updateAccountProperty(STORAGE.ASSETS, (assets += product.price));
+
+        let newBalance = balance;
+
+        let balanceObj = document.getElementById('balance-amount')
+
+        let accountLayouts = getAccountProperty(STORAGE.LAYOUT)
+        let layoutToRemove = [[Number(objects[product.id].x), Number(objects[product.id].x) + Number(objects[product.id].cursor[0]) - 1], [Number(objects[product.id].y), Number(objects[product.id].y) + Number(objects[product.id].cursor[1]) - 1]]
+
+        objectsCtx.clearRect(objects[product.id].x * TILE_SIZE, objects[product.id].y * TILE_SIZE, objects[product.id].cursor[0] * TILE_SIZE, objects[product.id].cursor[1] * TILE_SIZE)
+
+        let newLayout = accountLayouts.filter((layout) => String(layout) !== String(layoutToRemove))
+
+        delete objects[product.id]
+
+        if (product.type === 'developer') {
+          newBalance = Number(balance) - 2000
+          delete developers[product.id]
+          updateAccountProperty(STORAGE.DEVELOPERS, developers)
+        } else {
+          newBalance = Number(balance) + parseInt(product.price / 2)
+        }
+
+        updateAccountProperty(STORAGE.LAYOUT, newLayout)
+        updateAccountProperty(STORAGE.OBJECTS, objects)
+        updateAccountProperty(STORAGE.BALANCE, newBalance)
+        updateAccountProperty(STORAGE.ASSETS, Number(assets) - Number(product.price))
+
+        renderProducts(tab)
+
+        animateValue(balanceObj, Number(balance), Number(newBalance), 1000);
+
+        updateLog({
+          timestamp: moment().format("LT"),
+          message: product.type === 'developer' ? `-$ ${formatNumber(2000)} severance pay` : `sold on used marketplace for $ ${formatNumber(parseInt(product.price / 2))}`,
+        });
+      } else {
+        if (product.price <= balance) {
+          cursor = product.cursor;
+
+          shopActive = false;
+          grabbed = true;
+
+          localStorage.setItem(STORAGE.SELECTED, product.id);
+
+          handleShopClose()
+
+          newPrice = balance - product.price;
+
+          let assets = getAccountProperty(STORAGE.ASSETS);
+          updateAccountProperty(STORAGE.ASSETS, (assets += product.price));
+        }
       }
     };
 
@@ -533,8 +593,10 @@ function setTab(newTab) {
 }
 
 const claim = function (storageJobs, job, reward, expense) {
+  let balance = getAccountProperty(STORAGE.BALANCE);
+
   let events = customStorage.getter({}, STORAGE.EVENTS);
-  const newBalance = (balance + Number(reward)) - expense;
+  let newBalance = (balance + reward) - expense;
   updateAccountProperty(STORAGE.BALANCE, newBalance);
 
   let levelProgress = getAccountProperty(STORAGE.LEVEL_PROGRESS);
@@ -543,27 +605,29 @@ const claim = function (storageJobs, job, reward, expense) {
   let newLevelProgress = levelProgress + events[job].points;
 
   if (newLevelProgress >= 100) {
-    let newLevel = level + 1
+    let newLevel = level + 1;
 
-    updateLevel(0, newLevelProgress - 100)
-    updateAccountProperty(STORAGE.LEVEL_PROGRESS, newLevelProgress - 100)
-    document.querySelector("#level").firstElementChild.innerHTML = `LEVEL ${newLevel}`
-    updateAccountProperty(STORAGE.LEVEL, newLevel)
+    updateLevel(0, newLevelProgress - 100);
+    updateAccountProperty(STORAGE.LEVEL_PROGRESS, newLevelProgress - 100);
+    document.querySelector(
+      "#level"
+    ).firstElementChild.innerHTML = `LEVEL ${newLevel}`;
+    updateAccountProperty(STORAGE.LEVEL, newLevel);
   } else {
     updateLevel(levelProgress, newLevelProgress);
-    updateAccountProperty(STORAGE.LEVEL_PROGRESS, newLevelProgress)
+    updateAccountProperty(STORAGE.LEVEL_PROGRESS, newLevelProgress);
   }
 
   const obj = document.getElementById("balance-amount");
 
   updateLog({
     timestamp: moment().format("LT"),
-    message: `$ ${formatNumber(reward)} claimed`
+    message: `$ ${formatNumber(reward)} claimed`,
   });
 
   updateLog({
     timestamp: moment().format("LT"),
-    message: `-$ ${formatNumber(expense)} in expense`
+    message: `-$ ${formatNumber(expense)} in expense`,
   });
 
   delete storageJobs[job];
@@ -582,14 +646,14 @@ const endJob = (workId) => {
 };
 
 const renderProgressbar = function (final, current, reward, job) {
-  let storageJobs = getAccountProperty(STORAGE.JOBS);
-
   const container = document.createElement("div");
   container.className = "progressbar";
 
   const bar = document.createElement("div");
   bar.className = "bar";
   bar.setAttribute("completed", false);
+  bar.setAttribute("job", job);
+  bar.setAttribute("reward", reward);
 
   if (current >= 0) {
     makeWorkerFree(job);
@@ -598,11 +662,7 @@ const renderProgressbar = function (final, current, reward, job) {
 
     bar.style.backgroundColor = "green";
     bar.style.cursor = "pointer";
-    bar.onclick = function (event) {
-      event.preventDefault();
-      claim(storageJobs, job, reward, PRODUCT_LIST[parseInt(storageJobs[job].developer)].price);
-      renderJobs();
-    };
+
     bar.setAttribute("completed", true);
     bar.innerText = "Claim reward";
   } else {
@@ -614,6 +674,23 @@ const renderProgressbar = function (final, current, reward, job) {
 
   return container;
 };
+
+document.addEventListener('mousedown', (e) => {
+  let storageJobs = getAccountProperty(STORAGE.JOBS);
+  if (e.target.className === 'bar') {
+    let job = Number(e.target.getAttribute('job'))
+    let reward = Number(e.target.getAttribute('reward'))
+
+    claim(
+      storageJobs,
+      job,
+      reward,
+      PRODUCT_LIST[Number(storageJobs[job].developer)].expense
+    );
+    renderJobs();
+    renderActiveJobs();
+  }
+})
 
 const renderActiveJobs = function () {
   let storageJobs = getAccountProperty(STORAGE.JOBS);
@@ -640,6 +717,10 @@ const renderActiveJobs = function () {
       jobTitle.innerText = storageJobs[job].title;
       jobTitle.className = "title";
 
+      const developerName = document.createElement("p");
+      developerName.innerText = PRODUCT_LIST[storageJobs[job].developer].name;
+      developerName.className = "job-developer"
+
       const progress = renderProgressbar(
         storageJobs[job].duration * 60,
         timeDiff,
@@ -648,6 +729,7 @@ const renderActiveJobs = function () {
       );
 
       jobItem.append(jobTitle);
+      jobItem.append(developerName);
 
       const requirements = document.createElement("div");
       requirements.className = "requirements";
@@ -687,18 +769,32 @@ const updateLog = (log) => {
   container.className = "item";
 
   content.append(container);
+
+  let logs = document.getElementById("logs");
+  logs.scrollTop = logs.scrollHeight;
 };
 
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') {
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
     grabbed = false;
     cursor = [1, 1];
   }
-})
+});
 
-window.setInterval(() => renderActiveJobs(), 1000);
+window.setInterval(() => renderActiveJobs(), 200);
 
-window.setInterval(function () {
-  var elem = document.getElementById('logs');
-  elem.scrollTop = elem.scrollHeight;
-}, 200);
+// let interval = moment().add(10, 'seconds')
+// let running = true
+
+// window.setInterval(() => {
+//   if (running) {
+//     let diff = interval.diff(moment())
+
+//     if (diff <= 0) {
+//       intval = moment().add(10, 'seconds')
+//       running = false
+//       document.getElementById("light-bulb").setAttribute('disabled', true)
+//       document.getElementById("light-bulb").innerText = 'LIGHTS OFF'
+//     }
+//   }
+// }, 1000);

@@ -49,6 +49,9 @@ document
 const handleJobClose = () => {
   let menu = document.getElementById("menu-job")
   menu.hidden = true;
+
+  document.getElementById(`content-job`).parentElement.classList.remove('open');
+
   dragged = null;
 }
 
@@ -56,6 +59,9 @@ const handleShopClose = () => {
   shopActive = false;
   let menu = document.getElementById("menu-shop")
   menu.hidden = true;
+
+  document.getElementById(`content-shop`).parentElement.classList.remove('open');
+
   document.getElementById("grid").hidden = false;
   dragged = null;
 };

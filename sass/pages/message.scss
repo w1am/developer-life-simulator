@@ -1,0 +1,15 @@
+.message {
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+  max-width: 400px;
+  margin: 50px auto;
+  align-items: center;
+  justify-content: center;
+}
+
+.check {
+  font-size: 100px;
+  color: rgba($color: #21a021, $alpha: 1);
+  margin-bottom: 20px;
+}

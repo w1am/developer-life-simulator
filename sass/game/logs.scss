@@ -3,7 +3,7 @@
   position: absolute;
   top: 50px;
   left: 100px;
-  width: 300px;
+  width: 360px;
   margin: 15px;
   display: flex;
   flex-direction: column;
@@ -21,6 +21,7 @@
 
     .heading {
       margin: auto 0;
+      max-width: 300px;
       color: rgb(236, 236, 236);
     }
 

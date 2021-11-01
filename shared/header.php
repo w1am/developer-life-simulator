@@ -54,7 +54,6 @@ function loadGameScripts()
       type="text/javascript"
     ></script>
     <script src="./scripts/utils/drawImage.js" type="text/javascript"></script>
-    <script src="./scripts/utils/drawText.js" type="text/javascript"></script>
   ';
 };
 ?>
