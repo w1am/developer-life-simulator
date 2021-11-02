@@ -5,15 +5,15 @@
   <?php
   include_once('../../shared/authentication.php');
 
-  print renderAuthenticationHeader('Register');
-  echo loadAuthenticationScripts();
+  renderAuthenticationHeader('Register');
+  loadAuthenticationScripts();
   ?>
 </header>
 
 <body>
   <?php
   include('../../components/navbar.php');
-  echo renderNavbar();
+  renderNavbar();
   ?>
 
   <page-wrapper>
@@ -24,12 +24,13 @@
 
       <?php
       include('../../components/button.php');
-      print renderButton("/developer-life-simulator/game", "success", "Play Game");
+      renderButton("/developer-life-simulator/authentication/login", "primary", "Login");
       ?>
     </div>
   </page-wrapper>
 
-  <?php include('../../components/footer.php') ?>
+  <?php include('../../components/footer.php');
+  renderFooter() ?>
 </body>
 
 </html>

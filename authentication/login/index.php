@@ -5,15 +5,15 @@
   <?php
   include_once('../../shared/authentication.php');
 
-  print renderAuthenticationHeader('Login');
-  print loadAuthenticationScripts();
+  renderAuthenticationHeader('Login');
+  loadAuthenticationScripts();
   ?>
 </header>
 
 <body>
   <?php
   include('../../components/navbar.php');
-  echo renderNavbar();
+  renderNavbar();
   ?>
 
   <page-wrapper>
@@ -41,7 +41,8 @@
     </div>
   </page-wrapper>
 
-  <?php include('../../components/footer.php') ?>
+  <?php include('../../components/footer.php');
+  renderFooter() ?>
 </body>
 
 </html>

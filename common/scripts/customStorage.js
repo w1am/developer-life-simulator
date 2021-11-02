@@ -16,6 +16,10 @@ class CustomStorage {
   setter = function (key, value) {
     localStorage.setItem(key, JSON.stringify(value))
   }
+
+  remover = function (key) {
+    localStorage.removeItem(key)
+  }
 }
 
 let customStorage = new CustomStorage()

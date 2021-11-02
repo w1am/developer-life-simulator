@@ -91,33 +91,29 @@ function dragMenu(menuId) {
   })
 
   elm.onmousedown = (e) => {
+    if (e.button !== 0) return
+
     highlightWindow(menuId)
+
+    let newTop = null;
+    let newLeft = null;
+    const overlapSpace = 400;
 
     // Prevent drag outside browser window
     document.onmousemove = (i) => {
-      if (i.clientY - e.offsetY < 0) {
-        menu.style.top = '0px'
-      } else {
-        menu.style.top = `${i.clientY - e.offsetY}px`
-      }
+      if (i.clientY - e.offsetY < 0) newTop = '0px'
+      if (i.clientY + 440 > window.innerHeight + overlapSpace) newTop = `${window.innerHeight - 440}px`
+      if (i.clientX - e.offsetX < -overlapSpace) newLeft = '0px'
+      if (i.clientX + (600 - e.offsetX) > window.innerWidth + overlapSpace) newLeft = `${window.innerWidth - 600}px`
 
-      if (i.clientY + 440 > window.innerHeight) {
-        menu.style.top = `${window.innerHeight - 440}px`
-      }
-
-      if (i.clientX - e.offsetX < 0) {
-        menu.style.left = '0px'
-      } else {
-        menu.style.left = `${i.clientX - e.offsetX}px`
-      }
-
-      if (i.clientX + (600 - e.offsetX) > window.innerWidth) {
-        menu.style.left = `${window.innerWidth - 600}px`
-      }
+      menu.style.top = `${i.clientY - e.offsetY}px`
+      menu.style.left = `${i.clientX - e.offsetX}px`
     }
 
     document.onmouseup = () => {
-      document.onmouseup = null;
+      if (newLeft) menu.style.left = newLeft
+      if (newTop) menu.style.top = newTop
+
       document.onmousemove = null;
       dragged = null
     }

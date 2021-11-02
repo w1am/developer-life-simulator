@@ -3,6 +3,7 @@ body {
   height: 100%;
   margin: 0px;
   font-family: Arial, Helvetica, sans-serif;
+  margin-top: 29px;
 }
 
 * {
@@ -213,6 +214,10 @@ input.full {
   margin: 15px 0px;
 }
 
+.text-center {
+  text-align: center;
+}
+
 table {
   border-collapse: collapse;
   width: 100%;
@@ -240,6 +245,29 @@ tr:nth-child(even) {
   object-fit: contain;
 }
 
+.banner {
+  background-image: url("/developer-life-simulator/assets/banner.jpg");
+  color: white;
+  height: 500px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.banner button {
+  max-width: 200px;
+  margin: 20px auto;
+}
+.banner h1 {
+  max-width: 800px;
+  text-align: center;
+  margin: 0 auto;
+}
+
+#welcome-user {
+  margin-bottom: 20px;
+  color: #bd3b2f;
+}
+
 #navbar {
   background-color: #357797;
   display: flex;
@@ -247,6 +275,10 @@ tr:nth-child(even) {
   justify-content: space-between;
   padding-left: 20px;
   padding-right: 12px;
+  position: absolute;
+  top: 0px;
+  z-index: 2;
+  width: 100%;
 }
 #navbar #logo {
   display: block;
@@ -347,6 +379,7 @@ card form button[type=submit]:hover {
   width: 90px;
   row-gap: 5px;
   user-select: none;
+  z-index: 2;
 }
 #info-container .button {
   display: flex;
@@ -719,6 +752,7 @@ card form button[type=submit]:hover {
   background-size: contain;
   background-position: center;
   padding: 20px;
+  position: absolute;
 }
 
 .map {
@@ -743,6 +777,7 @@ card form button[type=submit]:hover {
   display: flex;
   flex-direction: column;
   row-gap: 15px;
+  z-index: 2;
 }
 
 #balance .pane-header {
@@ -817,8 +852,36 @@ div#balance-amount::before {
   -webkit-box-shadow: inset 0px 1px 15px -4px rgba(0, 0, 0, 0.25);
   box-shadow: inset 0px 1px 15px -4px rgba(0, 0, 0, 0.25);
 }
-.progressbar .bar[completed=true]:hover {
-  background-color: #009400 !important;
+
+.tutorial {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  background-color: #2c6a86;
+  padding: 60px 20px;
+  color: white;
+}
+.tutorial .tutorial-item {
+  text-align: center;
+}
+.tutorial .tutorial-item h1 {
+  margin-bottom: 10px;
+}
+.tutorial .tutorial-item .description {
+  max-width: 500px;
+  margin: 0 auto;
+}
+.tutorial .tutorial-item .number-label {
+  font-size: 30px;
+  background-color: #367897;
+  width: 70px;
+  height: 70px;
+  text-align: center;
+  margin: 0px auto;
+  margin-bottom: 20px;
+  border-radius: 100%;
+  padding: 20px;
+  font-weight: bold;
 }
 
 button {

@@ -6,37 +6,40 @@
 <?php
 function renderHeader($title)
 {
-  return '
+  echo '
     <link rel="stylesheet" href="../style.css">
   ' . '<title> Developer Life | ' . $title . '</title>';
 };
 
 function checkAuthenticationStatus()
 {
-  return '<script src="../common/scripts/authentication.js" type="text/javascript"></script>';
+  echo '<script src="../common/scripts/authentication.js" type="text/javascript"></script>';
 };
 
 function loadCustomStorage()
 {
-  return '
+  echo '
     <script src="../common/scripts/customStorage.js" type="text/javascript"></script>
   ';
 };
 
 function loadFormatters()
 {
-  return '
+  echo '
     <script src="../common/utils/formatNumber.js" type="text/javascript"></script>
   ';
 };
 
 function loadGameScripts()
 {
-  return '
+  echo '
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
       type="text/javascript"
     ></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" crossorigin="anonymous"></script>
+
     <script src="https://kit.fontawesome.com/f2f51db1ed.js" crossorigin="anonymous"></script>
     <script src="./scripts/game/items.js" type="text/javascript"></script>
     <script src="./scripts/game/constants.js" type="text/javascript"></script>

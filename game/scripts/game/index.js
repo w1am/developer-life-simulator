@@ -25,21 +25,22 @@ const labelsCtx = labelsCanvas.getContext("2d");
 const PIXELS = 2;
 const TILE_SIZE = PIXELS * 32;
 const [TILE_WIDTH_COUNT, TILE_HEIGHT_COUNT] = [10, 10];
+const AUTHENTICATED_USER = customStorage.getter({}, AUTHENTICATION_STORAGE.AUTHENTICATED_USER);
 
 let shopActive = false;
 let grabbed = false;
-let newPrice = 0;
 let cursor = [1, 1];
 let tab = [TABS.SERVER];
+let newBalance = null
 
 // On mount
-customStorage.setter(STORAGE.EVENTS, {
+customStorage.setter(STORAGE.TASKS, {
   0: new Job(
     0,
     "Coffee review Website",
     10000,
     "frestea",
-    0.1,
+    3.1,
     [
       new Requirement("Python", "", "PY", ["#173248", "white"]),
       new Requirement("Javascript", "", "JS", ["#EAD41B", "#000000"]),
@@ -69,23 +70,15 @@ customStorage.setter(STORAGE.EVENTS, {
   ),
 });
 
-let authed_user = customStorage.getter(
-  {},
-  AUTHENTICATION_STORAGE.AUTHENTICATED_USER
-);
+document.querySelector("#level").firstElementChild.innerHTML = `LEVEL ${getAccountProperty(STORAGE.LEVEL)}`;
+document.getElementById("balance-amount").innerText = formatNumber(getAccountProperty(STORAGE.BALANCE) || 0);
 
-let level = getAccountProperty(STORAGE.LEVEL);
-document.querySelector("#level").firstElementChild.innerHTML = `LEVEL ${level}`;
-
-const updateLevel = (before, after) => {
+function updateLevel(before, after) {
   const levelProgress = document.getElementById("level-progress-bar");
-
   animateValue(levelProgress, before, (200 / 100) * after, 1000, true);
 };
 
 updateLevel(0, getAccountProperty(STORAGE.LEVEL_PROGRESS));
-
-document.getElementById("balance-amount").innerText = formatNumber(getAccountProperty(STORAGE.BALANCE));
 
 document.addEventListener("mousemove", (event) => {
   clearRect();
@@ -114,43 +107,40 @@ document.addEventListener("mousemove", (event) => {
 
 function updateAccountProperty(field, newValue) {
   let accounts = customStorage.getter({}, AUTHENTICATION_STORAGE.ACCOUNTS);
-  accounts[authed_user][field] = newValue;
+  accounts[AUTHENTICATED_USER][field] = newValue;
   customStorage.setter(AUTHENTICATION_STORAGE.ACCOUNTS, accounts);
 }
 
 function getAccountProperty(field) {
-  if (isAuthed) {
-    let accounts = customStorage.getter({}, AUTHENTICATION_STORAGE.ACCOUNTS);
-    return accounts[authed_user][field];
-  }
+  if (!isAuthed) return
+  let accounts = customStorage.getter({}, AUTHENTICATION_STORAGE.ACCOUNTS);
+  return accounts[AUTHENTICATED_USER][field];
 }
 
-let objects = getAccountProperty(STORAGE.OBJECTS);
-
+// Load account products and developers on mount
 setTimeout(() => {
-  let developers = getAccountProperty(STORAGE.DEVELOPERS);
+  let developers = getAccountProperty(STORAGE.DEVELOPERS), objects = getAccountProperty(STORAGE.OBJECTS);
 
   Object.keys(objects).map((id) => {
-    if (
-      objects[id].isDeveloper &&
-      developers[Number(objects[id].selected)].active
-    ) {
+    let obj = objects[id]
+
+    if (obj.isDeveloper && developers[Number(obj.selected)].active) {
       drawImage(
         objectsCtx,
-        DISABLED_INVENTORY[Number(objects[id].selected)],
-        objects[id].x,
-        objects[id].y,
-        objects[id].cursor[0],
-        objects[id].cursor[1]
+        DISABLED_INVENTORY[Number(obj.selected)],
+        obj.x,
+        obj.y,
+        obj.cursor[0],
+        obj.cursor[1]
       );
     } else {
       drawImage(
         objectsCtx,
-        INVENTORY[Number(objects[id].selected)],
-        objects[id].x,
-        objects[id].y,
-        objects[id].cursor[0],
-        objects[id].cursor[1]
+        INVENTORY[Number(obj.selected)],
+        obj.x,
+        obj.y,
+        obj.cursor[0],
+        obj.cursor[1]
       );
     }
   });
@@ -162,63 +152,56 @@ document.getElementById("map").addEventListener("click", function (event) {
 
   if (detectObject(coordX, coordY)) return;
 
+  let selected = customStorage.getter(null, STORAGE.SELECTED);
+  if (selected == null) return
+
   let layout = getAccountProperty(STORAGE.LAYOUT);
   let objects = getAccountProperty(STORAGE.OBJECTS);
+  let product = PRODUCT_LIST[selected]
 
-  updateAccountProperty(STORAGE.BALANCE, newPrice);
-  let obj = document.getElementById("balance-amount");
+  drawImage(objectsCtx, INVENTORY[selected], coordX, coordY, cursor[0], cursor[1]);
 
-  animateValue(obj, Number(balance), Number(newPrice), 1000);
-
-  const storageSelected = localStorage.getItem(STORAGE.SELECTED);
-
-  renderJobs()
-
-  drawImage(
-    objectsCtx,
-    INVENTORY[storageSelected],
-    coordX,
-    coordY,
-    cursor[0],
-    cursor[1]
-  );
-
-  objects[PRODUCT_LIST[storageSelected].id] = {
+  objects[product.id] = {
     x: coordX,
     y: coordY,
     cursor,
-    isDeveloper: PRODUCT_LIST[storageSelected].type === TYPES.DEVELOPER,
-    selected: storageSelected,
-    name: PRODUCT_LIST[storageSelected].name,
-    id: PRODUCT_LIST[storageSelected].id,
+    isDeveloper: product.type === TYPES.DEVELOPER,
+    selected: selected,
+    name: product.name,
+    id: product.id,
   };
 
-  layout.push([
-    [coordX, coordX + cursor[0] - 1],
-    [coordY, coordY + cursor[1] - 1],
-  ]);
+  layout.push([[coordX, coordX + cursor[0] - 1], [coordY, coordY + cursor[1] - 1]]);
 
   updateAccountProperty(STORAGE.LAYOUT, layout);
   updateAccountProperty(STORAGE.OBJECTS, objects);
 
-  if (PRODUCT_LIST[storageSelected].type === TYPES.DEVELOPER) {
+  let assets = getAccountProperty(STORAGE.ASSETS);
+  let balance = getAccountProperty(STORAGE.BALANCE);
+  let balanceAmountElement = document.getElementById("balance-amount");
+
+  updateAccountProperty(STORAGE.BALANCE, newBalance);
+  updateAccountProperty(STORAGE.ASSETS, (assets += product.price));
+  animateValue(balanceAmountElement, Number(balance), Number(newBalance), 1000);
+
+  if (PRODUCT_LIST[selected].type === TYPES.DEVELOPER) {
     let developers = getAccountProperty(STORAGE.DEVELOPERS);
 
-    developers[PRODUCT_LIST[storageSelected].id] = {
-      id: PRODUCT_LIST[storageSelected].id,
-      skills: PRODUCT_LIST[storageSelected].skills,
+    developers[product.id] = {
+      id: product.id,
+      skills: product.skills,
       active: false,
       jobId: null,
       tile: [coordX, coordY],
       cursor,
-      image: storageSelected,
+      image: selected,
     };
 
     updateAccountProperty(STORAGE.DEVELOPERS, developers);
   }
 
-  localStorage.removeItem(STORAGE.SELECTED);
-
+  customStorage.remover(STORAGE.SELECTED);
+  renderJobs();
   grabbed = false;
   cursor = [1, 1];
 });
@@ -239,7 +222,7 @@ let products = {
 
 const isJobDisabled = function (work) {
   let developers = getAccountProperty(TABS.DEVELOPER);
-  let jobs = getAccountProperty(STORAGE.JOBS);
+  let jobs = getAccountProperty(STORAGE.ACTIVE_JOBS);
 
   const requirements = work.requirements;
 
@@ -270,8 +253,8 @@ const findDeveloper = (requirements) => {
     Object.keys(developers).forEach((id) => {
       if (
         developers[id].skills.includes(requirement.title) &&
-        count == requirements.length - 1
-        && !developers[id].active
+        count == requirements.length - 1 &&
+        !developers[id].active
       ) {
         pass = true;
         selected = id;
@@ -280,9 +263,9 @@ const findDeveloper = (requirements) => {
   });
 
   if (pass) {
-    return selected
+    return selected;
   } else {
-    return null
+    return null;
   }
 };
 
@@ -359,29 +342,29 @@ const renderJobs = () => {
   const job = document.getElementById("job");
   job.innerHTML = null;
 
-  let storageJobs = getAccountProperty(STORAGE.JOBS);
+  let activeJobs = getAccountProperty(STORAGE.ACTIVE_JOBS);
 
-  let events = customStorage.getter({}, "events");
+  let tasks = customStorage.getter({}, "tasks");
 
-  Object.keys(events).forEach((work) => {
+  Object.keys(tasks).forEach((work) => {
     const item = document.createElement("div");
     item.className = "job-item";
 
     const title = document.createElement("p");
-    title.innerText = events[work].title;
+    title.innerText = tasks[work].title;
     title.className = "title";
 
     const reward = document.createElement("p");
-    reward.innerText = "$ " + formatNumber(events[work].reward);
+    reward.innerText = "$ " + formatNumber(tasks[work].reward);
 
     const company = document.createElement("company");
-    company.innerText = "By " + events[work].company;
+    company.innerText = "By " + tasks[work].company;
     company.className = "company";
 
     const flow = document.createElement("div");
     flow.className = "flow";
     const duration = (document.createElement("p").innerText =
-      events[work].duration + " Minutes");
+      tasks[work].duration + " Minutes");
 
     const clock = document.createElement("i");
     clock.className = "fa fa-clock-o clock";
@@ -391,7 +374,7 @@ const renderJobs = () => {
     const requirements = document.createElement("div");
     requirements.className = "requirements";
 
-    events[work].requirements.forEach((requirement) => {
+    tasks[work].requirements.forEach((requirement) => {
       const requirementItem = document.createElement("div");
       requirementItem.className = "requirements-item";
       requirementItem.innerText = requirement.prefix;
@@ -404,37 +387,35 @@ const renderJobs = () => {
 
     const accept = document.createElement("button");
 
-    let jobEnded = storageJobs[work] && storageJobs[work].ended;
+    let jobEnded = activeJobs[work] && activeJobs[work].ended;
 
     accept.innerText = jobEnded ? "Claim reward" : "Accept job";
     accept.setAttribute("status", jobEnded ? "claim" : "open");
-    if (!jobEnded) accept.disabled = isJobDisabled(events[work]);
+    if (!jobEnded) accept.disabled = isJobDisabled(tasks[work]);
     accept.onclick = function () {
       if (jobEnded) {
-        claim(storageJobs, work, events[work].reward);
+        claimReward(activeJobs, work, tasks[work].reward);
         renderJobs();
-        handleJobClose();
       } else {
-        let selected = findDeveloper(events[work].requirements);
+        let selected = findDeveloper(tasks[work].requirements);
 
-        storageJobs[work] = {
-          title: events[work].title,
-          reward: events[work].reward,
-          requirements: events[work].requirements,
-          finish: moment().add(events[work].duration, "minute"),
-          duration: events[work].duration,
+        activeJobs[work] = {
+          title: tasks[work].title,
+          reward: tasks[work].reward,
+          requirements: tasks[work].requirements,
+          finish: moment().add(tasks[work].duration, "minute"),
+          duration: tasks[work].duration,
           ended: false,
           developer: selected,
         };
 
-        updateAccountProperty(STORAGE.JOBS, storageJobs);
-
-        handleJobClose()
+        updateAccountProperty(STORAGE.ACTIVE_JOBS, activeJobs);
 
         renderActiveJobs();
 
-        makeWorkerBusy(events[work].requirements, work);
-        isJobDisabled(events[work]);
+        makeWorkerBusy(tasks[work].requirements, work);
+        isJobDisabled(tasks[work]);
+        renderJobs();
       }
     };
 
@@ -458,7 +439,7 @@ const renderJobs = () => {
 const renderProducts = (tab) => {
   const shop = document.getElementById("shop");
   shop.innerHTML = null;
-  let developers = getAccountProperty(STORAGE.DEVELOPERS)
+  let developers = getAccountProperty(STORAGE.DEVELOPERS);
   let objects = getAccountProperty(STORAGE.OBJECTS);
   let balance = getAccountProperty(STORAGE.BALANCE);
 
@@ -469,8 +450,15 @@ const renderProducts = (tab) => {
     const item = document.createElement("div");
 
     const buy = document.createElement("button");
-    buy.innerText = tab === TABS.DEVELOPER ? isAlreadyHired ? "FIRE" : "HIRE" : isProductOnMap ? "SELL" : "BUY";
-    buy.className = isAlreadyHired || isProductOnMap ? 'remove' : 'item-buy'
+    buy.innerText =
+      tab === TABS.DEVELOPER
+        ? isAlreadyHired
+          ? "FIRE"
+          : "HIRE"
+        : isProductOnMap
+          ? "SELL"
+          : "BUY";
+    buy.className = isAlreadyHired || isProductOnMap ? "remove" : "item-buy";
 
     if (product.price > balance) {
       buy.disabled = true;
@@ -524,56 +512,73 @@ const renderProducts = (tab) => {
     buy.onclick = function () {
       if (isAlreadyHired || isProductOnMap) {
         let assets = getAccountProperty(STORAGE.ASSETS);
-
         let newBalance = balance;
+        let balanceAmountElement = document.getElementById("balance-amount");
 
-        let balanceObj = document.getElementById('balance-amount')
+        let accountLayouts = getAccountProperty(STORAGE.LAYOUT);
 
-        let accountLayouts = getAccountProperty(STORAGE.LAYOUT)
-        let layoutToRemove = [[Number(objects[product.id].x), Number(objects[product.id].x) + Number(objects[product.id].cursor[0]) - 1], [Number(objects[product.id].y), Number(objects[product.id].y) + Number(objects[product.id].cursor[1]) - 1]]
+        let layoutToRemove = [
+          [
+            Number(objects[product.id].x),
+            Number(objects[product.id].x) +
+            Number(objects[product.id].cursor[0]) -
+            1,
+          ],
+          [
+            Number(objects[product.id].y),
+            Number(objects[product.id].y) +
+            Number(objects[product.id].cursor[1]) -
+            1,
+          ],
+        ];
 
-        objectsCtx.clearRect(objects[product.id].x * TILE_SIZE, objects[product.id].y * TILE_SIZE, objects[product.id].cursor[0] * TILE_SIZE, objects[product.id].cursor[1] * TILE_SIZE)
+        objectsCtx.clearRect(
+          objects[product.id].x * TILE_SIZE,
+          objects[product.id].y * TILE_SIZE,
+          objects[product.id].cursor[0] * TILE_SIZE,
+          objects[product.id].cursor[1] * TILE_SIZE
+        );
 
-        let newLayout = accountLayouts.filter((layout) => String(layout) !== String(layoutToRemove))
+        let newLayout = accountLayouts.filter((layout) => String(layout) !== String(layoutToRemove));
 
-        delete objects[product.id]
+        delete objects[product.id];
 
-        if (product.type === 'developer') {
-          newBalance = Number(balance) - 2000
-          delete developers[product.id]
-          updateAccountProperty(STORAGE.DEVELOPERS, developers)
+        if (product.type === TYPES.DEVELOPER) {
+          newBalance = Number(balance) - 2000;
+          delete developers[product.id];
+          updateAccountProperty(STORAGE.DEVELOPERS, developers);
         } else {
-          newBalance = Number(balance) + parseInt(product.price / 2)
+          newBalance = Number(balance) + parseInt(product.price / 2);
         }
 
-        updateAccountProperty(STORAGE.LAYOUT, newLayout)
-        updateAccountProperty(STORAGE.OBJECTS, objects)
-        updateAccountProperty(STORAGE.BALANCE, newBalance)
-        updateAccountProperty(STORAGE.ASSETS, Number(assets) - Number(product.price))
+        updateAccountProperty(STORAGE.LAYOUT, newLayout);
+        updateAccountProperty(STORAGE.OBJECTS, objects);
+        updateAccountProperty(STORAGE.BALANCE, newBalance);
+        updateAccountProperty(STORAGE.ASSETS, Number(assets) - Number(product.price));
 
-        renderProducts(tab)
+        renderProducts(tab);
 
-        animateValue(balanceObj, Number(balance), Number(newBalance), 1000);
+        animateValue(balanceAmountElement, Number(balance), Number(newBalance), 1000);
 
         updateLog({
           timestamp: moment().format("LT"),
-          message: product.type === 'developer' ? `-$ ${formatNumber(2000)} severance pay` : `sold on used marketplace for $ ${formatNumber(parseInt(product.price / 2))}`,
+          message:
+            product.type === "developer"
+              ? `-$ ${formatNumber(2000)} severance pay`
+              : `sold on used marketplace for $ ${formatNumber(
+                parseInt(product.price / 2)
+              )}`,
         });
       } else {
         if (product.price <= balance) {
+          customStorage.setter(STORAGE.SELECTED, product.id);
           cursor = product.cursor;
-
           shopActive = false;
           grabbed = true;
 
-          localStorage.setItem(STORAGE.SELECTED, product.id);
+          newBalance = balance - product.price;
 
-          handleShopClose()
-
-          newPrice = balance - product.price;
-
-          let assets = getAccountProperty(STORAGE.ASSETS);
-          updateAccountProperty(STORAGE.ASSETS, (assets += product.price));
+          handleShopClose();
         }
       }
     };
@@ -592,57 +597,43 @@ function setTab(newTab) {
   });
 }
 
-const claim = function (storageJobs, job, reward, expense) {
+const claimReward = function (activeJobs, job, reward, expense) {
   let balance = getAccountProperty(STORAGE.BALANCE);
-
-  let events = customStorage.getter({}, STORAGE.EVENTS);
-  let newBalance = (balance + reward) - expense;
-  updateAccountProperty(STORAGE.BALANCE, newBalance);
-
   let levelProgress = getAccountProperty(STORAGE.LEVEL_PROGRESS);
   let level = getAccountProperty(STORAGE.LEVEL);
+  let tasks = customStorage.getter({}, STORAGE.TASKS);
+  let newBalance = balance + reward - expense;
 
-  let newLevelProgress = levelProgress + events[job].points;
+  let newLevelProgress = levelProgress + tasks[job].points;
 
+  // When progress bar reaches or surpasses level 100
   if (newLevelProgress >= 100) {
-    let newLevel = level + 1;
+    let updatedLevel = level + 1;
 
     updateLevel(0, newLevelProgress - 100);
     updateAccountProperty(STORAGE.LEVEL_PROGRESS, newLevelProgress - 100);
-    document.querySelector(
-      "#level"
-    ).firstElementChild.innerHTML = `LEVEL ${newLevel}`;
-    updateAccountProperty(STORAGE.LEVEL, newLevel);
+    updateAccountProperty(STORAGE.LEVEL, updatedLevel);
+    document.querySelector("#level").firstElementChild.innerHTML = `LEVEL ${updatedLevel}`;
   } else {
     updateLevel(levelProgress, newLevelProgress);
     updateAccountProperty(STORAGE.LEVEL_PROGRESS, newLevelProgress);
   }
 
-  const obj = document.getElementById("balance-amount");
+  const balanceAmountElement = document.getElementById("balance-amount");
 
-  updateLog({
-    timestamp: moment().format("LT"),
-    message: `$ ${formatNumber(reward)} claimed`,
-  });
+  updateLog({ timestamp: moment().format("LT"), message: `$ ${formatNumber(reward)} claimed` });
+  updateLog({ timestamp: moment().format("LT"), message: `-$ ${formatNumber(expense)} in expense` });
 
-  updateLog({
-    timestamp: moment().format("LT"),
-    message: `-$ ${formatNumber(expense)} in expense`,
-  });
-
-  delete storageJobs[job];
-  updateAccountProperty(STORAGE.JOBS, storageJobs);
-
-  // delete events[job];
-  // localStorage.setItem(STORAGE.EVENTS, JSON.stringify(events));
-
-  animateValue(obj, Number(balance), Number(newBalance), 1000);
+  delete activeJobs[job];
+  updateAccountProperty(STORAGE.ACTIVE_JOBS, activeJobs);
+  updateAccountProperty(STORAGE.BALANCE, newBalance);
+  animateValue(balanceAmountElement, Number(balance), Number(newBalance), 1000);
 };
 
-const endJob = (workId) => {
-  let jobs = getAccountProperty(STORAGE.JOBS);
-  jobs[workId] = { ...jobs[workId], ended: true };
-  updateAccountProperty(STORAGE.JOBS, jobs);
+const endJob = (id) => {
+  let jobs = getAccountProperty(STORAGE.ACTIVE_JOBS);
+  jobs[id] = { ...jobs[id], ended: true };
+  updateAccountProperty(STORAGE.ACTIVE_JOBS, jobs);
 };
 
 const renderProgressbar = function (final, current, reward, job) {
@@ -658,7 +649,7 @@ const renderProgressbar = function (final, current, reward, job) {
   if (current >= 0) {
     makeWorkerFree(job);
     endJob(job);
-    renderJobs();
+    // renderJobs();
 
     bar.style.backgroundColor = "green";
     bar.style.cursor = "pointer";
@@ -675,25 +666,29 @@ const renderProgressbar = function (final, current, reward, job) {
   return container;
 };
 
-document.addEventListener('mousedown', (e) => {
-  let storageJobs = getAccountProperty(STORAGE.JOBS);
-  if (e.target.className === 'bar') {
-    let job = Number(e.target.getAttribute('job'))
-    let reward = Number(e.target.getAttribute('reward'))
+document.addEventListener("mousedown", (e) => {
+  let activeJobs = getAccountProperty(STORAGE.ACTIVE_JOBS);
+  if (e.target.className === "bar") {
+    let completed = e.target.getAttribute("completed");
 
-    claim(
-      storageJobs,
+    if (completed === "false") return;
+
+    let job = Number(e.target.getAttribute("job"));
+    let reward = Number(e.target.getAttribute("reward"));
+
+    claimReward(
+      activeJobs,
       job,
       reward,
-      PRODUCT_LIST[Number(storageJobs[job].developer)].expense
+      PRODUCT_LIST[Number(activeJobs[job].developer)].expense
     );
     renderJobs();
     renderActiveJobs();
   }
-})
+});
 
 const renderActiveJobs = function () {
-  let storageJobs = getAccountProperty(STORAGE.JOBS);
+  let activeJobs = getAccountProperty(STORAGE.ACTIVE_JOBS);
 
   const empty = document.createElement("p");
   empty.style.color = "rgba(0,0,0,0.8)";
@@ -704,53 +699,50 @@ const renderActiveJobs = function () {
   const activeJobsContent = document.getElementById("active-jobs-content");
   activeJobsContent.innerHTML = null;
 
-  if (Object.keys(storageJobs).length === 0) {
-    activeJobsContent.append(empty);
-  } else {
-    Object.keys(storageJobs).forEach((job) => {
-      const timeDiff = moment().diff(storageJobs[job].finish, "second");
+  if (Object.keys(activeJobs).length === 0) return activeJobsContent.append(empty);
 
-      let jobItem = document.createElement("div");
-      jobItem.className = "job-item";
+  Object.keys(activeJobs).forEach((id) => {
+    let job = activeJobs[id];
 
-      const jobTitle = document.createElement("p");
-      jobTitle.innerText = storageJobs[job].title;
-      jobTitle.className = "title";
+    const timeDiff = moment().diff(job.finish, "second");
 
-      const developerName = document.createElement("p");
-      developerName.innerText = PRODUCT_LIST[storageJobs[job].developer].name;
-      developerName.className = "job-developer"
+    let jobItem = document.createElement("div");
+    jobItem.className = "job-item";
 
-      const progress = renderProgressbar(
-        storageJobs[job].duration * 60,
-        timeDiff,
-        storageJobs[job].reward,
-        job
-      );
+    const jobTitle = document.createElement("p");
+    jobTitle.innerText = job.title;
+    jobTitle.className = "title";
 
-      jobItem.append(jobTitle);
-      jobItem.append(developerName);
+    const developerName = document.createElement("p");
+    developerName.innerText = PRODUCT_LIST[job.developer].name;
+    developerName.className = "id-developer";
 
-      const requirements = document.createElement("div");
-      requirements.className = "requirements";
-      requirements.style.marginBottom = "8px";
-      storageJobs[job].requirements.forEach((requirement) => {
-        const requirementItem = document.createElement("div");
-        requirementItem.style.backgroundColor = requirement.palette[0];
-        requirementItem.style.color = requirement.palette[1];
-        requirementItem.className = "requirements-item";
-        requirementItem.innerText = requirement.prefix;
-        requirements.append(requirementItem);
-      });
+    const progress = renderProgressbar(job.duration * 60, timeDiff, job.reward, id);
 
-      jobItem.append(requirements);
-      jobItem.append(progress);
+    jobItem.append(jobTitle, developerName);
 
-      activeJobsContent.append(jobItem);
+    const requirements = document.createElement("div");
+    requirements.className = "requirements";
+    requirements.style.marginBottom = "8px";
+    job.requirements.forEach((requirement) => {
+      const requirementItem = document.createElement("div");
+      requirementItem.style.backgroundColor = requirement.palette[0];
+      requirementItem.style.color = requirement.palette[1];
+      requirementItem.className = "requirements-item";
+      requirementItem.innerText = requirement.prefix;
+      requirements.append(requirementItem);
     });
-  }
+
+    jobItem.append(requirements, progress);
+
+    activeJobsContent.append(jobItem);
+  });
 };
 
+/**
+ * Represents a book.
+ * @param {Object} log - log object with timestamp and message
+ */
 const updateLog = (log) => {
   let content = document.getElementById("logs");
 
@@ -774,6 +766,7 @@ const updateLog = (log) => {
   logs.scrollTop = logs.scrollHeight;
 };
 
+/** Clear item from selection on ESC key press */
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") {
     grabbed = false;
@@ -783,18 +776,22 @@ document.addEventListener("keydown", (e) => {
 
 window.setInterval(() => renderActiveJobs(), 200);
 
-// let interval = moment().add(10, 'seconds')
-// let running = true
+function moveGameMap() {
+  let elm = document.getElementById('frame');
 
-// window.setInterval(() => {
-//   if (running) {
-//     let diff = interval.diff(moment())
+  elm.onmousedown = (e) => {
+    if (e.button !== 0) return
 
-//     if (diff <= 0) {
-//       intval = moment().add(10, 'seconds')
-//       running = false
-//       document.getElementById("light-bulb").setAttribute('disabled', true)
-//       document.getElementById("light-bulb").innerText = 'LIGHTS OFF'
-//     }
-//   }
-// }, 1000);
+    document.onmousemove = (i) => {
+      elm.style.top = `${i.clientY - (e.offsetY + 90)}px`
+      elm.style.left = `${i.clientX - (e.offsetX + 30)}px`
+    }
+
+    document.onmouseup = () => {
+      document.onmousedown = null;
+      document.onmousemove = null;
+    }
+  }
+}
+
+moveGameMap();

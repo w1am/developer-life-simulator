@@ -5,7 +5,7 @@
   <?php
   include_once('../../shared/authentication.php');
 
-  print renderAuthenticationHeader('Signout');
+  renderAuthenticationHeader('Signout');
   ?>
   <script>
     window.onload = function() {
@@ -17,14 +17,15 @@
 <body>
   <?php
   include('../../components/navbar.php');
-  echo renderNavbar();
+  renderNavbar();
   ?>
 
   <page-wrapper>
     <h1>Bye!</h1>
   </page-wrapper>
 
-  <?php include('../../components/footer.php') ?>
+  <?php include('../../components/footer.php');
+  renderFooter() ?>
 </body>
 
 </html>

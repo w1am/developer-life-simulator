@@ -5,7 +5,11 @@ const relativeCoordinates = (event) => {
 
   let cursorInMap = mouseX >= left && mouseX < right && mouseY >= top && mouseY < bottom
 
-  if (!cursorInMap) return { undefined, undefined }
+  if (!cursorInMap) {
+    grabbed = false;
+    cursor = [1, 1];
+    return { undefined, undefined }
+  }
 
   let relativeMouseX = event.clientX - map.left
   let relativeMouseY = event.clientY - map.top

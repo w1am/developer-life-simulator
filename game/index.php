@@ -4,34 +4,40 @@
   <?php
   include_once('../shared/header.php');
 
-  print renderHeader('Play');
-  print loadGameScripts();
-  print loadFormatters();
-  print checkAuthenticationStatus();
+  renderHeader('Play');
+  loadGameScripts();
+  loadFormatters();
+  checkAuthenticationStatus();
   ?>
 </header>
 
 <body id="game-page">
   <?php
   include('../components/navbar.php');
-  echo renderNavbar();
+  renderNavbar();
   ?>
 
   <!-- MENUS -->
-  <?php include_once('./menus/jobs.php') ?>
-  <?php include_once('./menus/shop.php') ?>
+  <?php
+  include_once('./menus.php');
+  renderShop();
+  renderJobs();
+  ?>
 
   <div id="game-frame">
     <!-- SIDEBAR -->
     <?php include_once('./sidebar.php') ?>
 
     <!-- PANES -->
-    <div id="information-pane">
-      <?php include_once('./panes/balance.php') ?>
-      <?php include_once('./panes/level.php') ?>
-      <?php include_once('./panes/active_jobs.php') ?>
-    </div>
-    <?php include_once('./panes/logs.php') ?>
+    <?php
+    include_once('./panes.php');
+    echo '<div id="information-pane">';
+    renderBalance();
+    renderLevel();
+    renderActiveJobs();
+    echo '</div>';
+    renderLogs();
+    ?>
 
     <!-- MAP -->
     <div id="game">

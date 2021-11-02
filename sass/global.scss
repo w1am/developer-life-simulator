@@ -6,6 +6,7 @@ body {
   height: 100%;
   margin: 0px;
   font-family: Arial, Helvetica, sans-serif;
+  margin-top: 29px;
 }
 
 * {
@@ -174,6 +175,10 @@ input {
   margin: 15px 0px;
 }
 
+.text-center {
+  text-align: center;
+}
+
 table {
   border-collapse: collapse;
   width: 100%;
@@ -201,4 +206,29 @@ tr {
 #login-image {
   margin-left: 120px;
   object-fit: contain;
+}
+
+.banner {
+  background-image: url("/developer-life-simulator/assets/banner.jpg");
+  color: white;
+  height: 500px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  button {
+    max-width: 200px;
+    margin: 20px auto;
+  }
+
+  h1 {
+    max-width: 800px;
+    text-align: center;
+    margin: 0 auto;
+  }
+}
+
+#welcome-user {
+  margin-bottom: 20px;
+  color: #bd3b2f;
 }

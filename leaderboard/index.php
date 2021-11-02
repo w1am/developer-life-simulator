@@ -4,9 +4,9 @@
 <header>
   <?php
   include('../shared/header.php');
-  echo renderHeader("Leaderboard");
-  echo loadCustomStorage();
-  echo loadFormatters();
+  renderHeader("Leaderboard");
+  loadCustomStorage();
+  loadFormatters();
   ?>
 </header>
 
@@ -14,7 +14,7 @@
   <flex-wrapper>
     <?php
     include('../components/navbar.php');
-    echo renderNavbar();
+    renderNavbar();
     ?>
 
 
@@ -39,6 +39,9 @@
 
     <script src="./scripts/leaderboard.js" type="text/javascript"></script>
 
-    <?php include('../components/footer.php') ?>
+    <?php
+    include('../components/footer.php');
+    renderFooter();
+    ?>
   </flex-wrapper>
 </body>
