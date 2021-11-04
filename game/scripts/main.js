@@ -431,7 +431,7 @@ const renderJobs = () => {
     accept.onclick = function () {
       // Claim rewards when job ends
       if (jobEnded) {
-        claimReward(activeJobs, work, tasks[work].reward);
+        claimReward(activeJobs, work, tasks[work].reward, PRODUCT_LIST[Number(activeJobs[work].developer)].expense);
         renderJobs();
       } else {
         // Accept job and store list in active jobs list
@@ -691,7 +691,6 @@ const renderProgressbar = function (final, current, reward, job) {
   if (current >= 0) {
     makeWorkerFree(job);
     endJob(job);
-    // renderJobs();
 
     bar.style.backgroundColor = "green";
     bar.style.cursor = "pointer";
@@ -723,12 +722,14 @@ document.addEventListener("mousedown", (e) => {
     let job = Number(e.target.getAttribute("job"));
     let reward = Number(e.target.getAttribute("reward"));
 
-    claimReward(
-      activeJobs,
-      job,
-      reward,
-      PRODUCT_LIST[Number(activeJobs[job].developer)].expense
-    );
+    if (activeJobs[job]) {
+      claimReward(
+        activeJobs,
+        job,
+        reward,
+        PRODUCT_LIST[Number(activeJobs[job].developer)].expense
+      );
+    }
 
     // Re render jobs and active jobs window and pane after click
     renderJobs();
