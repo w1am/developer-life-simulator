@@ -1,6 +1,6 @@
 @import "palette.scss";
 
-$link-space-x: 8px;
+$link-space-x: 20px;
 $link-space-y: 20px;
 $navbar-space-x: 20px;
 
@@ -31,8 +31,6 @@ $navbar-space-x: 20px;
     padding: 0px;
 
     li {
-      padding: $link-space-y $link-space-x;
-
       &.auth {
         display: block;
         &[authenticated="true"] {
@@ -46,11 +44,24 @@ $navbar-space-x: 20px;
           display: block;
         }
       }
+
+      &.active {
+        background-color: #458cad;
+        &:hover {
+          background-color: #458cad;
+        }
+      }
     }
 
     a {
+      display: block;
+      padding: $link-space-y $link-space-x;
       color: $color-white;
       text-decoration: none;
+
+      &:hover {
+        background-color: #3d81a1;
+      }
     }
   }
 }

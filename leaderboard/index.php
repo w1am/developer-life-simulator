@@ -3,18 +3,16 @@
 
 <header>
   <?php
-  include('../shared/header.php');
+  include('../templates/headers.php');
   renderHeader("Leaderboard");
-  loadCustomStorage();
-  loadFormatters();
   ?>
 </header>
 
 <body>
   <flex-wrapper>
     <?php
-    include('../components/navbar.php');
-    renderNavbar();
+    include('../templates/common.php');
+    navbar();
     ?>
 
 
@@ -25,6 +23,7 @@
         <table>
           <thead>
             <tr>
+              <th></th>
               <th>Name</th>
               <th>Employees</th>
               <th>Level</th>
@@ -37,11 +36,8 @@
       </div>
     </page-wrapper>
 
-    <script src="./scripts/leaderboard.js" type="text/javascript"></script>
+    <script src="./leaderboard.js" type="text/javascript"></script>
 
-    <?php
-    include('../components/footer.php');
-    renderFooter();
-    ?>
+    <?php footer() ?>
   </flex-wrapper>
 </body>

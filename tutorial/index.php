@@ -3,19 +3,17 @@
 
 <header>
   <?php
-  include('../shared/header.php');
+  include('../templates/headers.php');
   renderHeader("Tutorial");
-  checkAuthenticationStatus()
   ?>
 </header>
 
 <body>
   <flex-wrapper>
     <?php
-    include('../components/navbar.php');
-    renderNavbar();
+    include('../templates/common.php');
+    navbar();
     ?>
-
 
     <page-wrapper>
       <h1>Tutorial</h1>
@@ -26,17 +24,9 @@
       </p>
       <br>
 
-
-      <?php
-      include('../components/button.php');
-      renderButton("/developer-life-simulator/game", "success", "Play Game");
-      ?>
+      <?php button("/developer-life-simulator/game", "success", "Play Game") ?>
     </page-wrapper>
 
-
-    <?php
-    include('../components/footer.php');
-    renderFooter();
-    ?>
+    <?php footer() ?>
   </flex-wrapper>
 </body>

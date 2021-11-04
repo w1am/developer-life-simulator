@@ -2,41 +2,42 @@
 <html lang="en">
 <header>
   <?php
-  include_once('../shared/header.php');
-
+  include_once('../templates/headers.php');
   renderHeader('Play');
-  loadGameScripts();
-  loadFormatters();
-  checkAuthenticationStatus();
   ?>
 </header>
 
 <body id="game-page">
+  <!-- Navigation bar -->
   <?php
-  include('../components/navbar.php');
-  renderNavbar();
+  include('../templates/common.php');
+  navbar();
   ?>
 
   <!-- MENUS -->
   <?php
-  include_once('./menus.php');
-  renderShop();
-  renderJobs();
+  include('../templates/game.php');
+  shop();
+  jobs();
   ?>
 
   <div id="game-frame">
-    <!-- SIDEBAR -->
-    <?php include_once('./sidebar.php') ?>
-
-    <!-- PANES -->
+    <!-- SIDEBAR  -->
     <?php
-    include_once('./panes.php');
-    echo '<div id="information-pane">';
-    renderBalance();
-    renderLevel();
-    renderActiveJobs();
-    echo '</div>';
-    renderLogs();
+    sidebar();
+    ?>
+
+    <!-- FLOATING PANES -->
+    <div id="information-pane">
+      <?php
+      balance();
+      level();
+      activeJobs();
+      ?>
+    </div>
+
+    <?php
+    logs();
     ?>
 
     <!-- MAP -->
@@ -52,8 +53,9 @@
     </div>
   </div>
 
-  <script src="./scripts/game/index.js"></script>
-  <script src="./scripts/game/menus.js" type="text/javascript"></script>
+  <!-- Scripts that needs to be loaded after UI loads -->
+  <script src="./scripts/main.js"></script>
+  <script src="./scripts/menus.js" type="text/javascript"></script>
 </body>
 
 </html>

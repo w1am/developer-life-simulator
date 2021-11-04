@@ -1,3 +1,8 @@
+const AUTHENTICATION_STORAGE = {
+  ACCOUNTS: 'accounts',
+  AUTHENTICATED_USER: 'authed_user',
+}
+
 const TABS = {
   SERVER: 'servers',
   DEVELOPER: 'developers',
@@ -8,7 +13,6 @@ const TABS = {
 const STORAGE = {
   LAYOUT: 'layout',
   BALANCE: 'balance',
-  SELECTED: 'selected',
   ACTIVE_JOBS: 'activeJobs',
   DEVELOPERS: 'developers',
   TASKS: 'tasks',
@@ -23,6 +27,14 @@ const TYPES = {
   DEVELOPER: 'developer',
   JOB: 'job',
   REQUIREMENT: 'requirement',
+}
+
+const SOUNDS = {
+  ACCEPT_JOB: 'accept-job.wav',
+  CLAIM_REWARD: 'coin.wav',
+  LEVEL_UP: 'level-up.wav',
+  BACKGROUND: 'background.wav',
+  TYPING: 'typing.wav',
 }
 
 const DISABLED_INVENTORY = {

@@ -1,6 +1,12 @@
+/**
+ * Core functionality when user drags window / menu.
+ * 
+*/
+
 let menus = ["shop", "job"]
 let dragged = null
 
+// Highlight window when clicked
 function highlightWindow(menuId) {
   dragged = menuId
 

@@ -3,17 +3,23 @@
 
 <header>
   <?php
-  include_once('../../shared/authentication.php');
+  include_once('../../templates/headers.php');
 
   renderAuthenticationHeader('Login');
-  loadAuthenticationScripts();
   ?>
 </header>
 
 <body>
   <?php
-  include('../../components/navbar.php');
-  renderNavbar();
+  include('../../templates/common.php');
+  navbar();
+  ?>
+
+  <?php
+  $not_authenticated = isset($_GET['source']) && $_GET['source'] === 'failed';
+  if ($not_authenticated) {
+    messageBox('error', 'Please login to play the game');
+  }
   ?>
 
   <page-wrapper>
@@ -41,8 +47,9 @@
     </div>
   </page-wrapper>
 
-  <?php include('../../components/footer.php');
-  renderFooter() ?>
+  <?php footer() ?>
+
+  <script src="../scripts/main.js"></script>
 </body>
 
 </html>

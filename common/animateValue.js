@@ -1,3 +1,4 @@
+// Animate any numbers from a given range.
 const animateValue = (domElement, start, end, duration, levelUp = false) => {
   let startTimestamp = null;
   const step = (timestamp) => {

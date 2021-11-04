@@ -1,0 +1,23 @@
+.message-box {
+  padding: 20px;
+  color: #fff1ed;
+  border-radius: 6px;
+  max-width: 500px;
+  margin: 50px auto;
+
+  &.primary {
+    background-color: #6eb2c7;
+  }
+
+  &.error {
+    background-color: #d84a49;
+  }
+
+  &.warning {
+    background-color: #ecbe5c;
+  }
+
+  &.success {
+    background-color: #5bc3a2;
+  }
+}

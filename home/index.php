@@ -3,29 +3,24 @@
 
 <header>
   <?php
-  include('../shared/header.php');
+  include('../templates/headers.php');
   renderHeader("Home");
-  checkAuthenticationStatus()
   ?>
 </header>
 
 <body>
   <flex-wrapper>
     <?php
-    include('../components/navbar.php');
-    renderNavbar();
+    include('../templates/common.php');
+    navbar();
     ?>
-
 
     <div class="text-center banner">
       <h1 id="welcome-user"></h1>
 
       <h1>Create your own virtual startup. Hire employees and grow your tech company.</h1>
 
-      <?php
-      include('../components/button.php');
-      renderButton("/developer-life-simulator/game", "success", "Play Game");
-      ?>
+      <?php button("/developer-life-simulator/game", "success", "Play Game") ?>
     </div>
 
     <div class="tutorial">
@@ -48,9 +43,6 @@
       </div>
     </div>
 
-    <?php
-    include('../components/footer.php');
-    renderFooter();
-    ?>
+    <?php footer() ?>
   </flex-wrapper>
 </body>

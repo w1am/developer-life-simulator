@@ -3,7 +3,7 @@
 
 <header>
   <?php
-  include_once('../../shared/authentication.php');
+  include_once('../../templates/headers.php');
 
   renderAuthenticationHeader('Signout');
   ?>
@@ -16,16 +16,17 @@
 
 <body>
   <?php
-  include('../../components/navbar.php');
-  renderNavbar();
+  include('../../templates/common.php');
+  navbar();
   ?>
 
   <page-wrapper>
     <h1>Bye!</h1>
   </page-wrapper>
 
-  <?php include('../../components/footer.php');
-  renderFooter() ?>
+  <?php
+  footer();
+  ?>
 </body>
 
 </html>

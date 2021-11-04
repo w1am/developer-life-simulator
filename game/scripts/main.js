@@ -1,8 +1,25 @@
+/**
+ * This is the main javascript scripting file for the game page
+ * Only the important / less obvious functionalities are commented
+ * 
+ * ===========/ Important Functions /=============:
+ * renderJobs()
+ * renderProducts()
+ * findDeveloper()
+ * makeWorkerBusy()
+ * makeWorkerFree()
+ * 
+ * ===========/ Other Functions /=============:
+ * updateLog()
+ * 
+*/
+
+
 let isAuthed = customStorage.getter(
   null,
   AUTHENTICATION_STORAGE.AUTHENTICATED_USER
 );
-if (!isAuthed) window.location.pathname = "/developer-life-simulator";
+if (!isAuthed) window.location.href = '/developer-life-simulator/authentication/login?source=failed'
 
 var gridCanvas = /** @type {HTMLCanvasElement} */ (
   document.querySelector("#grid")
@@ -29,18 +46,19 @@ const AUTHENTICATED_USER = customStorage.getter({}, AUTHENTICATION_STORAGE.AUTHE
 
 let shopActive = false;
 let grabbed = false;
+let selected = null;
 let cursor = [1, 1];
 let tab = [TABS.SERVER];
 let newBalance = null
 
-// On mount
+// On mount. Initialize available tasks/jobs
 customStorage.setter(STORAGE.TASKS, {
   0: new Job(
     0,
     "Coffee review Website",
     10000,
     "frestea",
-    3.1,
+    0.1,
     [
       new Requirement("Python", "", "PY", ["#173248", "white"]),
       new Requirement("Javascript", "", "JS", ["#EAD41B", "#000000"]),
@@ -80,10 +98,11 @@ function updateLevel(before, after) {
 
 updateLevel(0, getAccountProperty(STORAGE.LEVEL_PROGRESS));
 
+// Highlight current tile on mouse move
 document.addEventListener("mousemove", (event) => {
   clearRect();
-  let selected = customStorage.getter(null, STORAGE.SELECTED);
   const { coordX, coordY } = relativeCoordinates(event);
+
   if (detectObject(coordX, coordY)) return;
 
   gridCtx.strokeStyle = "white";
@@ -105,6 +124,7 @@ document.addEventListener("mousemove", (event) => {
     );
 });
 
+// Get and Update user account properties
 function updateAccountProperty(field, newValue) {
   let accounts = customStorage.getter({}, AUTHENTICATION_STORAGE.ACCOUNTS);
   accounts[AUTHENTICATED_USER][field] = newValue;
@@ -144,15 +164,22 @@ setTimeout(() => {
       );
     }
   });
-}, 100);
+}, 500);
 
+// Reset all states and update balance when object is placed on the map
 document.getElementById("map").addEventListener("click", function (event) {
   if (shopActive || !grabbed) return;
   const { coordX, coordY } = relativeCoordinates(event);
 
+  if (coordX === undefined || coordY === undefined) {
+    grabbed = false;
+    cursor = [1, 1];
+    newBalance = 0;
+    return
+  }
+
   if (detectObject(coordX, coordY)) return;
 
-  let selected = customStorage.getter(null, STORAGE.SELECTED);
   if (selected == null) return
 
   let layout = getAccountProperty(STORAGE.LAYOUT);
@@ -161,6 +188,7 @@ document.getElementById("map").addEventListener("click", function (event) {
 
   drawImage(objectsCtx, INVENTORY[selected], coordX, coordY, cursor[0], cursor[1]);
 
+  // Get object properties using the product id
   objects[product.id] = {
     x: coordX,
     y: coordY,
@@ -184,6 +212,7 @@ document.getElementById("map").addEventListener("click", function (event) {
   updateAccountProperty(STORAGE.ASSETS, (assets += product.price));
   animateValue(balanceAmountElement, Number(balance), Number(newBalance), 1000);
 
+  // Add developer to the user account's developers list if product is of type developer
   if (PRODUCT_LIST[selected].type === TYPES.DEVELOPER) {
     let developers = getAccountProperty(STORAGE.DEVELOPERS);
 
@@ -200,8 +229,8 @@ document.getElementById("map").addEventListener("click", function (event) {
     updateAccountProperty(STORAGE.DEVELOPERS, developers);
   }
 
-  customStorage.remover(STORAGE.SELECTED);
   renderJobs();
+  selected = null
   grabbed = false;
   cursor = [1, 1];
 });
@@ -220,13 +249,13 @@ let products = {
   [TABS.SERVICE]: [],
 };
 
+// disable to the button if no developers match programming language
 const isJobDisabled = function (work) {
   let developers = getAccountProperty(TABS.DEVELOPER);
   let jobs = getAccountProperty(STORAGE.ACTIVE_JOBS);
 
   const requirements = work.requirements;
 
-  // disable to the button if no developers match programming language
   let pass = false;
   requirements.forEach((requirement, count) => {
     Object.keys(developers).forEach((developer) => {
@@ -243,6 +272,7 @@ const isJobDisabled = function (work) {
   return false;
 };
 
+// Look for a developer who meets the job specifications.
 const findDeveloper = (requirements) => {
   let developers = getAccountProperty(STORAGE.DEVELOPERS);
 
@@ -269,9 +299,11 @@ const findDeveloper = (requirements) => {
   }
 };
 
+// When a developer is working, change character image to "working" 
 const makeWorkerBusy = (requirements, jobId) => {
   let developers = getAccountProperty(STORAGE.DEVELOPERS);
 
+  // Find available worker based on job requirements. For eg. If job needs javascript dev, function looks for javascript developer.
   let selected = findDeveloper(requirements);
 
   if (!selected) return false;
@@ -299,6 +331,7 @@ const makeWorkerBusy = (requirements, jobId) => {
   updateAccountProperty(STORAGE.DEVELOPERS, developers);
 };
 
+// Update character image back to normal when job ends.
 const makeWorkerFree = (jobId) => {
   let developers = getAccountProperty(STORAGE.DEVELOPERS);
   let selected = null;
@@ -338,12 +371,14 @@ const makeWorkerFree = (jobId) => {
   });
 };
 
+/** List all products when job menu window opens */
 const renderJobs = () => {
   const job = document.getElementById("job");
   job.innerHTML = null;
 
   let activeJobs = getAccountProperty(STORAGE.ACTIVE_JOBS);
 
+  // Tasks are all jobs that are available on the market.
   let tasks = customStorage.getter({}, "tasks");
 
   Object.keys(tasks).forEach((work) => {
@@ -374,6 +409,7 @@ const renderJobs = () => {
     const requirements = document.createElement("div");
     requirements.className = "requirements";
 
+    // Display job requirements
     tasks[work].requirements.forEach((requirement) => {
       const requirementItem = document.createElement("div");
       requirementItem.className = "requirements-item";
@@ -393,10 +429,13 @@ const renderJobs = () => {
     accept.setAttribute("status", jobEnded ? "claim" : "open");
     if (!jobEnded) accept.disabled = isJobDisabled(tasks[work]);
     accept.onclick = function () {
+      // Claim rewards when job ends
       if (jobEnded) {
         claimReward(activeJobs, work, tasks[work].reward);
         renderJobs();
       } else {
+        // Accept job and store list in active jobs list
+        // Also update developer state to active
         let selected = findDeveloper(tasks[work].requirements);
 
         activeJobs[work] = {
@@ -436,6 +475,7 @@ const renderJobs = () => {
   });
 };
 
+/** List all products when shop menu window opens */
 const renderProducts = (tab) => {
   const shop = document.getElementById("shop");
   shop.innerHTML = null;
@@ -449,6 +489,7 @@ const renderProducts = (tab) => {
 
     const item = document.createElement("div");
 
+    // Update button text when required
     const buy = document.createElement("button");
     buy.innerText =
       tab === TABS.DEVELOPER
@@ -479,23 +520,14 @@ const renderProducts = (tab) => {
 
     content.append(title, price);
 
+    // Show skills when product has a list of skills
     if (product.skills) {
-      let formattedSkills = "";
-
-      product.skills.forEach((skill, i) => {
-        if (i === product.skills.length - 1) {
-          formattedSkills += `${skill}`;
-        } else {
-          formattedSkills += `${skill}, `;
-        }
-      });
       const skills = document.createElement("p");
       skills.style.margin = 0;
       skills.style.fontSize = "12px";
       skills.style.paddingTop = "5px";
       skills.style.paddingBottom = "5px";
-      skills.innerText = formattedSkills;
-
+      skills.innerText = product.skills.join(", ");
       content.appendChild(skills);
     }
 
@@ -510,12 +542,12 @@ const renderProducts = (tab) => {
     item.appendChild(buy);
 
     buy.onclick = function () {
+      // Fire developer or sell product when product or developer is already placed on the map
       if (isAlreadyHired || isProductOnMap) {
         let assets = getAccountProperty(STORAGE.ASSETS);
+        let accountLayouts = getAccountProperty(STORAGE.LAYOUT);
         let newBalance = balance;
         let balanceAmountElement = document.getElementById("balance-amount");
-
-        let accountLayouts = getAccountProperty(STORAGE.LAYOUT);
 
         let layoutToRemove = [
           [
@@ -532,6 +564,7 @@ const renderProducts = (tab) => {
           ],
         ];
 
+        // Remove product image from canvas
         objectsCtx.clearRect(
           objects[product.id].x * TILE_SIZE,
           objects[product.id].y * TILE_SIZE,
@@ -539,16 +572,19 @@ const renderProducts = (tab) => {
           objects[product.id].cursor[1] * TILE_SIZE
         );
 
+        // Remove layout. LAYOUT stores the position and size of the object that can be used for object detection
         let newLayout = accountLayouts.filter((layout) => String(layout) !== String(layoutToRemove));
 
         delete objects[product.id];
 
+        // Take away 2000 in severance pay when a developer is fired.
         if (product.type === TYPES.DEVELOPER) {
           newBalance = Number(balance) - 2000;
           delete developers[product.id];
           updateAccountProperty(STORAGE.DEVELOPERS, developers);
         } else {
-          newBalance = Number(balance) + parseInt(product.price / 2);
+          // Update new balance based on the resale value. We always assume that the re sale value diminishes by 50%
+          newBalance = Number(balance) + Number(product.price / 2);
         }
 
         updateAccountProperty(STORAGE.LAYOUT, newLayout);
@@ -570,16 +606,18 @@ const renderProducts = (tab) => {
               )}`,
         });
       } else {
-        if (product.price <= balance) {
-          customStorage.setter(STORAGE.SELECTED, product.id);
-          cursor = product.cursor;
-          shopActive = false;
-          grabbed = true;
+        // When user clicks on buy or hire. Save selection and set cursor to the
+        // object's width and height property. We need cursor to determine how
+        // many tiles the object will occupy when placed on the map
+        if (product.price > balance) return
+        selected = product.id
+        cursor = product.cursor;
+        shopActive = false;
+        grabbed = true;
 
-          newBalance = balance - product.price;
+        newBalance = Number(balance) - Number(product.price);
 
-          handleShopClose();
-        }
+        handleShopClose();
       }
     };
 
@@ -587,6 +625,7 @@ const renderProducts = (tab) => {
   });
 };
 
+/** Change tab when user clicks links in shop menu sidebar */
 function setTab(newTab) {
   tab = newTab;
 
@@ -597,16 +636,19 @@ function setTab(newTab) {
   });
 }
 
+/** Update progress, level and balance when user clicks */
 const claimReward = function (activeJobs, job, reward, expense) {
   let balance = getAccountProperty(STORAGE.BALANCE);
   let levelProgress = getAccountProperty(STORAGE.LEVEL_PROGRESS);
   let level = getAccountProperty(STORAGE.LEVEL);
   let tasks = customStorage.getter({}, STORAGE.TASKS);
-  let newBalance = balance + reward - expense;
+
+  // Add reward points and minus developer expense
+  let newBalance = (Number(balance) + Number(reward)) - Number(expense);
 
   let newLevelProgress = levelProgress + tasks[job].points;
 
-  // When progress bar reaches or surpasses level 100
+  // When progress bar reaches or surpasses level 100 reset to 0 and increment level
   if (newLevelProgress >= 100) {
     let updatedLevel = level + 1;
 
@@ -666,6 +708,11 @@ const renderProgressbar = function (final, current, reward, job) {
   return container;
 };
 
+/**
+ * A separate mouse click event listener to detect when user clicks on "Claim Reward" button
+ * Accumulate job reward points using getAttribute and pass it into the claimReward function  
+ * 
+ * */
 document.addEventListener("mousedown", (e) => {
   let activeJobs = getAccountProperty(STORAGE.ACTIVE_JOBS);
   if (e.target.className === "bar") {
@@ -682,11 +729,14 @@ document.addEventListener("mousedown", (e) => {
       reward,
       PRODUCT_LIST[Number(activeJobs[job].developer)].expense
     );
+
+    // Re render jobs and active jobs window and pane after click
     renderJobs();
     renderActiveJobs();
   }
 });
 
+/** Display all active jobs */
 const renderActiveJobs = function () {
   let activeJobs = getAccountProperty(STORAGE.ACTIVE_JOBS);
 
@@ -699,12 +749,14 @@ const renderActiveJobs = function () {
   const activeJobsContent = document.getElementById("active-jobs-content");
   activeJobsContent.innerHTML = null;
 
+  /** Show empty message when there is no active jobs */
   if (Object.keys(activeJobs).length === 0) return activeJobsContent.append(empty);
 
   Object.keys(activeJobs).forEach((id) => {
     let job = activeJobs[id];
 
-    const timeDiff = moment().diff(job.finish, "second");
+    /** Get time left before active job ends */
+    let timeDiff = moment().diff(job.finish, "second");
 
     let jobItem = document.createElement("div");
     jobItem.className = "job-item";
@@ -717,10 +769,12 @@ const renderActiveJobs = function () {
     developerName.innerText = PRODUCT_LIST[job.developer].name;
     developerName.className = "id-developer";
 
-    const progress = renderProgressbar(job.duration * 60, timeDiff, job.reward, id);
+    /** Update progress bar */
+    let progress = renderProgressbar(job.duration * 60, timeDiff, job.reward, id);
 
     jobItem.append(jobTitle, developerName);
 
+    /** Job requirements icons and generate color based on their color palettes */
     const requirements = document.createElement("div");
     requirements.className = "requirements";
     requirements.style.marginBottom = "8px";
@@ -740,7 +794,7 @@ const renderActiveJobs = function () {
 };
 
 /**
- * Represents a book.
+ * Log anything
  * @param {Object} log - log object with timestamp and message
  */
 const updateLog = (log) => {
@@ -776,6 +830,7 @@ document.addEventListener("keydown", (e) => {
 
 window.setInterval(() => renderActiveJobs(), 200);
 
+// Draggable map element handler
 function moveGameMap() {
   let elm = document.getElementById('frame');
 

@@ -1,5 +1,67 @@
 <?php
-function renderJobs()
+function sidebar()
+{
+  echo <<<DEV
+  <div id="info-container">
+
+    <div class="button">
+      <div id="content-shop"></div>
+      <p>Shop</p>
+    </div>
+
+    <div class="button">
+      <div id="content-job"></div>
+      <p>Jobs</p>
+    </div>
+
+  </div>
+  DEV;
+}
+
+function activeJobs()
+{
+  echo '
+    <div id="active-jobs">
+      <div class="header">
+        <p class="title">Active Jobs</p>
+      </div>
+      <div id="active-jobs-content"></div>
+    </div>
+  ';
+};
+
+function balance()
+{
+  echo '
+    <div id="balance">
+      <p class="pane-header">Balance</p>
+      <div id="balance-amount">0</div>
+    </div>
+  ';
+};
+
+function level()
+{
+  echo '
+    <div id="level">
+      <p class="pane-header">Level</p>
+      <div id="level-progress">
+        <div id="level-progress-bar">
+        </div>
+      </div>
+    </div>
+  ';
+};
+
+function logs()
+{
+  echo '
+    <div id="logs">
+    </div>
+  ';
+};
+
+function jobs()
 {
   echo '
     <div hidden id="menu-job" class="menu">
@@ -13,7 +75,7 @@ function renderJobs()
   ';
 };
 
-function renderShop()
+function shop()
 {
   echo <<<DEV
     <div hidden id="menu-shop" class="menu">

@@ -1,3 +1,4 @@
+// On load function to check if user is currently authenticated.
 window.onload = function () {
   let isAuthed = JSON.parse(localStorage.getItem('authed_user')) || null
   let accounts = JSON.parse(localStorage.getItem('accounts'));

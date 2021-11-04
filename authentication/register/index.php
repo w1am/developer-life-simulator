@@ -3,17 +3,16 @@
 
 <header>
   <?php
-  include_once('../../shared/authentication.php');
+  include_once('../../templates/headers.php');
 
   renderAuthenticationHeader('Register');
-  loadAuthenticationScripts();
   ?>
 </header>
 
 <body>
   <?php
-  include('../../components/navbar.php');
-  renderNavbar();
+  include('../../templates/common.php');
+  navbar();
   ?>
 
   <page-wrapper>
@@ -60,8 +59,9 @@
     </div>
   </page-wrapper>
 
-  <?php include('../../components/footer.php');
-  renderFooter() ?>
+  <?php footer() ?>
+
+  <script src="../scripts/main.js"></script>
 </body>
 
 </html>

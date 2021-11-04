@@ -1,3 +1,4 @@
+// Global custom storage functionality 
 class CustomStorage {
   constructor() {
   }
@@ -22,4 +23,4 @@ class CustomStorage {
   }
 }
 
-const customStorage = new CustomStorage()
+let customStorage = new CustomStorage()

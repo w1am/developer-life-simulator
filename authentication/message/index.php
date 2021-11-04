@@ -3,17 +3,16 @@
 
 <header>
   <?php
-  include_once('../../shared/authentication.php');
+  include_once('../../templates/headers.php');
 
   renderAuthenticationHeader('Register');
-  loadAuthenticationScripts();
   ?>
 </header>
 
 <body>
   <?php
-  include('../../components/navbar.php');
-  renderNavbar();
+  include('../../templates/common.php');
+  navbar();
   ?>
 
   <page-wrapper>
@@ -22,15 +21,11 @@
       <h1>Registration successful</h1>
       <br>
 
-      <?php
-      include('../../components/button.php');
-      renderButton("/developer-life-simulator/authentication/login", "primary", "Login");
-      ?>
+      <?php button("/developer-life-simulator/authentication/login", "primary", "Login"); ?>
     </div>
   </page-wrapper>
 
-  <?php include('../../components/footer.php');
-  renderFooter() ?>
+  <?php footer() ?>
 </body>
 
 </html>

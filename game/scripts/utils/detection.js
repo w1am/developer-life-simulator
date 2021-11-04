@@ -4,8 +4,8 @@ const inRange = function (num, ranges) {
   return coordX >= ranges[0][0] && coordX <= ranges[0][1] && coordY >= ranges[1][0] && coordY <= ranges[1][1]
 }
 
+// Check if object exists at current x and y position
 const objectExists = function (coordX, coordY) {
-  // let layout = JSON.parse(localStorage.getItem(STORAGE.LAYOUT))
   let layout = getAccountProperty(STORAGE.LAYOUT)
   let pass = false
 
@@ -28,7 +28,6 @@ const objectExists = function (coordX, coordY) {
 
 const detectObject = function (coordX, coordY) {
   let detected = false
-  // let layout = JSON.parse(localStorage.getItem(STORAGE.LAYOUT))
   let layout = getAccountProperty(STORAGE.LAYOUT)
 
   if (coordX + (cursor[0] - 1) >= TILE_WIDTH_COUNT || coordY + (cursor[1] - 1) >= TILE_HEIGHT_COUNT) return true
