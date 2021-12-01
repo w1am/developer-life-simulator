@@ -27,7 +27,7 @@
       <card>
         <h1>Login</h1>
 
-        <form id="login-form" onsubmit="event.preventDefault();handleSubmit('login')" action="" class="space-y-sm">
+        <form id="login-form" onsubmit="handleSubmit('login')" action="" class="space-y-sm">
           <div>
             <label for="email">Email Address</label>
             <input onblur="handleInput('login',this.name, this.value)" oninput="handleInput('login',this.name, this.value)" type="email" name="email" class="full" placeholder="Email Address">

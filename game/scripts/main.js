@@ -27,22 +27,15 @@ var gridCanvas = /** @type {HTMLCanvasElement} */ (
 var objectsCanvas = /** @type {HTMLCanvasElement} */ (
   document.querySelector("#objects")
 );
-var devCanvas = /** @type {HTMLCanvasElement} */ (
-  document.querySelector("#dev")
-);
-var labelsCanvas = /** @type {HTMLCanvasElement} */ (
-  document.querySelector("#labels")
-);
 
 const gridCtx = gridCanvas.getContext("2d");
 const objectsCtx = objectsCanvas.getContext("2d");
-const devCtx = devCanvas.getContext("2d");
-const labelsCtx = labelsCanvas.getContext("2d");
 
 const PIXELS = 2;
 const TILE_SIZE = PIXELS * 32;
 const [TILE_WIDTH_COUNT, TILE_HEIGHT_COUNT] = [10, 10];
 const AUTHENTICATED_USER = customStorage.getter({}, AUTHENTICATION_STORAGE.AUTHENTICATED_USER);
+const SECURITY_INTERVALS = [150000, 270000, 180000]
 
 let shopActive = false;
 let grabbed = false;
@@ -50,6 +43,7 @@ let selected = null;
 let cursor = [1, 1];
 let tab = [TABS.SERVER];
 let newBalance = null
+let securityRiskStatus = false
 
 // On mount. Initialize available tasks/jobs
 customStorage.setter(STORAGE.TASKS, {
@@ -123,6 +117,17 @@ document.addEventListener("mousemove", (event) => {
       cursor[1]
     );
 });
+
+// Play sound effects
+function playSound(id) {
+  let audio = document.getElementById(id);
+  audio.cloneNode(true).play()
+}
+
+function muteSound(id) {
+  let audio = document.getElementById(id);
+  audio.pause();
+}
 
 // Get and Update user account properties
 function updateAccountProperty(field, newValue) {
@@ -434,6 +439,8 @@ const renderJobs = () => {
         claimReward(activeJobs, work, tasks[work].reward, PRODUCT_LIST[Number(activeJobs[work].developer)].expense);
         renderJobs();
       } else {
+        playSound("audio-start")
+
         // Accept job and store list in active jobs list
         // Also update developer state to active
         let selected = findDeveloper(tasks[work].requirements);
@@ -638,6 +645,7 @@ function setTab(newTab) {
 
 /** Update progress, level and balance when user clicks */
 const claimReward = function (activeJobs, job, reward, expense) {
+  playSound("audio-claim")
   let balance = getAccountProperty(STORAGE.BALANCE);
   let levelProgress = getAccountProperty(STORAGE.LEVEL_PROGRESS);
   let level = getAccountProperty(STORAGE.LEVEL);
@@ -650,6 +658,7 @@ const claimReward = function (activeJobs, job, reward, expense) {
 
   // When progress bar reaches or surpasses level 100 reset to 0 and increment level
   if (newLevelProgress >= 100) {
+    playSound("audio-level-up")
     let updatedLevel = level + 1;
 
     updateLevel(0, newLevelProgress - 100);
@@ -713,7 +722,12 @@ const renderProgressbar = function (final, current, reward, job) {
  * 
  * */
 document.addEventListener("mousedown", (e) => {
+  console.log("hello")
+
   let activeJobs = getAccountProperty(STORAGE.ACTIVE_JOBS);
+
+  console.log(e.target)
+
   if (e.target.className === "bar") {
     let completed = e.target.getAttribute("completed");
 
@@ -799,12 +813,16 @@ const renderActiveJobs = function () {
  * @param {Object} log - log object with timestamp and message
  */
 const updateLog = (log) => {
+  let type = log.type || "normal"
+
   let content = document.getElementById("logs");
 
   let heading = document.createElement("p");
   heading.className = "heading";
   let timestamp = document.createElement("p");
   timestamp.className = "timestamp";
+
+  heading.setAttribute('type', type)
 
   let container = document.createElement("div");
 
@@ -821,6 +839,56 @@ const updateLog = (log) => {
   logs.scrollTop = logs.scrollHeight;
 };
 
+function delay(delayInms) {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve(2);
+    }, delayInms);
+  });
+}
+
+const animateSecurityThreatLog = async function () {
+  const log = {
+    timestamp: moment().format("LT"),
+    type: "green"
+  }
+
+  updateLog({ ...log, message: 'START', });
+  updateLog({ ...log, message: 'Analyzing threat...', });
+  await delay(2000)
+  updateLog({ ...log, message: "initConnection" });
+  await delay(500)
+  updateLog({ ...log, message: ">>@Server 32.3.211.0" });
+  await delay(800)
+  updateLog({ ...log, message: 'success 200' });
+  await delay(900)
+  updateLog({ ...log, message: "END" });
+  await delay(100)
+  updateLog({ ...log, message: 'Security threat resolved' });
+}
+
+const resolveSecurityRisk = function () {
+  const securityRiskButton = document.getElementById("security-risk-btn");
+  animateSecurityThreatLog()
+
+  securityRiskButton.disabled = true
+  securityRiskStatus = false
+}
+
+const generateSecurityRisks = function () {
+  securityRiskStatus = true
+
+  const securityRiskButton = document.getElementById("security-risk-btn");
+
+  updateLog({
+    timestamp: moment().format("LT"),
+    message: 'Security threat detected!',
+    type: "red"
+  });
+
+  securityRiskButton.disabled = false
+}
+
 /** Clear item from selection on ESC key press */
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") {
@@ -830,6 +898,12 @@ document.addEventListener("keydown", (e) => {
 });
 
 window.setInterval(() => renderActiveJobs(), 200);
+
+window.setInterval(() => {
+  if (!securityRiskStatus) {
+    generateSecurityRisks()
+  }
+}, SECURITY_INTERVALS[Math.floor(Math.random() * SECURITY_INTERVALS.length)]);
 
 // Draggable map element handler
 function moveGameMap() {

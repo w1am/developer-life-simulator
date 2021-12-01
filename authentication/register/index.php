@@ -20,7 +20,7 @@
       <card>
         <h1>Register</h1>
 
-        <form id="registration-form" onsubmit="event.preventDefault();handleSubmit('register')" action="" class="space-y-sm">
+        <form id="registration-form" onsubmit="handleSubmit('register')" action="" class="space-y-sm">
           <div>
             <label for="email">Email Address</label>
             <input onblur="handleInput('register',this.name, this.value)" oninput="handleInput('register',this.name, this.value)" type="email" name="email" class="full" placeholder="Email Address">

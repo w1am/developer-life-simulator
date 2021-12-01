@@ -75,6 +75,15 @@ function jobs()
   ';
 };
 
+function status()
+{
+  echo '
+    <div id="status">
+      <button onclick="resolveSecurityRisk()" id="security-risk-btn" disabled>Fix security risk</button>
+    </div>
+  ';
+};
+
 function shop()
 {
   echo <<<DEV

@@ -3,6 +3,7 @@
 @import "./job.scss";
 @import "./logs.scss";
 @import "./level.scss";
+@import "./status.scss";
 
 $pixels: 2px;
 $tile-size: 64px;
@@ -31,18 +32,8 @@ $room-padding: 10px;
   position: absolute;
 }
 
-#dev {
-  position: absolute;
-  z-index: 999;
-}
-
 #objects {
   position: absolute;
-}
-
-#labels {
-  position: absolute;
-  z-index: 99999;
 }
 
 #frame {

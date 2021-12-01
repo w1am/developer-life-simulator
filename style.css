@@ -482,7 +482,7 @@ card form button[type=submit]:hover {
   background-color: #f0f0f0;
   border: 3px solid #3a82a3;
   border-radius: 4px;
-  z-index: 999999999999999;
+  z-index: 100000000000000000000000000000000000;
   opacity: 1;
 }
 #menu-job .content {
@@ -514,7 +514,7 @@ card form button[type=submit]:hover {
   background-color: #f0f0f0;
   border: 3px solid #3a82a3;
   border-radius: 4px;
-  z-index: 999999999999999;
+  z-index: 100000000000000000000000000000000000;
   opacity: 1;
 }
 #menu-shop .parent {
@@ -687,13 +687,14 @@ card form button[type=submit]:hover {
 }
 
 #logs {
-  background-color: black;
+  background: none;
   position: absolute;
   top: 50px;
   left: 100px;
   width: 360px;
   margin: 15px;
   display: flex;
+  z-index: 9999;
   flex-direction: column;
   row-gap: 5px;
   max-height: 200px;
@@ -702,7 +703,7 @@ card form button[type=submit]:hover {
 }
 #logs .item {
   margin: auto 0;
-  background-color: black;
+  background: none;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -710,7 +711,15 @@ card form button[type=submit]:hover {
 #logs .item .heading {
   margin: auto 0;
   max-width: 300px;
+}
+#logs .item .heading[type=normal] {
   color: #ececec;
+}
+#logs .item .heading[type=green] {
+  color: #00d636;
+}
+#logs .item .heading[type=red] {
+  color: #d60e00;
 }
 #logs .item .timestamp {
   margin: auto 0;
@@ -742,6 +751,32 @@ card form button[type=submit]:hover {
   width: 0px;
 }
 
+#status {
+  position: absolute;
+  bottom: 100px;
+  left: 100px;
+  margin: 15px;
+}
+#status button {
+  padding: 20px;
+}
+#status button:hover {
+  background-color: rgba(255, 255, 255, 0.85);
+}
+#status button:disabled {
+  background-color: rgba(255, 255, 255, 0.2);
+  cursor: not-allowed;
+}
+#status button#security-risk-btn {
+  background-image: url("/developer-life-simulator/assets/virus.png");
+  border: none;
+  color: white;
+}
+#status button#security-risk-btn:disabled {
+  opacity: 0;
+  cursor: not-allowed;
+}
+
 #game-page {
   overflow: hidden;
   background-color: black;
@@ -765,18 +800,8 @@ card form button[type=submit]:hover {
   position: absolute;
 }
 
-#dev {
-  position: absolute;
-  z-index: 999;
-}
-
 #objects {
   position: absolute;
-}
-
-#labels {
-  position: absolute;
-  z-index: 99999;
 }
 
 #frame {

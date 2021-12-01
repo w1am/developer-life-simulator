@@ -1,0 +1,30 @@
+#status {
+  position: absolute;
+  bottom: 100px;
+  left: 100px;
+  margin: 15px;
+
+  button {
+    padding: 20px;
+
+    &:hover {
+      background-color: rgba(255,255,255,0.85);
+    }
+
+    &:disabled {
+      background-color: rgba(255,255,255,0.2);
+      cursor: not-allowed;
+    }
+  }
+
+  button#security-risk-btn {
+    background-image: url("/developer-life-simulator/assets/virus.png");
+    border: none;
+    color: white;
+
+    &:disabled {
+      opacity: 0;
+      cursor: not-allowed;
+    }
+  }
+}
