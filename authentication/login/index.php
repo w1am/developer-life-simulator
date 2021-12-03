@@ -4,8 +4,8 @@
 <header>
   <?php
   include_once('../../templates/headers.php');
-
-  renderAuthenticationHeader('Login');
+  renderBaseHeader('Login');
+  renderAuthenticationHeader();
   ?>
 </header>
 
@@ -49,7 +49,7 @@
 
   <?php footer() ?>
 
-  <script src="../scripts/main.js"></script>
+  <script type="module" src="../scripts/main.js"></script>
 </body>
 
 </html>

@@ -1,7 +1,13 @@
+"use strict"
+
+import { TILE_SIZE } from "../main.js";
+
 /**
  * Convert current X and Y position into relative coordinates. For example [0,0], [0,1]
+ * 
+ * @param {MouseEvent} event - The mouse event objet
 */
-const relativeCoordinates = (event) => {
+export const relativeCoordinates = (event) => {
   const map = document.getElementById('map').getBoundingClientRect();
   const [mouseX, mouseY] = [event.clientX, event.clientY]
   const { left, right, top, bottom } = map;

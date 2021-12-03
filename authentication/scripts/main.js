@@ -1,3 +1,7 @@
+"use strict"
+
+import { customStorage, AUTHENTICATION_STORAGE } from '../../common/index.js'
+
 // Initial form values
 const formValue = {
   register: {
@@ -64,10 +68,12 @@ let errors = {
 };
 
 // Update state using the field and value property
-function handleInput(type, field, value) {
+const handleInput = function(type, field, value) {
   formValue[type][field] = value;
   highlightFieldWhenError(type, field, value);
 }
+
+window.handleInput = handleInput
 
 // Highlight field if form has errors.
 function highlightFieldWhenError(type, field, value) {
@@ -110,7 +116,7 @@ function validateFields(type) {
   });
 }
 
-function handleSubmit(type) {
+const handleSubmit = function (type) {
   validateFields(type);
 
   // Push to errorsCount array when object key value is true
@@ -145,7 +151,7 @@ function handleSubmit(type) {
       emailField.parentElement.appendChild(errorMessage);
       return;
     } else {
-      // Registration successful and set default account properties
+      // Registration successful and set default account GAME_PROPERTIES
       const { email, firstName, lastName, password } = formValue.register;
       accounts[email] = {
         firstName,
@@ -231,3 +237,5 @@ function handleSubmit(type) {
     }
   }
 }
+
+window.handleSubmit = handleSubmit;

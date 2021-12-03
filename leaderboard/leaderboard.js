@@ -1,3 +1,7 @@
+"use strict";
+
+import { customStorage, formatNumber } from "../common/index.js";
+
 let leaderboardItems = document.getElementById('leaderboard-items');
 let leaderboard = document.getElementById('leaderboard')
 

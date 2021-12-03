@@ -4,8 +4,8 @@
 <header>
   <?php
   include_once('../../templates/headers.php');
-
-  renderAuthenticationHeader('Register');
+  renderBaseHeader('Bye')
+  renderAuthenticationHeader();
   ?>
 </header>
 

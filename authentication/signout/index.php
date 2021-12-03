@@ -4,10 +4,9 @@
 <header>
   <?php
   include_once('../../templates/headers.php');
-
-  renderAuthenticationHeader('Signout');
+  renderBaseHeader('Signout')
   ?>
-  <script>
+  <script type="module">
     window.onload = function() {
       localStorage.removeItem("authed_user");
     };

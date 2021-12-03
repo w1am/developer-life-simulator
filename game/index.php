@@ -3,7 +3,8 @@
 <header>
   <?php
   include_once('../templates/headers.php');
-  renderHeader('Play');
+  renderBaseHeader("Play");
+  renderHeader();
   ?>
 </header>
 
@@ -61,10 +62,12 @@
   <audio id="audio-claim" src="/developer-life-simulator/assets/claim.wav"></audio>
   <audio id="audio-start" src="/developer-life-simulator/assets/start.wav"></audio>
   <audio id="audio-level-up" src="/developer-life-simulator/assets/level-up.wav"></audio>
+  <audio id="audio-coin" src="/developer-life-simulator/assets/coin.wav"></audio>
+  <audio id="audio-threat" src="/developer-life-simulator/assets/threat.wav"></audio>
 
   <!-- Scripts that needs to be loaded after UI loads -->
-  <script src="./scripts/main.js"></script>
-  <script src="./scripts/menus.js" type="text/javascript"></script>
+  <script type="module" src="./scripts/main.js"></script>
+  <script type="module" src="./scripts/menus.js" type="text/javascript"></script>
 </body>
 
 </html>

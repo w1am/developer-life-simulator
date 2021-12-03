@@ -1,3 +1,8 @@
+"use strict"
+
+import { TABS } from '../../common/index.js';
+import { renderJobs, renderProducts, GAME_PROPERTIES } from './main.js';
+
 /**
  * Core functionality when user drags window / menu.
  * 
@@ -31,13 +36,13 @@ document
     document.getElementById("content-shop").parentElement.classList.add('open');
     document.getElementById("content-job").parentElement.classList.remove('open')
 
-    shopActive = true;
+    // shopActive = true;
 
     document.getElementById("menu-shop").hidden = false;
     document.getElementById("grid").hidden = true;
 
     highlightWindow('shop')
-    renderProducts(tab);
+    renderProducts(GAME_PROPERTIES.tab);
   });
 
 document
@@ -52,7 +57,7 @@ document
     renderJobs();
   });
 
-const handleJobClose = () => {
+export const handleJobClose = function () {
   let menu = document.getElementById("menu-job")
   menu.hidden = true;
 
@@ -61,8 +66,7 @@ const handleJobClose = () => {
   dragged = null;
 }
 
-const handleShopClose = () => {
-  shopActive = false;
+export const handleShopClose = function() {
   let menu = document.getElementById("menu-shop")
   menu.hidden = true;
 
@@ -72,7 +76,27 @@ const handleShopClose = () => {
   dragged = null;
 };
 
+/**
+ * Change tab when user clicks links in shop menu sidebar
+ * 
+ * @param {string} newTab - tab name
+ * */
+window.setTab = function setTab(newTab) {
+  GAME_PROPERTIES.tab = newTab;
 
+  Object.values(TABS).forEach((tab) => {
+    document.getElementById(`item-${tab}`).removeAttribute("active");
+  });
+
+  document.getElementById(`item-${newTab}`).setAttribute("active", true);
+  renderProducts(newTab);
+}
+
+/**
+ * Make shop and job menu draggable
+ * 
+ * @param {string} menuId - the menu id
+*/
 function dragMenu(menuId) {
   // Set header component of menu as draggable element
   let elm = document.querySelector(`#menu-${menuId}`).querySelector(".header")
@@ -128,3 +152,6 @@ function dragMenu(menuId) {
 
 dragMenu("shop")
 dragMenu("job")
+
+window.handleJobClose = handleJobClose
+window.handleShopClose = handleShopClose

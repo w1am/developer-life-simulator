@@ -4,7 +4,7 @@
 <header>
   <?php
   include('../templates/headers.php');
-  renderHeader("Tutorial");
+  renderBaseHeader("Tutorial");
   ?>
 </header>
 

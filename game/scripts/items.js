@@ -1,3 +1,5 @@
+"use strict"
+
 // Servers
 const amazonServer = document.createElement('img');
 const azureServer = document.createElement('img');
@@ -57,3 +59,31 @@ desk3Off.src = "/developer-life-simulator/assets/desk3-off.png";
 desk4Off.src = "/developer-life-simulator/assets/desk4-off.png";
 desk5Off.src = "/developer-life-simulator/assets/desk5-off.png";
 desk6Off.src = "/developer-life-simulator/assets/desk6-off.png";
+
+const ITEMS = {
+  amazonServer,
+  azureServer,
+  firebaseServer,
+  developer1,
+  developer2,
+  developer3,
+  developer4,
+  developer5,
+  developer6,
+  desk1,
+  desk2,
+  desk3,
+  desk4,
+  desk5,
+  desk6,
+  desk1Off,
+  desk2Off,
+  desk3Off,
+  desk4Off,
+  desk5Off,
+  desk6Off,
+  cafeImage,
+  bordRoomImage
+}
+
+export default ITEMS;

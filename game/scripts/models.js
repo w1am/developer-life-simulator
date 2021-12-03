@@ -1,4 +1,10 @@
-class Item {
+"use strict"
+
+/** Some classes are inherited from a parent class to reduce code duplication */
+
+import { TYPES } from '../../common/index.js'
+
+export class Item {
   constructor(id, name, icon, price, cursor) {
     this.id = id
     this.name = name
@@ -8,14 +14,14 @@ class Item {
   }
 }
 
-class Product extends Item {
+export class Product extends Item {
   constructor(id, name, icon, price, cursor) {
     super(id, name, icon, price, cursor)
     this.type = TYPES.PRODUCT
   }
 }
 
-class Developer extends Item {
+export class Developer extends Item {
   constructor(id, name, icon, price, cursor, skills, expense) {
     super(id, name, icon, price, cursor)
     this.skills = skills
@@ -24,7 +30,7 @@ class Developer extends Item {
   }
 }
 
-class Job {
+export class Job {
   constructor(id, title, reward, company, duration, requirements, points) {
     this.id = id;
     this.title = title;
@@ -37,7 +43,7 @@ class Job {
   }
 }
 
-class Requirement {
+export class Requirement {
   constructor(title, icon, prefix, palette) {
     this.title = title
     this.icon = icon

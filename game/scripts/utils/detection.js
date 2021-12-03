@@ -1,3 +1,11 @@
+"use strict"
+
+import { STORAGE } from "../../../common/index.js"
+import { getAccountProperty } from "../account.js"
+import { TILE_HEIGHT_COUNT, TILE_WIDTH_COUNT } from "../main.js"
+
+// Part of the objectExists function
+// returns true if player's cursor is in item's range
 const inRange = function (num, ranges) {
   const [coordX, coordY] = [num[0], num[1]]
 
@@ -6,6 +14,7 @@ const inRange = function (num, ranges) {
 
 // Check if object exists at current x and y position
 const objectExists = function (coordX, coordY) {
+  // Layouts are just 2D arrays that stores the width relative to its coordinates of an object in the map
   let layout = getAccountProperty(STORAGE.LAYOUT)
   let pass = false
 
@@ -20,13 +29,13 @@ const objectExists = function (coordX, coordY) {
  *
  * @param {number} coordX - X coordinate
  * @param {number} coordY - Y coordinate
+ * @param {number} cursor - cursor of the item
  *
  * @example
  *
- *     detectObject(5, 4)
+ *     detectObject(5, 4, [1, 1])
  */
-
-const detectObject = function (coordX, coordY) {
+export const detectObject = function (coordX, coordY, cursor) {
   let detected = false
   let layout = getAccountProperty(STORAGE.LAYOUT)
 

@@ -1,4 +1,6 @@
-// Global custom storage functionality 
+"use strict"
+
+/** Global accessible custom storage functionality  */
 class CustomStorage {
   constructor() {
   }
@@ -23,4 +25,4 @@ class CustomStorage {
   }
 }
 
-let customStorage = new CustomStorage()
+export const customStorage = new CustomStorage()

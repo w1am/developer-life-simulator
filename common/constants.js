@@ -1,16 +1,29 @@
-const AUTHENTICATION_STORAGE = {
+"use strict"
+
+/**
+ * 
+ * Global variables that will be used often and never change
+ * 
+ * */ 
+
+import ITEMS from '../game/scripts/items.js'
+
+// Authentication
+export const AUTHENTICATION_STORAGE = {
   ACCOUNTS: 'accounts',
   AUTHENTICATED_USER: 'authed_user',
 }
 
-const TABS = {
+// Shop menu tab section
+export const TABS = {
   SERVER: 'servers',
   DEVELOPER: 'developers',
   ENTERTAINMENT: 'entertainments',
   SERVICE: 'services'
 }
 
-const STORAGE = {
+// Related to javascript's localStorage object
+export const STORAGE = {
   LAYOUT: 'layout',
   BALANCE: 'balance',
   ACTIVE_JOBS: 'activeJobs',
@@ -22,40 +35,44 @@ const STORAGE = {
   LEVEL: 'level'
 }
 
-const TYPES = {
+// Item type
+export const TYPES = {
   PRODUCT: 'product',
   DEVELOPER: 'developer',
   JOB: 'job',
   REQUIREMENT: 'requirement',
 }
 
-const SOUNDS = {
-  ACCEPT_JOB: 'accept-job.wav',
-  CLAIM_REWARD: 'coin.wav',
-  LEVEL_UP: 'level-up.wav',
-  BACKGROUND: 'background.wav',
-  TYPING: 'typing.wav',
+// Sounds elements
+export const SOUNDS = {
+  START_JOB: 'audio-start',
+  CLAIM: 'audio-claim',
+  LEVEL_UP: 'audio-level-up',
+  COIN: 'audio-coin',
+  THREAT: 'audio-threat',
 }
 
-const DISABLED_INVENTORY = {
-  3: desk1Off,
-  4: desk2Off,
-  5: desk3Off,
-  6: desk4Off,
-  7: desk5Off,
-  8: desk6Off,
+// Images that are displayed when developers switch to active / working mode. 
+export const DISABLED_INVENTORY = {
+  3: ITEMS.desk1Off,
+  4: ITEMS.desk2Off,
+  5: ITEMS.desk3Off,
+  6: ITEMS.desk4Off,
+  7: ITEMS.desk5Off,
+  8: ITEMS.desk6Off,
 }
 
-const INVENTORY = {
-  0: amazonServer,
-  1: azureServer,
-  2: firebaseServer,
-  3: desk1,
-  4: desk2,
-  5: desk3,
-  6: desk4,
-  7: desk5,
-  8: desk6,
-  9: cafeImage,
-  10: bordRoomImage
+// Products
+export const INVENTORY = {
+  0: ITEMS.amazonServer,
+  1: ITEMS.azureServer,
+  2: ITEMS.firebaseServer,
+  3: ITEMS.desk1,
+  4: ITEMS.desk2,
+  5: ITEMS.desk3,
+  6: ITEMS.desk4,
+  7: ITEMS.desk5,
+  8: ITEMS.desk6,
+  9: ITEMS.cafeImage,
+  10: ITEMS.bordRoomImage
 }

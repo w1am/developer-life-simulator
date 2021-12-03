@@ -67,7 +67,7 @@ function jobs()
     <div hidden id="menu-job" class="menu">
       <div class="header">
         <p class="title">Jobs</p>
-        <button onclick="handleJobClose()">X</button>
+        <button onclick="handleJobClose()" id="job-close-button">X</button>
       </div>
 
       <div id="job" class="content"></div>
@@ -90,7 +90,7 @@ function shop()
     <div hidden id="menu-shop" class="menu">
       <div class="header">
         <p class="title">Shop</p>
-        <button onclick="handleShopClose()">X</button>
+        <button onclick="handleShopClose()" id="shop-close-button">X</button>
       </div>
 
       <div class="parent">

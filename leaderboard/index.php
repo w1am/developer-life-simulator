@@ -4,7 +4,7 @@
 <header>
   <?php
   include('../templates/headers.php');
-  renderHeader("Leaderboard");
+  renderBaseHeader("Leaderboard");
   ?>
 </header>
 
@@ -14,7 +14,6 @@
     include('../templates/common.php');
     navbar();
     ?>
-
 
     <page-wrapper>
       <h1>Leaderboard</h1>
@@ -36,7 +35,7 @@
       </div>
     </page-wrapper>
 
-    <script src="./leaderboard.js" type="text/javascript"></script>
+    <script type="module" src="./leaderboard.js" type="text/javascript"></script>
 
     <?php footer() ?>
   </flex-wrapper>
