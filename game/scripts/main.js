@@ -17,9 +17,13 @@
 */
 
 import { TYPES, TABS, STORAGE, INVENTORY, DISABLED_INVENTORY, SOUNDS, AUTHENTICATION_STORAGE, customStorage, formatNumber, animateValue } from '../../common/index.js';
+import { product0, product1, product2, product3, product4, product5, product6, product7, product8, product9, product10 } from './products.js';
 import { clearRect, detectObject, relativeCoordinates, drawImage, playSound, updateLevel } from './utils/index.js';
 import { getAccountProperty, updateAccountProperty } from './account.js';
-import { product0, product1, product2, product3, product4, product5, product6, product7, product8, product9, product10 } from './products.js';
+import { WELCOME_MESSAGES } from '../../common/constants.js';
+import { Notification } from './models.js';
+
+const notification = new Notification()
 
 const isAuthed = customStorage.getter(null, AUTHENTICATION_STORAGE.AUTHENTICATED_USER);
 if (!isAuthed) window.location.href = '/developer-life-simulator/authentication/login?source=failed'
@@ -42,7 +46,6 @@ export const [TILE_WIDTH_COUNT, TILE_HEIGHT_COUNT] = [10, 10];
 export const SECURITY_INTERVALS = [150000, 270000, 180000]
 export const AUTHENTICATED_USER = customStorage.getter({}, AUTHENTICATION_STORAGE.AUTHENTICATED_USER);
 export const PRODUCT_LIST = [product0, product1, product2, product3, product4, product5, product6, product7, product8, product9, product10]
-export const DEVELOPERS_LIST = [product3, product4, product5, product6, product7, product8]
 
 export const PRODUCTS = {
   [TABS.SERVER]: [product0, product1, product2],
@@ -117,7 +120,7 @@ document.getElementById("map").addEventListener("click", function (event) {
 
   drawImage(objectsCtx, INVENTORY[GAME_PROPERTIES.selected], coordX, coordY, GAME_PROPERTIES.cursor[0], GAME_PROPERTIES.cursor[1]);
 
-  // Get object GAME_PROPERTIES using the product id
+  // Get object properties using the product id
   objects[product.id] = {
     x: coordX,
     y: coordY,
@@ -156,6 +159,20 @@ document.getElementById("map").addEventListener("click", function (event) {
     };
 
     updateAccountProperty(STORAGE.DEVELOPERS, developers);
+
+    notification.sendNotification(`${product.name} 👋`, WELCOME_MESSAGES[Math.floor(Math.random() * WELCOME_MESSAGES.length)])
+  } else if (PRODUCT_LIST[GAME_PROPERTIES.selected].type === TYPES.PRODUCT) {
+
+    let activeJobsStorageLimit = getAccountProperty(STORAGE.ACTIVE_JOBS_STORAGE_LIMIT);
+
+    if (PRODUCT_LIST[GAME_PROPERTIES.selected].id === 0) {
+      updateAccountProperty(STORAGE.ACTIVE_JOBS_STORAGE_LIMIT, activeJobsStorageLimit + 1)
+    } else if (PRODUCT_LIST[GAME_PROPERTIES.selected].id === 1) {
+      updateAccountProperty(STORAGE.ACTIVE_JOBS_STORAGE_LIMIT, activeJobsStorageLimit + 1)
+    } else if (PRODUCT_LIST[GAME_PROPERTIES.selected].id === 2) {
+      updateAccountProperty(STORAGE.ACTIVE_JOBS_STORAGE_LIMIT, activeJobsStorageLimit + 1)
+    }
+
   }
 
   playSound(SOUNDS.COIN)
@@ -285,8 +302,10 @@ const makeWorkerFree = (jobId) => {
         jobId: null,
       };
 
-      AUDIOS[selected].pause()
-      AUDIOS[selected].currentTime = 0
+      if (AUDIOS[selected]) {
+        AUDIOS[selected].pause()
+        AUDIOS[selected].currentTime = 0
+      }
 
       updateAccountProperty(STORAGE.DEVELOPERS, developers);
       return;
@@ -357,7 +376,18 @@ export const renderJobs = () => {
         claimReward(activeJobs, work, tasks[work].reward, PRODUCT_LIST[Number(activeJobs[work].developer)].expense);
         renderJobs();
       } else {
-        playSound(SOUNDS.START_JOB)
+        let activeJobsStorageLimit = getAccountProperty(STORAGE.ACTIVE_JOBS_STORAGE_LIMIT);
+        let activeJobs = getAccountProperty(STORAGE.ACTIVE_JOBS);
+
+        const runningActiveJobs = Object.keys(activeJobs).filter((job) => activeJobs[job].ended == false)
+
+        // Prevent new active jobs
+        if (runningActiveJobs.length >= activeJobsStorageLimit) {
+          notification.sendNotification("Error", "You do not have enough storage", true)
+          return
+        };
+
+        playSound(SOUNDS.START_JOB);
 
         // Accept job and store list in active jobs list
         // Also update developer state to active
@@ -462,9 +492,7 @@ export const renderProducts = (tab) => {
 
     item.className = "item";
     item.id = product.id;
-    item.appendChild(imageContainer);
-    item.appendChild(content);
-    item.appendChild(buy);
+    item.append(imageContainer, content, buy)
 
     buy.onclick = function () {
       // Fire developer or sell product when product or developer is already placed on the map
@@ -510,6 +538,16 @@ export const renderProducts = (tab) => {
         } else {
           // Update new balance based on the resale value. We always assume that the re sale value diminishes by 50%
           newBalance = Number(balance) + Number(product.price / 2);
+
+          let activeJobsStorageLimit = getAccountProperty(STORAGE.ACTIVE_JOBS_STORAGE_LIMIT);
+
+          if (product.id === 0) {
+            updateAccountProperty(STORAGE.ACTIVE_JOBS_STORAGE_LIMIT, activeJobsStorageLimit - 1)
+          } else if (product.id === 1) {
+            updateAccountProperty(STORAGE.ACTIVE_JOBS_STORAGE_LIMIT, activeJobsStorageLimit - 1)
+          } else if (product.id === 2) {
+            updateAccountProperty(STORAGE.ACTIVE_JOBS_STORAGE_LIMIT, activeJobsStorageLimit - 1)
+          }
         }
 
         updateAccountProperty(STORAGE.LAYOUT, newLayout);

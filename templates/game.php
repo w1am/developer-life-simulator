@@ -113,3 +113,11 @@ function shop()
     </div>
   DEV;
 }
+
+function notifications()
+{
+  echo '
+    <div id="notifications">
+    </div>
+  ';
+};

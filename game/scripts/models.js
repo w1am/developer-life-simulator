@@ -52,3 +52,45 @@ export class Requirement {
     this.type = TYPES.REQUIREMENT
   }
 }
+
+export class Notification {
+  constructor() {
+    this.notificationsContainer = document.getElementById('notifications');
+  }
+
+  /**
+   * 
+   * @param {string} title 
+   * @param {string} message 
+   * @param {boolean} type 
+   */
+  sendNotification(title, message, error=false) {
+    const notificationItem = document.createElement("div");
+    notificationItem.className = `notification-item ${error ? 'error' : 'normal'}`;
+
+    const notificationHeader = document.createElement("div");
+    notificationHeader.className = 'notification-header'
+
+    const closeIcon = document.createElement("button");
+    closeIcon.innerText = 'X'
+    closeIcon.onclick = function() {
+      notificationItem.remove()
+    }
+
+    const notificationTitle = document.createElement('p');
+    const notificationMessage = document.createElement('p');
+
+    notificationHeader.append(notificationTitle, closeIcon)
+
+    notificationTitle.innerText = title;
+    notificationMessage.innerText = message;
+
+    notificationItem.append(notificationHeader, notificationMessage);
+
+    this.notificationsContainer.append(notificationItem);
+
+    setTimeout(() => {
+      this.notificationsContainer.removeChild(this.notificationsContainer.lastChild)
+    }, 10000)
+  }
+}

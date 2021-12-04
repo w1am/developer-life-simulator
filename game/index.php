@@ -45,6 +45,10 @@
     status();
     ?>
 
+    <?php
+    notifications();
+    ?>
+
     <!-- MAP -->
     <div id="game">
       <div id="frame">

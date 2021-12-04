@@ -32,7 +32,8 @@ export const STORAGE = {
   OBJECTS: 'objects',
   ASSETS: 'assets',
   LEVEL_PROGRESS: 'level_progress',
-  LEVEL: 'level'
+  LEVEL: 'level',
+  ACTIVE_JOBS_STORAGE_LIMIT: 'activeJobsStorageLimit'
 }
 
 // Item type
@@ -76,3 +77,10 @@ export const INVENTORY = {
   9: ITEMS.cafeImage,
   10: ITEMS.bordRoomImage
 }
+
+export const WELCOME_MESSAGES = [
+  'I can’t wait to be a part of your team',
+  'Thank you very much for the opportunity',
+  'I look forward to bringing my experience, skills and network of contacts to your company',
+  'With my years of experience in this industry, I am confident that I can help your company expand'
+]

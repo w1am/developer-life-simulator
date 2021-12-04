@@ -73,8 +73,6 @@ const handleInput = function(type, field, value) {
   highlightFieldWhenError(type, field, value);
 }
 
-window.handleInput = handleInput
-
 // Highlight field if form has errors.
 function highlightFieldWhenError(type, field, value) {
   let fields = document.getElementsByName(field);
@@ -166,6 +164,7 @@ const handleSubmit = function (type) {
         level_progress: 0,
         level: 1,
         type: "startup",
+        activeJobsStorageLimit: 0
       };
       customStorage.setter(AUTHENTICATION_STORAGE.ACCOUNTS, accounts);
 
@@ -239,3 +238,4 @@ const handleSubmit = function (type) {
 }
 
 window.handleSubmit = handleSubmit;
+window.handleInput = handleInput

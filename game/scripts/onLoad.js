@@ -19,7 +19,7 @@ customStorage.setter(STORAGE.TASKS, {
     "Coffee review Website",
     10000,
     "frestea",
-    0.1,
+    2.1,
     [
       new Requirement("Python", "", "PY", ["#173248", "white"]),
       new Requirement("Javascript", "", "JS", ["#EAD41B", "#000000"]),
