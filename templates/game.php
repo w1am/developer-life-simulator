@@ -26,6 +26,10 @@ function activeJobs()
         <p class="title">Active Jobs</p>
       </div>
       <div id="active-jobs-content"></div>
+      <div id="active-jobs-amount-remaining">
+        <span id="storage-count"></span>
+        <span>server(s) capacity</span>
+      </div>
     </div>
   ';
 };
@@ -103,9 +107,6 @@ function shop()
           </div>
           <div active="false" onclick="setTab('entertainments')" id="item-entertainments" class="item">
             Entertainments
-          </div>
-          <div active="false" onclick="setTab('services')" id="item-services" class="item">
-            Services
           </div>
         </div>
         <div id="shop" class="content"></div>

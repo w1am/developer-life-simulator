@@ -18,7 +18,7 @@
 
 import { TYPES, TABS, STORAGE, INVENTORY, DISABLED_INVENTORY, SOUNDS, AUTHENTICATION_STORAGE, customStorage, formatNumber, animateValue } from '../../common/index.js';
 import { product0, product1, product2, product3, product4, product5, product6, product7, product8, product9, product10 } from './products.js';
-import { clearRect, detectObject, relativeCoordinates, drawImage, playSound, updateLevel } from './utils/index.js';
+import { clearRect, detectObject, relativeCoordinates, drawImage, playSound, updateLevel, updateBalance } from './utils/index.js';
 import { getAccountProperty, updateAccountProperty } from './account.js';
 import { WELCOME_MESSAGES } from '../../common/constants.js';
 import { Notification } from './models.js';
@@ -49,16 +49,8 @@ export const PRODUCT_LIST = [product0, product1, product2, product3, product4, p
 
 export const PRODUCTS = {
   [TABS.SERVER]: [product0, product1, product2],
-  [TABS.DEVELOPER]: [
-    product3,
-    product4,
-    product5,
-    product6,
-    product7,
-    product8,
-  ],
-  [TABS.ENTERTAINMENT]: [product9, product10],
-  [TABS.SERVICE]: [],
+  [TABS.DEVELOPER]: [product3, product4, product5, product6, product7, product8],
+  [TABS.ENTERTAINMENT]: [product9, product10]
 };
 
 export const GAME_PROPERTIES = {
@@ -67,7 +59,7 @@ export const GAME_PROPERTIES = {
   selected: null,
   cursor: [1, 1],
   tab: [TABS.SERVER],
-  newBalance: null,
+  subtractedAmount: null,
   securityRiskStatus: false
 }
 
@@ -106,7 +98,7 @@ document.getElementById("map").addEventListener("click", function (event) {
   if (coordX === undefined || coordY === undefined) {
     GAME_PROPERTIES.grabbed = false;
     GAME_PROPERTIES.cursor = [1, 1];
-    GAME_PROPERTIES.newBalance = 0;
+    GAME_PROPERTIES.subtractedAmount = 0;
     return
   }
 
@@ -133,19 +125,17 @@ document.getElementById("map").addEventListener("click", function (event) {
 
   layout.push([[coordX, coordX + GAME_PROPERTIES.cursor[0] - 1], [coordY, coordY + GAME_PROPERTIES.cursor[1] - 1]]);
 
+  let assets = getAccountProperty(STORAGE.ASSETS);
+
   updateAccountProperty(STORAGE.LAYOUT, layout);
   updateAccountProperty(STORAGE.OBJECTS, objects);
-
-  let assets = getAccountProperty(STORAGE.ASSETS);
-  let balance = getAccountProperty(STORAGE.BALANCE);
-  let balanceAmountElement = document.getElementById("balance-amount");
-
-  updateAccountProperty(STORAGE.BALANCE, GAME_PROPERTIES.newBalance);
   updateAccountProperty(STORAGE.ASSETS, (assets += product.price));
-  animateValue(balanceAmountElement, Number(balance), Number(GAME_PROPERTIES.newBalance), 1000);
+  updateBalance(GAME_PROPERTIES.subtractedAmount * -1)
+
+  const selectedProduct = PRODUCT_LIST[GAME_PROPERTIES.selected]
 
   // Add developer to the user account's developers list if product is of type developer
-  if (PRODUCT_LIST[GAME_PROPERTIES.selected].type === TYPES.DEVELOPER) {
+  if (selectedProduct.type === TYPES.DEVELOPER) {
     let developers = getAccountProperty(STORAGE.DEVELOPERS);
 
     developers[product.id] = {
@@ -161,18 +151,15 @@ document.getElementById("map").addEventListener("click", function (event) {
     updateAccountProperty(STORAGE.DEVELOPERS, developers);
 
     notification.sendNotification(`${product.name} 👋`, WELCOME_MESSAGES[Math.floor(Math.random() * WELCOME_MESSAGES.length)])
-  } else if (PRODUCT_LIST[GAME_PROPERTIES.selected].type === TYPES.PRODUCT) {
+  } else if (selectedProduct.type === TYPES.PRODUCT) {
 
     let activeJobsStorageLimit = getAccountProperty(STORAGE.ACTIVE_JOBS_STORAGE_LIMIT);
+    let storageCount = document.getElementById("storage-count")
 
-    if (PRODUCT_LIST[GAME_PROPERTIES.selected].id === 0) {
+    if (selectedProduct.id < 3) {
       updateAccountProperty(STORAGE.ACTIVE_JOBS_STORAGE_LIMIT, activeJobsStorageLimit + 1)
-    } else if (PRODUCT_LIST[GAME_PROPERTIES.selected].id === 1) {
-      updateAccountProperty(STORAGE.ACTIVE_JOBS_STORAGE_LIMIT, activeJobsStorageLimit + 1)
-    } else if (PRODUCT_LIST[GAME_PROPERTIES.selected].id === 2) {
-      updateAccountProperty(STORAGE.ACTIVE_JOBS_STORAGE_LIMIT, activeJobsStorageLimit + 1)
+      storageCount.innerText = activeJobsStorageLimit + 1
     }
-
   }
 
   playSound(SOUNDS.COIN)
@@ -182,54 +169,41 @@ document.getElementById("map").addEventListener("click", function (event) {
   GAME_PROPERTIES.cursor = [1, 1];
 });
 
+
 /** Disable to the button if no developers match programming language */
 const isJobDisabled = function (work) {
-  let developers = getAccountProperty(TABS.DEVELOPER);
   let jobs = getAccountProperty(STORAGE.ACTIVE_JOBS);
 
-  const requirements = work.requirements;
+  const { id, requirements } = work;
 
-  let pass = false;
-  requirements.forEach((requirement, count) => {
-    Object.keys(developers).forEach((developer) => {
-      if (
-        developers[developer].skills.includes(requirement.title) &&
-        !developers[developer].active &&
-        count == requirements.length - 1
-      )
-        pass = true;
-    });
-  });
-
-  if ((jobs[work.id] && !jobs[work.id].ended) || !pass) return true;
+  if ((jobs[id] && !jobs[id].ended) || !findDeveloper(requirements)) return true;
   return false;
 };
 
 /** Look for a developer who meets the job specifications. */
-const findDeveloper = (requirements) => {
+const findDeveloper = function (requirements) {
   let developers = getAccountProperty(STORAGE.DEVELOPERS);
 
-  let pass = false;
-  let selected = null;
-
-  requirements.forEach((requirement, count) => {
+  let developerMatched = false;
+  let selectedDeveloper = null;
+  
+  requirements.forEach((requirement) => {
     Object.keys(developers).forEach((id) => {
-      if (
-        developers[id].skills.includes(requirement.title) &&
-        count == requirements.length - 1 &&
-        !developers[id].active
-      ) {
-        pass = true;
-        selected = id;
-      }
-    });
-  });
+      const developer = developers[id];
 
-  if (pass) {
-    return selected;
-  } else {
-    return null;
-  }
+      if (developer.skills.length === requirements.length) {
+        developerMatched = String(developer.skills.sort()) === String(requirements.map((req) => req.title).sort())
+      } else {
+        developerMatched = developer.skills.includes(requirement.title)
+      }
+
+      if (developerMatched && !developer.active) {
+        selectedDeveloper = id;
+      }
+    })
+  })
+
+  return selectedDeveloper
 };
 
 /** When a developer is working, change character image to "working" */
@@ -379,11 +353,11 @@ export const renderJobs = () => {
         let activeJobsStorageLimit = getAccountProperty(STORAGE.ACTIVE_JOBS_STORAGE_LIMIT);
         let activeJobs = getAccountProperty(STORAGE.ACTIVE_JOBS);
 
-        const runningActiveJobs = Object.keys(activeJobs).filter((job) => activeJobs[job].ended == false)
+        const runningActiveJobs = Object.keys(activeJobs).filter((job) => activeJobs[job].ended == false).length
 
         // Prevent new active jobs
-        if (runningActiveJobs.length >= activeJobsStorageLimit) {
-          notification.sendNotification("Error", "You do not have enough storage", true)
+        if (runningActiveJobs >= activeJobsStorageLimit) {
+          notification.sendNotification("Error", "You do not have enough servers. Go to shop > servers to increase capacity", true)
           return
         };
 
@@ -497,10 +471,13 @@ export const renderProducts = (tab) => {
     buy.onclick = function () {
       // Fire developer or sell product when product or developer is already placed on the map
       if (isAlreadyHired || isProductOnMap) {
+        if (product.type === TYPES.DEVELOPER && getAccountProperty(STORAGE.DEVELOPERS)[product.id].active) {
+          notification.sendNotification(product.name, "Hey! I'm still working!")
+          return
+        }
+
         let assets = getAccountProperty(STORAGE.ASSETS);
         let accountLayouts = getAccountProperty(STORAGE.LAYOUT);
-        let newBalance = balance;
-        let balanceAmountElement = document.getElementById("balance-amount");
 
         let layoutToRemove = [
           [
@@ -532,32 +509,29 @@ export const renderProducts = (tab) => {
 
         // Take away 2000 in severance pay when a developer is fired.
         if (product.type === TYPES.DEVELOPER) {
-          newBalance = Number(balance) - 2000;
+          updateBalance(-2000)
           delete developers[product.id];
           updateAccountProperty(STORAGE.DEVELOPERS, developers);
         } else {
           // Update new balance based on the resale value. We always assume that the re sale value diminishes by 50%
-          newBalance = Number(balance) + Number(product.price / 2);
+          updateBalance(Number(product.price / 2))
 
           let activeJobsStorageLimit = getAccountProperty(STORAGE.ACTIVE_JOBS_STORAGE_LIMIT);
 
-          if (product.id === 0) {
+          let storageCount = document.getElementById("storage-count")
+
+          if (product.id < 3) {
             updateAccountProperty(STORAGE.ACTIVE_JOBS_STORAGE_LIMIT, activeJobsStorageLimit - 1)
-          } else if (product.id === 1) {
-            updateAccountProperty(STORAGE.ACTIVE_JOBS_STORAGE_LIMIT, activeJobsStorageLimit - 1)
-          } else if (product.id === 2) {
-            updateAccountProperty(STORAGE.ACTIVE_JOBS_STORAGE_LIMIT, activeJobsStorageLimit - 1)
+            storageCount.innerText = activeJobsStorageLimit - 1
           }
         }
 
         updateAccountProperty(STORAGE.LAYOUT, newLayout);
         updateAccountProperty(STORAGE.OBJECTS, objects);
-        updateAccountProperty(STORAGE.BALANCE, newBalance);
         updateAccountProperty(STORAGE.ASSETS, Number(assets) - Number(product.price));
 
         renderProducts(GAME_PROPERTIES.tab);
-
-        animateValue(balanceAmountElement, Number(balance), Number(newBalance), 1000);
+        renderJobs();
 
         updateLog({
           timestamp: moment().format("LT"),
@@ -578,8 +552,7 @@ export const renderProducts = (tab) => {
         GAME_PROPERTIES.selected = product.id
         GAME_PROPERTIES.cursor = product.cursor;
         GAME_PROPERTIES.grabbed = true;
-
-        GAME_PROPERTIES.newBalance = Number(balance) - Number(product.price);
+        GAME_PROPERTIES.subtractedAmount = Number(product.price);
 
         handleShopClose();
       }
@@ -592,14 +565,9 @@ export const renderProducts = (tab) => {
 /** Update progress, level and balance when user clicks */
 const claimReward = function (activeJobs, job, reward, expense) {
   playSound(SOUNDS.CLAIM)
-  let balance = getAccountProperty(STORAGE.BALANCE);
   let levelProgress = getAccountProperty(STORAGE.LEVEL_PROGRESS);
   let level = getAccountProperty(STORAGE.LEVEL);
   let tasks = customStorage.getter({}, STORAGE.TASKS);
-
-  // Add reward points and minus developer expense
-  let newBalance = (Number(balance) + Number(reward)) - Number(expense);
-
   let newLevelProgress = levelProgress + tasks[job].points;
 
   // When progress bar reaches or surpasses level 100 reset to 0 and increment level
@@ -611,20 +579,19 @@ const claimReward = function (activeJobs, job, reward, expense) {
     updateAccountProperty(STORAGE.LEVEL_PROGRESS, newLevelProgress - 100);
     updateAccountProperty(STORAGE.LEVEL, updatedLevel);
     document.querySelector("#level").firstElementChild.innerHTML = `LEVEL ${updatedLevel}`;
+    notification.sendNotification("Level up!", "Congratulations on reaching level " + updatedLevel)
   } else {
     updateLevel(levelProgress, newLevelProgress);
     updateAccountProperty(STORAGE.LEVEL_PROGRESS, newLevelProgress);
   }
-
-  const balanceAmountElement = document.getElementById("balance-amount");
 
   updateLog({ timestamp: moment().format("LT"), message: `$ ${formatNumber(reward)} claimed` });
   updateLog({ timestamp: moment().format("LT"), message: `-$ ${formatNumber(expense)} in expense` });
 
   delete activeJobs[job];
   updateAccountProperty(STORAGE.ACTIVE_JOBS, activeJobs);
-  updateAccountProperty(STORAGE.BALANCE, newBalance);
-  animateValue(balanceAmountElement, Number(balance), Number(newBalance), 1000);
+
+  updateBalance(Number(reward) - Number(expense))
 };
 
 const endJob = (id) => {
@@ -701,10 +668,13 @@ const renderActiveJobs = function () {
   empty.style.color = "rgba(0,0,0,0.8)";
   empty.style.margin = 0;
   empty.style.padding = "10px 20px";
-  empty.innerText = "No active job";
+  empty.innerText = "No active jobs";
+  empty.style.textAlign = 'center';
 
   const activeJobsContent = document.getElementById("active-jobs-content");
   activeJobsContent.innerHTML = null;
+  activeJobsContent.style.overflowY = 'auto';
+  activeJobsContent.style.maxHeight = '500px';
 
   /** Show empty message when there is no active jobs */
   if (Object.keys(activeJobs).length === 0) return activeJobsContent.append(empty);
@@ -808,23 +778,27 @@ const resolveSecurityRisk = function () {
 
   securityRiskButton.disabled = true
   GAME_PROPERTIES.securityRiskStatus = false
-}
 
-window.resolveSecurityRisk = resolveSecurityRisk;
+  generateSecurityRisks()
+}
 
 const generateSecurityRisks = function () {
-  GAME_PROPERTIES.securityRiskStatus = true
+  setTimeout(() => {
+    GAME_PROPERTIES.securityRiskStatus = true
 
-  const securityRiskButton = document.getElementById("security-risk-btn");
+    const securityRiskButton = document.getElementById("security-risk-btn");
 
-  updateLog({
-    timestamp: moment().format("LT"),
-    message: 'Security threat detected!',
-    type: "red"
-  });
+    updateLog({
+      timestamp: moment().format("LT"),
+      message: 'Security threat detected!',
+      type: "red"
+    });
 
-  securityRiskButton.disabled = false
+    securityRiskButton.disabled = false
+  }, SECURITY_INTERVALS[Math.floor(Math.random() * SECURITY_INTERVALS.length)])
 }
+
+generateSecurityRisks()
 
 /** Clear item from selection on ESC key press */
 document.addEventListener("keydown", (e) => {
@@ -835,12 +809,6 @@ document.addEventListener("keydown", (e) => {
 });
 
 window.setInterval(() => renderActiveJobs(), 200);
-
-window.setInterval(() => {
-  if (!GAME_PROPERTIES.securityRiskStatus) {
-    generateSecurityRisks()
-  }
-}, SECURITY_INTERVALS[Math.floor(Math.random() * SECURITY_INTERVALS.length)]);
 
 // Draggable map element handler
 (function moveGameMap() {
@@ -860,3 +828,5 @@ window.setInterval(() => {
     }
   }
 })()
+
+window.resolveSecurityRisk = resolveSecurityRisk;

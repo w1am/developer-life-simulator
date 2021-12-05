@@ -44,9 +44,8 @@ export class Job {
 }
 
 export class Requirement {
-  constructor(title, icon, prefix, palette) {
+  constructor(title, prefix, palette) {
     this.title = title
-    this.icon = icon
     this.prefix = prefix
     this.palette = palette
     this.type = TYPES.REQUIREMENT
@@ -90,7 +89,9 @@ export class Notification {
     this.notificationsContainer.append(notificationItem);
 
     setTimeout(() => {
-      this.notificationsContainer.removeChild(this.notificationsContainer.lastChild)
+      if (this.notificationsContainer.lastChild) {
+        this.notificationsContainer.removeChild(this.notificationsContainer.lastChild)
+      }
     }, 10000)
   }
 }

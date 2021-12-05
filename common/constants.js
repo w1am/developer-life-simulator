@@ -18,8 +18,7 @@ export const AUTHENTICATION_STORAGE = {
 export const TABS = {
   SERVER: 'servers',
   DEVELOPER: 'developers',
-  ENTERTAINMENT: 'entertainments',
-  SERVICE: 'services'
+  ENTERTAINMENT: 'entertainments'
 }
 
 // Related to javascript's localStorage object
@@ -41,7 +40,7 @@ export const TYPES = {
   PRODUCT: 'product',
   DEVELOPER: 'developer',
   JOB: 'job',
-  REQUIREMENT: 'requirement',
+  REQUIREMENT: 'requirement'
 }
 
 // Sounds elements

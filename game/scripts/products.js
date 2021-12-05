@@ -9,7 +9,7 @@ export const product2 = new Product(2, "Firebase", ITEMS.firebaseServer, 599, [1
 
 export const product3 = new Developer(3, "John", ITEMS.developer1, 30000, [3, 2], ['Python', 'Javascript'], 5000)
 export const product4 = new Developer(4, "Isabella", ITEMS.developer2, 15000, [3, 2], ['SQL', 'ReactJS'], 3000)
-export const product5 = new Developer(5, "Andrew", ITEMS.developer3, 20000, [3, 2], ['C++', 'ASP'], 2500)
+export const product5 = new Developer(5, "Andrew", ITEMS.developer3, 20000, [3, 2], ['C++', 'Python'], 2500)
 export const product6 = new Developer(6, "Bobby", ITEMS.developer4, 75000, [3, 2], ['Scala', 'Java'], 10000)
 export const product7 = new Developer(7, "Jade", ITEMS.developer5, 56000, [3, 2], ['AWS'], 5000)
 export const product8 = new Developer(8, "Chris", ITEMS.developer6, 59000, [3, 2], ['Javascript'], 8000)
