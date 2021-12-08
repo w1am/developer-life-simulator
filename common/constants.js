@@ -1,58 +1,58 @@
-"use strict"
+"use strict";
 
 /**
- * 
+ *
  * Global variables that will be used often and never change
- * 
- * */ 
+ *
+ * */
 
-import ITEMS from '../game/scripts/items.js'
+import ITEMS from "../game/scripts/items.js";
 
 // Authentication
 export const AUTHENTICATION_STORAGE = {
-  ACCOUNTS: 'accounts',
-  AUTHENTICATED_USER: 'authed_user',
-}
+  ACCOUNTS: "accounts",
+  AUTHENTICATED_USER: "authed_user",
+};
 
 // Shop menu tab section
 export const TABS = {
-  SERVER: 'servers',
-  DEVELOPER: 'developers',
-  ENTERTAINMENT: 'entertainments'
-}
+  SERVER: "servers",
+  DEVELOPER: "developers",
+  ENTERTAINMENT: "entertainments",
+};
 
 // Related to javascript's localStorage object
 export const STORAGE = {
-  LAYOUT: 'layout',
-  BALANCE: 'balance',
-  ACTIVE_JOBS: 'activeJobs',
-  DEVELOPERS: 'developers',
-  TASKS: 'tasks',
-  OBJECTS: 'objects',
-  ASSETS: 'assets',
-  LEVEL_PROGRESS: 'level_progress',
-  LEVEL: 'level',
-  ACTIVE_JOBS_STORAGE_LIMIT: 'activeJobsStorageLimit'
-}
+  LAYOUT: "layout",
+  BALANCE: "balance",
+  ACTIVE_JOBS: "activeJobs",
+  DEVELOPERS: "developers",
+  TASKS: "tasks",
+  OBJECTS: "objects",
+  ASSETS: "assets",
+  LEVEL_PROGRESS: "level_progress",
+  LEVEL: "level",
+  ACTIVE_JOBS_STORAGE_LIMIT: "activeJobsStorageLimit",
+};
 
 // Item type
 export const TYPES = {
-  PRODUCT: 'product',
-  DEVELOPER: 'developer',
-  JOB: 'job',
-  REQUIREMENT: 'requirement'
-}
+  PRODUCT: "product",
+  DEVELOPER: "developer",
+  JOB: "job",
+  REQUIREMENT: "requirement",
+};
 
 // Sounds elements
 export const SOUNDS = {
-  START_JOB: 'audio-start',
-  CLAIM: 'audio-claim',
-  LEVEL_UP: 'audio-level-up',
-  COIN: 'audio-coin',
-  THREAT: 'audio-threat',
-}
+  START_JOB: "audio-start",
+  CLAIM: "audio-claim",
+  LEVEL_UP: "audio-level-up",
+  COIN: "audio-coin",
+  THREAT: "audio-threat",
+};
 
-// Images that are displayed when developers switch to active / working mode. 
+// Images that are displayed when developers switch to active / working mode.
 export const DISABLED_INVENTORY = {
   3: ITEMS.desk1Off,
   4: ITEMS.desk2Off,
@@ -60,7 +60,7 @@ export const DISABLED_INVENTORY = {
   6: ITEMS.desk4Off,
   7: ITEMS.desk5Off,
   8: ITEMS.desk6Off,
-}
+};
 
 // Products
 export const INVENTORY = {
@@ -74,12 +74,22 @@ export const INVENTORY = {
   7: ITEMS.desk5,
   8: ITEMS.desk6,
   9: ITEMS.cafeImage,
-  10: ITEMS.bordRoomImage
-}
+  10: ITEMS.bordRoomImage,
+  11: ITEMS.tableTennisImage,
+};
 
 export const WELCOME_MESSAGES = [
-  'I can’t wait to be a part of your team',
-  'Thank you very much for the opportunity',
-  'I look forward to bringing my experience, skills and network of contacts to your company',
-  'With my years of experience in this industry, I am confident that I can help your company expand'
-]
+  "I can’t wait to be a part of your team",
+  "Thank you very much for the opportunity",
+  "I look forward to bringing my experience, skills and network of contacts to your company",
+  "With my years of experience in this industry, I am confident that I can help your company expand",
+];
+
+// The first 5 levels are easy to advance. Earning points becomes harder as the player progresses
+export const POINTS_REWARDS = {
+  1: 10,
+  2: 5,
+  3: 2.5,
+  4: 2,
+  5: 1.25,
+};

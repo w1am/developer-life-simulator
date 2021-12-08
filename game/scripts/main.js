@@ -1,32 +1,68 @@
-"use strict"
+"use strict";
 
 /**
  * This is the main javascript scripting file for the game page
  * Only the important / less obvious functionalities are commented
- * 
+ *
  * ===========/ Important Functions /=============:
  * renderJobs()
  * renderProducts()
  * findDeveloper()
  * makeWorkerBusy()
  * makeWorkerFree()
- * 
+ *
  * ===========/ Other Functions /=============:
  * updateLog()
- * 
-*/
+ *
+ */
 
-import { TYPES, TABS, STORAGE, INVENTORY, DISABLED_INVENTORY, SOUNDS, AUTHENTICATION_STORAGE, customStorage, formatNumber, animateValue } from '../../common/index.js';
-import { product0, product1, product2, product3, product4, product5, product6, product7, product8, product9, product10 } from './products.js';
-import { clearRect, detectObject, relativeCoordinates, drawImage, playSound, updateLevel, updateBalance } from './utils/index.js';
-import { getAccountProperty, updateAccountProperty } from './account.js';
-import { WELCOME_MESSAGES } from '../../common/constants.js';
-import { Notification } from './models.js';
+import {
+  TYPES,
+  TABS,
+  STORAGE,
+  INVENTORY,
+  DISABLED_INVENTORY,
+  SOUNDS,
+  AUTHENTICATION_STORAGE,
+  customStorage,
+  formatNumber,
+} from "../../common/index.js";
+import {
+  product0,
+  product1,
+  product2,
+  product3,
+  product4,
+  product5,
+  product6,
+  product7,
+  product8,
+  product9,
+  product10,
+  product11,
+} from "./products.js";
+import {
+  clearRect,
+  detectObject,
+  relativeCoordinates,
+  drawImage,
+  playSound,
+  updateLevel,
+  updateBalance,
+} from "./utils/index.js";
+import { getAccountProperty, updateAccountProperty } from "./account.js";
+import { WELCOME_MESSAGES, POINTS_REWARDS } from "../../common/constants.js";
+import { Notification } from "./models.js";
 
-const notification = new Notification()
+const notification = new Notification();
 
-const isAuthed = customStorage.getter(null, AUTHENTICATION_STORAGE.AUTHENTICATED_USER);
-if (!isAuthed) window.location.href = '/developer-life-simulator/authentication/login?source=failed'
+const isAuthed = customStorage.getter(
+  null,
+  AUTHENTICATION_STORAGE.AUTHENTICATED_USER
+);
+if (!isAuthed)
+  window.location.href =
+    "/developer-life-simulator/authentication/login?source=failed";
 
 const gridCanvas = /** @type {HTMLCanvasElement} */ (
   document.querySelector("#grid")
@@ -35,22 +71,45 @@ const objectsCanvas = /** @type {HTMLCanvasElement} */ (
   document.querySelector("#objects")
 );
 
-/** Audio object that tracks each developers keyboard sound effect */ 
-const AUDIOS = {}
+/** Audio object that tracks each developers keyboard sound effect */
+const AUDIOS = {};
 
 export const gridCtx = gridCanvas.getContext("2d");
 export const objectsCtx = objectsCanvas.getContext("2d");
 
 export const TILE_SIZE = 2 * 32;
 export const [TILE_WIDTH_COUNT, TILE_HEIGHT_COUNT] = [10, 10];
-export const SECURITY_INTERVALS = [150000, 270000, 180000]
-export const AUTHENTICATED_USER = customStorage.getter({}, AUTHENTICATION_STORAGE.AUTHENTICATED_USER);
-export const PRODUCT_LIST = [product0, product1, product2, product3, product4, product5, product6, product7, product8, product9, product10]
+export const SECURITY_INTERVALS = [150000, 270000, 180000];
+export const AUTHENTICATED_USER = customStorage.getter(
+  {},
+  AUTHENTICATION_STORAGE.AUTHENTICATED_USER
+);
+export const PRODUCT_LIST = [
+  product0,
+  product1,
+  product2,
+  product3,
+  product4,
+  product5,
+  product6,
+  product7,
+  product8,
+  product9,
+  product10,
+  product11,
+];
 
 export const PRODUCTS = {
   [TABS.SERVER]: [product0, product1, product2],
-  [TABS.DEVELOPER]: [product3, product4, product5, product6, product7, product8],
-  [TABS.ENTERTAINMENT]: [product9, product10]
+  [TABS.DEVELOPER]: [
+    product3,
+    product4,
+    product5,
+    product6,
+    product7,
+    product8,
+  ],
+  [TABS.ENTERTAINMENT]: [product9, product10, product11],
 };
 
 export const GAME_PROPERTIES = {
@@ -60,10 +119,10 @@ export const GAME_PROPERTIES = {
   cursor: [1, 1],
   tab: [TABS.SERVER],
   subtractedAmount: null,
-  securityRiskStatus: false
-}
+  securityRiskStatus: false,
+};
 
-/** Highlight current tile on mouse move */ 
+/** Highlight current tile on mouse move */
 document.addEventListener("mousemove", (event) => {
   clearRect(gridCtx);
   const { coordX, coordY } = relativeCoordinates(event);
@@ -89,7 +148,7 @@ document.addEventListener("mousemove", (event) => {
     );
 });
 
-/** Reset all states and update balance when object is placed on the map */ 
+/** Reset all states and update balance when object is placed on the map */
 document.getElementById("map").addEventListener("click", function (event) {
   // if (shopActive || !GAME_PROPERTIES.grabbed) return;
   if (!GAME_PROPERTIES.grabbed) return;
@@ -99,18 +158,25 @@ document.getElementById("map").addEventListener("click", function (event) {
     GAME_PROPERTIES.grabbed = false;
     GAME_PROPERTIES.cursor = [1, 1];
     GAME_PROPERTIES.subtractedAmount = 0;
-    return
+    return;
   }
 
   if (detectObject(coordX, coordY, GAME_PROPERTIES.cursor)) return;
 
-  if (GAME_PROPERTIES.selected == null) return
+  if (GAME_PROPERTIES.selected == null) return;
 
   let layout = getAccountProperty(STORAGE.LAYOUT);
   let objects = getAccountProperty(STORAGE.OBJECTS);
-  let product = PRODUCT_LIST[GAME_PROPERTIES.selected]
+  let product = PRODUCT_LIST[GAME_PROPERTIES.selected];
 
-  drawImage(objectsCtx, INVENTORY[GAME_PROPERTIES.selected], coordX, coordY, GAME_PROPERTIES.cursor[0], GAME_PROPERTIES.cursor[1]);
+  drawImage(
+    objectsCtx,
+    INVENTORY[GAME_PROPERTIES.selected],
+    coordX,
+    coordY,
+    GAME_PROPERTIES.cursor[0],
+    GAME_PROPERTIES.cursor[1]
+  );
 
   // Get object properties using the product id
   objects[product.id] = {
@@ -123,16 +189,19 @@ document.getElementById("map").addEventListener("click", function (event) {
     id: product.id,
   };
 
-  layout.push([[coordX, coordX + GAME_PROPERTIES.cursor[0] - 1], [coordY, coordY + GAME_PROPERTIES.cursor[1] - 1]]);
+  layout.push([
+    [coordX, coordX + GAME_PROPERTIES.cursor[0] - 1],
+    [coordY, coordY + GAME_PROPERTIES.cursor[1] - 1],
+  ]);
 
   let assets = getAccountProperty(STORAGE.ASSETS);
 
   updateAccountProperty(STORAGE.LAYOUT, layout);
   updateAccountProperty(STORAGE.OBJECTS, objects);
   updateAccountProperty(STORAGE.ASSETS, (assets += product.price));
-  updateBalance(GAME_PROPERTIES.subtractedAmount * -1)
+  updateBalance(GAME_PROPERTIES.subtractedAmount * -1);
 
-  const selectedProduct = PRODUCT_LIST[GAME_PROPERTIES.selected]
+  const selectedProduct = PRODUCT_LIST[GAME_PROPERTIES.selected];
 
   // Add developer to the user account's developers list if product is of type developer
   if (selectedProduct.type === TYPES.DEVELOPER) {
@@ -145,30 +214,36 @@ document.getElementById("map").addEventListener("click", function (event) {
       jobId: null,
       tile: [coordX, coordY],
       cursor: GAME_PROPERTIES.cursor,
-      image: GAME_PROPERTIES.selected
+      image: GAME_PROPERTIES.selected,
     };
 
     updateAccountProperty(STORAGE.DEVELOPERS, developers);
 
-    notification.sendNotification(`${product.name} 👋`, WELCOME_MESSAGES[Math.floor(Math.random() * WELCOME_MESSAGES.length)])
+    notification.sendNotification(
+      `${product.name} 👋`,
+      WELCOME_MESSAGES[Math.floor(Math.random() * WELCOME_MESSAGES.length)]
+    );
   } else if (selectedProduct.type === TYPES.PRODUCT) {
-
-    let activeJobsStorageLimit = getAccountProperty(STORAGE.ACTIVE_JOBS_STORAGE_LIMIT);
-    let storageCount = document.getElementById("storage-count")
+    let activeJobsStorageLimit = getAccountProperty(
+      STORAGE.ACTIVE_JOBS_STORAGE_LIMIT
+    );
+    let storageCount = document.getElementById("storage-count");
 
     if (selectedProduct.id < 3) {
-      updateAccountProperty(STORAGE.ACTIVE_JOBS_STORAGE_LIMIT, activeJobsStorageLimit + 1)
-      storageCount.innerText = activeJobsStorageLimit + 1
+      updateAccountProperty(
+        STORAGE.ACTIVE_JOBS_STORAGE_LIMIT,
+        activeJobsStorageLimit + 1
+      );
+      storageCount.innerText = activeJobsStorageLimit + 1;
     }
   }
 
-  playSound(SOUNDS.COIN)
+  playSound(SOUNDS.COIN);
   renderJobs();
-  GAME_PROPERTIES.selected = null
+  GAME_PROPERTIES.selected = null;
   GAME_PROPERTIES.grabbed = false;
   GAME_PROPERTIES.cursor = [1, 1];
 });
-
 
 /** Disable to the button if no developers match programming language */
 const isJobDisabled = function (work) {
@@ -176,7 +251,8 @@ const isJobDisabled = function (work) {
 
   const { id, requirements } = work;
 
-  if ((jobs[id] && !jobs[id].ended) || !findDeveloper(requirements)) return true;
+  if ((jobs[id] && !jobs[id].ended) || !findDeveloper(requirements))
+    return true;
   return false;
 };
 
@@ -186,24 +262,26 @@ const findDeveloper = function (requirements) {
 
   let developerMatched = false;
   let selectedDeveloper = null;
-  
+
   requirements.forEach((requirement) => {
     Object.keys(developers).forEach((id) => {
       const developer = developers[id];
 
       if (developer.skills.length === requirements.length) {
-        developerMatched = String(developer.skills.sort()) === String(requirements.map((req) => req.title).sort())
+        developerMatched =
+          String(developer.skills.sort()) ===
+          String(requirements.map((req) => req.title).sort());
       } else {
-        developerMatched = developer.skills.includes(requirement.title)
+        developerMatched = developer.skills.includes(requirement.title);
       }
 
       if (developerMatched && !developer.active) {
         selectedDeveloper = id;
       }
-    })
-  })
+    });
+  });
 
-  return selectedDeveloper
+  return selectedDeveloper;
 };
 
 /** When a developer is working, change character image to "working" */
@@ -236,13 +314,13 @@ const makeWorkerBusy = (requirements, jobId) => {
   );
   developers[selected] = { ...developers[selected], active: true, jobId };
 
-  AUDIOS[selected] = new Audio('/developer-life-simulator/assets/keyboard.wav');
-  AUDIOS[selected].play()
+  AUDIOS[selected] = new Audio("/developer-life-simulator/assets/keyboard.wav");
+  AUDIOS[selected].play();
 
   updateAccountProperty(STORAGE.DEVELOPERS, developers);
 };
 
-/** Update character image back to normal when job ends. */ 
+/** Update character image back to normal when job ends. */
 const makeWorkerFree = (jobId) => {
   let developers = getAccountProperty(STORAGE.DEVELOPERS);
   let selected = null;
@@ -277,8 +355,8 @@ const makeWorkerFree = (jobId) => {
       };
 
       if (AUDIOS[selected]) {
-        AUDIOS[selected].pause()
-        AUDIOS[selected].currentTime = 0
+        AUDIOS[selected].pause();
+        AUDIOS[selected].currentTime = 0;
       }
 
       updateAccountProperty(STORAGE.DEVELOPERS, developers);
@@ -347,19 +425,32 @@ export const renderJobs = () => {
     accept.onclick = function () {
       // Claim rewards when job ends
       if (jobEnded) {
-        claimReward(activeJobs, work, tasks[work].reward, PRODUCT_LIST[Number(activeJobs[work].developer)].expense);
+        claimReward(
+          activeJobs,
+          work,
+          tasks[work].reward,
+          PRODUCT_LIST[Number(activeJobs[work].developer)].expense
+        );
         renderJobs();
       } else {
-        let activeJobsStorageLimit = getAccountProperty(STORAGE.ACTIVE_JOBS_STORAGE_LIMIT);
+        let activeJobsStorageLimit = getAccountProperty(
+          STORAGE.ACTIVE_JOBS_STORAGE_LIMIT
+        );
         let activeJobs = getAccountProperty(STORAGE.ACTIVE_JOBS);
 
-        const runningActiveJobs = Object.keys(activeJobs).filter((job) => activeJobs[job].ended == false).length
+        const runningActiveJobs = Object.keys(activeJobs).filter(
+          (job) => activeJobs[job].ended == false
+        ).length;
 
         // Prevent new active jobs
         if (runningActiveJobs >= activeJobsStorageLimit) {
-          notification.sendNotification("Error", "You do not have enough servers. Go to shop > servers to increase capacity", true)
-          return
-        };
+          notification.sendNotification(
+            "Error",
+            "You do not have enough servers. Go to shop > servers to increase capacity",
+            true
+          );
+          return;
+        }
 
         playSound(SOUNDS.START_JOB);
 
@@ -426,8 +517,8 @@ export const renderProducts = (tab) => {
           ? "FIRE"
           : "HIRE"
         : isProductOnMap
-          ? "SELL"
-          : "BUY";
+        ? "SELL"
+        : "BUY";
     buy.className = isAlreadyHired || isProductOnMap ? "remove" : "item-buy";
 
     if (product.price > balance) {
@@ -466,14 +557,20 @@ export const renderProducts = (tab) => {
 
     item.className = "item";
     item.id = product.id;
-    item.append(imageContainer, content, buy)
+    item.append(imageContainer, content, buy);
 
     buy.onclick = function () {
       // Fire developer or sell product when product or developer is already placed on the map
       if (isAlreadyHired || isProductOnMap) {
-        if (product.type === TYPES.DEVELOPER && getAccountProperty(STORAGE.DEVELOPERS)[product.id].active) {
-          notification.sendNotification(product.name, "Hey! I'm still working!")
-          return
+        if (
+          product.type === TYPES.DEVELOPER &&
+          getAccountProperty(STORAGE.DEVELOPERS)[product.id].active
+        ) {
+          notification.sendNotification(
+            product.name,
+            "Hey! I'm still working!"
+          );
+          return;
         }
 
         let assets = getAccountProperty(STORAGE.ASSETS);
@@ -483,14 +580,14 @@ export const renderProducts = (tab) => {
           [
             Number(objects[product.id].x),
             Number(objects[product.id].x) +
-            Number(objects[product.id].cursor[0]) -
-            1,
+              Number(objects[product.id].cursor[0]) -
+              1,
           ],
           [
             Number(objects[product.id].y),
             Number(objects[product.id].y) +
-            Number(objects[product.id].cursor[1]) -
-            1,
+              Number(objects[product.id].cursor[1]) -
+              1,
           ],
         ];
 
@@ -503,32 +600,42 @@ export const renderProducts = (tab) => {
         );
 
         // Remove layout. LAYOUT stores the position and size of the object that can be used for object detection
-        let newLayout = accountLayouts.filter((layout) => String(layout) !== String(layoutToRemove));
+        let newLayout = accountLayouts.filter(
+          (layout) => String(layout) !== String(layoutToRemove)
+        );
 
         delete objects[product.id];
 
         // Take away 2000 in severance pay when a developer is fired.
         if (product.type === TYPES.DEVELOPER) {
-          updateBalance(-2000)
+          updateBalance(-2000);
           delete developers[product.id];
           updateAccountProperty(STORAGE.DEVELOPERS, developers);
         } else {
           // Update new balance based on the resale value. We always assume that the re sale value diminishes by 50%
-          updateBalance(Number(product.price / 2))
+          updateBalance(Number(product.price / 2));
 
-          let activeJobsStorageLimit = getAccountProperty(STORAGE.ACTIVE_JOBS_STORAGE_LIMIT);
+          let activeJobsStorageLimit = getAccountProperty(
+            STORAGE.ACTIVE_JOBS_STORAGE_LIMIT
+          );
 
-          let storageCount = document.getElementById("storage-count")
+          let storageCount = document.getElementById("storage-count");
 
           if (product.id < 3) {
-            updateAccountProperty(STORAGE.ACTIVE_JOBS_STORAGE_LIMIT, activeJobsStorageLimit - 1)
-            storageCount.innerText = activeJobsStorageLimit - 1
+            updateAccountProperty(
+              STORAGE.ACTIVE_JOBS_STORAGE_LIMIT,
+              activeJobsStorageLimit - 1
+            );
+            storageCount.innerText = activeJobsStorageLimit - 1;
           }
         }
 
         updateAccountProperty(STORAGE.LAYOUT, newLayout);
         updateAccountProperty(STORAGE.OBJECTS, objects);
-        updateAccountProperty(STORAGE.ASSETS, Number(assets) - Number(product.price));
+        updateAccountProperty(
+          STORAGE.ASSETS,
+          Number(assets) - Number(product.price)
+        );
 
         renderProducts(GAME_PROPERTIES.tab);
         renderJobs();
@@ -539,17 +646,17 @@ export const renderProducts = (tab) => {
             product.type === TYPES.DEVELOPER
               ? `-$ ${formatNumber(2000)} severance pay`
               : `sold on used marketplace for $ ${formatNumber(
-                parseInt(product.price / 2)
-              )}`,
+                  parseInt(product.price / 2)
+                )}`,
         });
 
-        playSound(SOUNDS.COIN)
+        playSound(SOUNDS.COIN);
       } else {
         // When user clicks on buy or hire. Save selection and set GAME_PROPERTIES.cursor to the
         // object's width and height property. We need GAME_PROPERTIES.cursor to determine how
         // many tiles the object will occupy when placed on the map
-        if (product.price > balance) return
-        GAME_PROPERTIES.selected = product.id
+        if (product.price > balance) return;
+        GAME_PROPERTIES.selected = product.id;
         GAME_PROPERTIES.cursor = product.cursor;
         GAME_PROPERTIES.grabbed = true;
         GAME_PROPERTIES.subtractedAmount = Number(product.price);
@@ -564,34 +671,48 @@ export const renderProducts = (tab) => {
 
 /** Update progress, level and balance when user clicks */
 const claimReward = function (activeJobs, job, reward, expense) {
-  playSound(SOUNDS.CLAIM)
+  playSound(SOUNDS.CLAIM);
   let levelProgress = getAccountProperty(STORAGE.LEVEL_PROGRESS);
   let level = getAccountProperty(STORAGE.LEVEL);
   let tasks = customStorage.getter({}, STORAGE.TASKS);
-  let newLevelProgress = levelProgress + tasks[job].points;
+
+  let newLevelProgress =
+    levelProgress + tasks[job].points * POINTS_REWARDS[level];
 
   // When progress bar reaches or surpasses level 100 reset to 0 and increment level
   if (newLevelProgress >= 100) {
-    playSound(SOUNDS.LEVEL_UP)
+    playSound(SOUNDS.LEVEL_UP);
     let updatedLevel = level + 1;
+    let offsetProgress = newLevelProgress - 100;
 
-    updateLevel(0, newLevelProgress - 100);
-    updateAccountProperty(STORAGE.LEVEL_PROGRESS, newLevelProgress - 100);
+    updateLevel(0, offsetProgress);
+    updateAccountProperty(STORAGE.LEVEL_PROGRESS, offsetProgress);
     updateAccountProperty(STORAGE.LEVEL, updatedLevel);
-    document.querySelector("#level").firstElementChild.innerHTML = `LEVEL ${updatedLevel}`;
-    notification.sendNotification("Level up!", "Congratulations on reaching level " + updatedLevel)
+    document.querySelector(
+      "#level"
+    ).firstElementChild.innerHTML = `LEVEL ${updatedLevel}`;
+    notification.sendNotification(
+      "Level up!",
+      "Congratulations on reaching level " + updatedLevel
+    );
   } else {
     updateLevel(levelProgress, newLevelProgress);
     updateAccountProperty(STORAGE.LEVEL_PROGRESS, newLevelProgress);
   }
 
-  updateLog({ timestamp: moment().format("LT"), message: `$ ${formatNumber(reward)} claimed` });
-  updateLog({ timestamp: moment().format("LT"), message: `-$ ${formatNumber(expense)} in expense` });
+  updateLog({
+    timestamp: moment().format("LT"),
+    message: `$ ${formatNumber(reward)} claimed`,
+  });
+  updateLog({
+    timestamp: moment().format("LT"),
+    message: `-$ ${formatNumber(expense)} in expense`,
+  });
 
   delete activeJobs[job];
   updateAccountProperty(STORAGE.ACTIVE_JOBS, activeJobs);
 
-  updateBalance(Number(reward) - Number(expense))
+  updateBalance(Number(reward) - Number(expense));
 };
 
 const endJob = (id) => {
@@ -631,8 +752,8 @@ const renderProgressbar = function (final, current, reward, job) {
 
 /**
  * A separate mouse click event listener to detect when user clicks on "Claim Reward" button
- * Accumulate job reward points using getAttribute and pass it into the claimReward function  
- * 
+ * Accumulate job reward points using getAttribute and pass it into the claimReward function
+ *
  * */
 document.addEventListener("mousedown", (e) => {
   let activeJobs = getAccountProperty(STORAGE.ACTIVE_JOBS);
@@ -669,15 +790,16 @@ const renderActiveJobs = function () {
   empty.style.margin = 0;
   empty.style.padding = "10px 20px";
   empty.innerText = "No active jobs";
-  empty.style.textAlign = 'center';
+  empty.style.textAlign = "center";
 
   const activeJobsContent = document.getElementById("active-jobs-content");
   activeJobsContent.innerHTML = null;
-  activeJobsContent.style.overflowY = 'auto';
-  activeJobsContent.style.maxHeight = '500px';
+  activeJobsContent.style.overflowY = "auto";
+  activeJobsContent.style.maxHeight = "500px";
 
   /** Show empty message when there is no active jobs */
-  if (Object.keys(activeJobs).length === 0) return activeJobsContent.append(empty);
+  if (Object.keys(activeJobs).length === 0)
+    return activeJobsContent.append(empty);
 
   Object.keys(activeJobs).forEach((id) => {
     let job = activeJobs[id];
@@ -697,7 +819,12 @@ const renderActiveJobs = function () {
     developerName.className = "id-developer";
 
     /** Update progress bar */
-    let progress = renderProgressbar(job.duration * 60, timeDiff, job.reward, id);
+    let progress = renderProgressbar(
+      job.duration * 60,
+      timeDiff,
+      job.reward,
+      id
+    );
 
     jobItem.append(jobTitle, developerName);
 
@@ -725,7 +852,7 @@ const renderActiveJobs = function () {
  * @param {Object} log - log object with timestamp and message
  */
 const updateLog = (log) => {
-  let type = log.type || "normal"
+  let type = log.type || "normal";
 
   let content = document.getElementById("logs");
 
@@ -734,7 +861,7 @@ const updateLog = (log) => {
   let timestamp = document.createElement("p");
   timestamp.className = "timestamp";
 
-  heading.setAttribute('type', type)
+  heading.setAttribute("type", type);
 
   let container = document.createElement("div");
 
@@ -752,7 +879,7 @@ const updateLog = (log) => {
 };
 
 function delay(delayInms) {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     setTimeout(() => {
       resolve(2);
     }, delayInms);
@@ -762,43 +889,43 @@ function delay(delayInms) {
 const animateSecurityThreatLog = async function () {
   const log = {
     timestamp: moment().format("LT"),
-    type: "green"
-  }
+    type: "green",
+  };
 
-  updateLog({ ...log, message: 'START', });
-  updateLog({ ...log, message: 'Fixing threat...', });
-  await delay(2000)
-  updateLog({ ...log, message: 'Security threat resolved' });
-}
+  updateLog({ ...log, message: "START" });
+  updateLog({ ...log, message: "Fixing threat..." });
+  await delay(2000);
+  updateLog({ ...log, message: "Security threat resolved" });
+};
 
 const resolveSecurityRisk = function () {
-  playSound(SOUNDS.THREAT)
+  playSound(SOUNDS.THREAT);
   const securityRiskButton = document.getElementById("security-risk-btn");
-  animateSecurityThreatLog()
+  animateSecurityThreatLog();
 
-  securityRiskButton.disabled = true
-  GAME_PROPERTIES.securityRiskStatus = false
+  securityRiskButton.disabled = true;
+  GAME_PROPERTIES.securityRiskStatus = false;
 
-  generateSecurityRisks()
-}
+  generateSecurityRisks();
+};
 
 const generateSecurityRisks = function () {
   setTimeout(() => {
-    GAME_PROPERTIES.securityRiskStatus = true
+    GAME_PROPERTIES.securityRiskStatus = true;
 
     const securityRiskButton = document.getElementById("security-risk-btn");
 
     updateLog({
       timestamp: moment().format("LT"),
-      message: 'Security threat detected!',
-      type: "red"
+      message: "Security threat detected!",
+      type: "red",
     });
 
-    securityRiskButton.disabled = false
-  }, SECURITY_INTERVALS[Math.floor(Math.random() * SECURITY_INTERVALS.length)])
-}
+    securityRiskButton.disabled = false;
+  }, SECURITY_INTERVALS[Math.floor(Math.random() * SECURITY_INTERVALS.length)]);
+};
 
-generateSecurityRisks()
+generateSecurityRisks();
 
 /** Clear item from selection on ESC key press */
 document.addEventListener("keydown", (e) => {
@@ -812,21 +939,21 @@ window.setInterval(() => renderActiveJobs(), 200);
 
 // Draggable map element handler
 (function moveGameMap() {
-  let elm = document.getElementById('frame');
+  let elm = document.getElementById("frame");
 
   elm.onmousedown = (e) => {
-    if (e.button !== 0) return
+    if (e.button !== 0) return;
 
     document.onmousemove = (i) => {
-      elm.style.top = `${i.clientY - (e.offsetY + 90)}px`
-      elm.style.left = `${i.clientX - (e.offsetX + 30)}px`
-    }
+      elm.style.top = `${i.clientY - (e.offsetY + 90)}px`;
+      elm.style.left = `${i.clientX - (e.offsetX + 30)}px`;
+    };
 
     document.onmouseup = () => {
       document.onmousedown = null;
       document.onmousemove = null;
-    }
-  }
-})()
+    };
+  };
+})();
 
 window.resolveSecurityRisk = resolveSecurityRisk;

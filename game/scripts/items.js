@@ -1,37 +1,38 @@
-"use strict"
+"use strict";
 
 // Servers
-const amazonServer = document.createElement('img');
-const azureServer = document.createElement('img');
-const firebaseServer = document.createElement('img');
+const amazonServer = document.createElement("img");
+const azureServer = document.createElement("img");
+const firebaseServer = document.createElement("img");
 
 // Developers
-const developer1 = document.createElement('img');
-const developer2 = document.createElement('img');
-const developer3 = document.createElement('img');
-const developer4 = document.createElement('img');
-const developer5 = document.createElement('img');
-const developer6 = document.createElement('img');
+const developer1 = document.createElement("img");
+const developer2 = document.createElement("img");
+const developer3 = document.createElement("img");
+const developer4 = document.createElement("img");
+const developer5 = document.createElement("img");
+const developer6 = document.createElement("img");
 
 // Desks
-const desk1 = document.createElement('img');
-const desk2 = document.createElement('img');
-const desk3 = document.createElement('img');
-const desk4 = document.createElement('img');
-const desk5 = document.createElement('img');
-const desk6 = document.createElement('img');
+const desk1 = document.createElement("img");
+const desk2 = document.createElement("img");
+const desk3 = document.createElement("img");
+const desk4 = document.createElement("img");
+const desk5 = document.createElement("img");
+const desk6 = document.createElement("img");
 
 // Desks occupied
-const desk1Off = document.createElement('img');
-const desk2Off = document.createElement('img');
-const desk3Off = document.createElement('img');
-const desk4Off = document.createElement('img');
-const desk5Off = document.createElement('img');
-const desk6Off = document.createElement('img');
+const desk1Off = document.createElement("img");
+const desk2Off = document.createElement("img");
+const desk3Off = document.createElement("img");
+const desk4Off = document.createElement("img");
+const desk5Off = document.createElement("img");
+const desk6Off = document.createElement("img");
 
 // Entertainments
-const cafeImage = document.createElement('img');
-const bordRoomImage = document.createElement('img');
+const cafeImage = document.createElement("img");
+const bordRoomImage = document.createElement("img");
+const tableTennisImage = document.createElement("img");
 
 amazonServer.src = "/developer-life-simulator/assets/rds.png";
 azureServer.src = "/developer-life-simulator/assets/server.png";
@@ -51,7 +52,8 @@ desk5.src = "/developer-life-simulator/assets/desk5.png";
 desk6.src = "/developer-life-simulator/assets/desk6.png";
 
 cafeImage.src = "/developer-life-simulator/assets/cafe.png";
-bordRoomImage.src = '/developer-life-simulator/assets/boardroom.png'
+bordRoomImage.src = "/developer-life-simulator/assets/boardroom.png";
+tableTennisImage.src = "/developer-life-simulator/assets/table-tennis.png";
 
 desk1Off.src = "/developer-life-simulator/assets/desk1-off.png";
 desk2Off.src = "/developer-life-simulator/assets/desk2-off.png";
@@ -83,7 +85,8 @@ const ITEMS = {
   desk5Off,
   desk6Off,
   cafeImage,
-  bordRoomImage
-}
+  bordRoomImage,
+  tableTennisImage,
+};
 
 export default ITEMS;

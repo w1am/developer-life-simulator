@@ -50,7 +50,7 @@ input.error {
   border: 1px solid #fc6f6f;
   box-shadow: 0 0 2px #ce7171;
 }
-input[type=password] {
+input[type="password"] {
   font: small-caption;
   font-size: 20px;
 }
@@ -288,7 +288,7 @@ tbody tr:last-child {
 
 #welcome-user {
   margin-bottom: 20px;
-  color: #bd3b2f;
+  color: rgb(47, 216, 47);
 }
 
 #navbar {
@@ -318,13 +318,13 @@ tbody tr:last-child {
 #navbar #links li.auth {
   display: block;
 }
-#navbar #links li.auth[authenticated=true] {
+#navbar #links li.auth[authenticated="true"] {
   display: none;
 }
 #navbar #links li.signout {
   display: none;
 }
-#navbar #links li.signout[authenticated=true] {
+#navbar #links li.signout[authenticated="true"] {
   display: block;
 }
 #navbar #links li.active {
@@ -386,7 +386,7 @@ card form label {
   display: block;
   margin-bottom: 5px;
 }
-card form button[type=submit] {
+card form button[type="submit"] {
   background-color: #357797;
   border: 1px solid #357797;
   color: #ffffff;
@@ -397,7 +397,7 @@ card form button[type=submit] {
   margin: 0px;
   cursor: pointer;
 }
-card form button[type=submit]:hover {
+card form button[type="submit"]:hover {
   background-color: #418bb1;
 }
 
@@ -537,11 +537,11 @@ card form button[type=submit]:hover {
   cursor: pointer;
   border: 1px solid #e4e4e4;
 }
-#menu-shop .parent #sidebar .item[active=true] {
+#menu-shop .parent #sidebar .item[active="true"] {
   background-color: #f1f1f1;
   border: 1px solid #cccccc;
 }
-#menu-shop .parent #sidebar .item:hover[active=false] {
+#menu-shop .parent #sidebar .item:hover[active="false"] {
   background-color: #f1f1f1;
   border: 1px solid #cccccc;
 }
@@ -620,7 +620,7 @@ card form button[type=submit]:hover {
   width: 25%;
   text-align: center;
 }
-.job-item button[status=claim] {
+.job-item button[status="claim"] {
   background-color: #21a021;
   border: 2px solid #1d8b1d;
   color: white;
@@ -630,7 +630,7 @@ card form button[type=submit]:hover {
   border-radius: 3px;
   cursor: pointer;
 }
-.job-item button[status=claim]:hover {
+.job-item button[status="claim"]:hover {
   background-color: #2fb82f;
   border: 2px solid #238823;
 }
@@ -638,7 +638,7 @@ card form button[type=submit]:hover {
   opacity: 0.2;
   cursor: not-allowed;
 }
-.job-item button[status=open] {
+.job-item button[status="open"] {
   background-color: #173248;
   border: 2px solid #0f263a;
   color: white;
@@ -648,7 +648,7 @@ card form button[type=submit]:hover {
   border-radius: 3px;
   cursor: pointer;
 }
-.job-item button[status=open]:hover {
+.job-item button[status="open"]:hover {
   background-color: #10273a;
   border: 2px solid #081825;
 }
@@ -721,13 +721,13 @@ card form button[type=submit]:hover {
   margin: auto 0;
   max-width: 300px;
 }
-#logs .item .heading[type=normal] {
+#logs .item .heading[type="normal"] {
   color: #ececec;
 }
-#logs .item .heading[type=green] {
+#logs .item .heading[type="green"] {
   color: #00d636;
 }
-#logs .item .heading[type=red] {
+#logs .item .heading[type="red"] {
   color: #d60e00;
 }
 #logs .item .timestamp {
@@ -746,13 +746,23 @@ card form button[type=submit]:hover {
 #level #level-progress {
   border: 2px solid #838081;
   border-radius: 5px;
-  background: linear-gradient(180deg, #c7c7c7 -31.08%, #d6d6d6 58.2%, #c7c7c7 130.63%);
+  background: linear-gradient(
+    180deg,
+    #c7c7c7 -31.08%,
+    #d6d6d6 58.2%,
+    #c7c7c7 130.63%
+  );
   height: 39px;
   width: 204px;
   position: relative;
 }
 #level #level-progress #level-progress-bar {
-  background: linear-gradient(180deg, #b7d669 -31.08%, #82b428 58.2%, #628933 130.63%);
+  background: linear-gradient(
+    180deg,
+    #b7d669 -31.08%,
+    #82b428 58.2%,
+    #628933 130.63%
+  );
   position: absolute;
   top: 0px;
   left: 0px;
@@ -927,10 +937,10 @@ div#balance-amount::before {
   border-bottom: 3px solid #316c88;
   cursor: pointer;
 }
-.header[active=true] {
+.header[active="true"] {
   background-color: #367897;
 }
-.header[active=false] {
+.header[active="false"] {
   background-color: #2c6a86;
   border-bottom: 3px solid #285970;
 }

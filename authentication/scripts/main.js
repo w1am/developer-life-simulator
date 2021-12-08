@@ -1,6 +1,6 @@
-"use strict"
+"use strict";
 
-import { customStorage, AUTHENTICATION_STORAGE } from '../../common/index.js'
+import { customStorage, AUTHENTICATION_STORAGE } from "../../common/index.js";
 
 // Initial form values
 const formValue = {
@@ -68,10 +68,10 @@ let errors = {
 };
 
 // Update state using the field and value property
-const handleInput = function(type, field, value) {
+const handleInput = function (type, field, value) {
   formValue[type][field] = value;
   highlightFieldWhenError(type, field, value);
-}
+};
 
 // Highlight field if form has errors.
 function highlightFieldWhenError(type, field, value) {
@@ -114,7 +114,8 @@ function validateFields(type) {
   });
 }
 
-const handleSubmit = function (type) {
+const handleSubmit = function (event, type) {
+  event.preventDefault();
   validateFields(type);
 
   // Push to errorsCount array when object key value is true
@@ -131,15 +132,12 @@ const handleSubmit = function (type) {
         .querySelector("#registration-form")
         .querySelector("input[name='email']");
 
-      // The paragraph error message.
-      if (emailField.parentNode.childNodes.length > 3)
-        e.parentNode.removeChild(e.parentNode.lastElementChild);
-
       emailField.classList.add("error");
       emailField.parentElement.style.color = "red";
       emailField.parentElement.style.transition = "all 0.1s";
 
       const errorMessage = document.createElement("p");
+      errorMessage.className = "form-error";
       errorMessage.innerText = "User already exists";
       errorMessage.style.color = "red";
       errorMessage.style.transition = "all 0.1s";
@@ -149,7 +147,7 @@ const handleSubmit = function (type) {
       emailField.parentElement.appendChild(errorMessage);
       return;
     } else {
-      // Registration successful and set default account GAME_PROPERTIES
+      // Registration successful and set default account properties
       const { email, firstName, lastName, password } = formValue.register;
       accounts[email] = {
         firstName,
@@ -164,13 +162,9 @@ const handleSubmit = function (type) {
         level_progress: 0,
         level: 1,
         type: "startup",
-        activeJobsStorageLimit: 0
+        activeJobsStorageLimit: 0,
       };
       customStorage.setter(AUTHENTICATION_STORAGE.ACCOUNTS, accounts);
-
-      // Redirect to another page 
-      window.location.pathname =
-        "developer-life-simulator/authentication/message";
     }
   } else if (type === "login") {
     // The user must exist first to proceed
@@ -182,9 +176,6 @@ const handleSubmit = function (type) {
         let emailField = document
           .querySelector("#login-form")
           .querySelector("input[name='password']");
-
-        if (emailField.parentNode.childNodes.length > 3)
-          e.parentNode.removeChild(e.parentNode.lastElementChild);
 
         emailField.classList.add("error");
         emailField.parentElement.style.color = "red";
@@ -219,9 +210,6 @@ const handleSubmit = function (type) {
         .querySelector("#login-form")
         .querySelector("input[name='email']");
 
-      if (emailField.parentNode.childNodes.length > 3)
-        e.parentNode.removeChild(e.parentNode.lastElementChild);
-
       emailField.classList.add("error");
       emailField.parentElement.style.color = "red";
       emailField.parentElement.style.transition = "all 0.1s";
@@ -235,7 +223,7 @@ const handleSubmit = function (type) {
       emailField.parentElement.appendChild(errorMessage);
     }
   }
-}
+};
 
 window.handleSubmit = handleSubmit;
-window.handleInput = handleInput
+window.handleInput = handleInput;
