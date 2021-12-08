@@ -49,12 +49,14 @@ import {
   playSound,
   updateLevel,
   updateBalance,
+  createConfetti
 } from "./utils/index.js";
 import { getAccountProperty, updateAccountProperty } from "./account.js";
-import { WELCOME_MESSAGES, POINTS_REWARDS } from "../../common/constants.js";
-import { Notification } from "./models.js";
+import { WELCOME_MESSAGES, POINTS_REWARDS, COMPANY_TYPE } from "../../common/constants.js";
+import { Notification, Log } from "./models.js";
 
 const notification = new Notification();
+const log = new Log();
 
 const isAuthed = customStorage.getter(
   null,
@@ -294,10 +296,7 @@ const makeWorkerBusy = (requirements, jobId) => {
 
   if (!selected) return false;
 
-  updateLog({
-    timestamp: moment().format("LT"),
-    message: `${PRODUCT_LIST[selected].name} started working`,
-  });
+  log.pushLog(`${PRODUCT_LIST[selected].name} started working`)
 
   objectsCtx.clearRect(
     developers[selected].tile[0] * TILE_SIZE,
@@ -329,10 +328,7 @@ const makeWorkerFree = (jobId) => {
     if (developers[id].jobId === jobId) {
       selected = Number(id);
 
-      updateLog({
-        timestamp: moment().format("LT"),
-        message: `${PRODUCT_LIST[selected].name} stopped working`,
-      });
+      log.pushLog(`${PRODUCT_LIST[selected].name} stopped working`)
 
       objectsCtx.clearRect(
         developers[selected].tile[0] * TILE_SIZE,
@@ -504,26 +500,26 @@ export const renderProducts = (tab) => {
   let balance = getAccountProperty(STORAGE.BALANCE);
 
   PRODUCTS[GAME_PROPERTIES.tab].forEach((product) => {
-    let isAlreadyHired = Object.keys(developers).includes(String(product.id));
-    let isProductOnMap = Object.keys(objects).includes(String(product.id));
+    const isAlreadyHired = Object.keys(developers).includes(String(product.id));
+    const isProductOnMap = Object.keys(objects).includes(String(product.id));
+    const isFiredState = GAME_PROPERTIES.tab === TABS.DEVELOPER && isAlreadyHired;
+    const isProductSellState = GAME_PROPERTIES.tab !== TABS.DEVELOPER && isProductOnMap;
 
     const item = document.createElement("div");
 
     // Update button text when required
     const buy = document.createElement("button");
-    buy.innerText =
-      GAME_PROPERTIES.tab === TABS.DEVELOPER
-        ? isAlreadyHired
-          ? "FIRE"
-          : "HIRE"
-        : isProductOnMap
-        ? "SELL"
-        : "BUY";
+
+    if (GAME_PROPERTIES.tab === TABS.DEVELOPER) {
+      buy.innerText = isAlreadyHired ? "FIRE" : "HIRE"
+    } else {
+      buy.innerText = isProductOnMap ? "SELL" : "BUY"
+    }
+
     buy.className = isAlreadyHired || isProductOnMap ? "remove" : "item-buy";
 
-    if (product.price > balance) {
-      buy.disabled = true;
-    }
+    // Disable when state is "sell" or "fire" 
+    buy.disabled = (!isFiredState || !isProductSellState) && product.price > balance
 
     const content = document.createElement("div");
     content.style.display = "block";
@@ -576,6 +572,7 @@ export const renderProducts = (tab) => {
         let assets = getAccountProperty(STORAGE.ASSETS);
         let accountLayouts = getAccountProperty(STORAGE.LAYOUT);
 
+        // Initialise the layout
         let layoutToRemove = [
           [
             Number(objects[product.id].x),
@@ -640,15 +637,11 @@ export const renderProducts = (tab) => {
         renderProducts(GAME_PROPERTIES.tab);
         renderJobs();
 
-        updateLog({
-          timestamp: moment().format("LT"),
-          message:
-            product.type === TYPES.DEVELOPER
-              ? `-$ ${formatNumber(2000)} severance pay`
-              : `sold on used marketplace for $ ${formatNumber(
-                  parseInt(product.price / 2)
-                )}`,
-        });
+        let logMessage = product.type === TYPES.DEVELOPER
+          ? `-$ ${formatNumber(2000)} severance pay`
+          : `sold on used marketplace for $ ${formatNumber(parseInt(product.price / 2))}`
+
+        log.pushLog(logMessage)
 
         playSound(SOUNDS.COIN);
       } else {
@@ -682,32 +675,25 @@ const claimReward = function (activeJobs, job, reward, expense) {
   // When progress bar reaches or surpasses level 100 reset to 0 and increment level
   if (newLevelProgress >= 100) {
     playSound(SOUNDS.LEVEL_UP);
+    createConfetti()
     let updatedLevel = level + 1;
     let offsetProgress = newLevelProgress - 100;
+    let companyType = updatedLevel > 5 ? "enterprise" : COMPANY_TYPE[updatedLevel]
 
     updateLevel(0, offsetProgress);
     updateAccountProperty(STORAGE.LEVEL_PROGRESS, offsetProgress);
     updateAccountProperty(STORAGE.LEVEL, updatedLevel);
-    document.querySelector(
-      "#level"
-    ).firstElementChild.innerHTML = `LEVEL ${updatedLevel}`;
-    notification.sendNotification(
-      "Level up!",
-      "Congratulations on reaching level " + updatedLevel
-    );
+    updateAccountProperty(STORAGE.TYPE, companyType);
+    document.querySelector("#company-type").innerHTML = companyType;
+    document.querySelector("#level").firstElementChild.innerHTML = `LEVEL ${updatedLevel}`;
+    notification.sendNotification("Level up!", "Congratulations on reaching level " + updatedLevel);
   } else {
     updateLevel(levelProgress, newLevelProgress);
     updateAccountProperty(STORAGE.LEVEL_PROGRESS, newLevelProgress);
   }
 
-  updateLog({
-    timestamp: moment().format("LT"),
-    message: `$ ${formatNumber(reward)} claimed`,
-  });
-  updateLog({
-    timestamp: moment().format("LT"),
-    message: `-$ ${formatNumber(expense)} in expense`,
-  });
+  log.pushLog(`$ ${formatNumber(reward)} claimed`)
+  log.pushLog(`-$ ${formatNumber(expense)} in expense`)
 
   delete activeJobs[job];
   updateAccountProperty(STORAGE.ACTIVE_JOBS, activeJobs);
@@ -847,65 +833,20 @@ const renderActiveJobs = function () {
   });
 };
 
-/**
- * Log anything
- * @param {Object} log - log object with timestamp and message
- */
-const updateLog = (log) => {
-  let type = log.type || "normal";
-
-  let content = document.getElementById("logs");
-
-  let heading = document.createElement("p");
-  heading.className = "heading";
-  let timestamp = document.createElement("p");
-  timestamp.className = "timestamp";
-
-  heading.setAttribute("type", type);
-
-  let container = document.createElement("div");
-
-  heading.append(log.message);
-  timestamp.append(log.timestamp);
-
-  container.append(heading, timestamp);
-
-  container.className = "item";
-
-  content.append(container);
-
-  let logs = document.getElementById("logs");
-  logs.scrollTop = logs.scrollHeight;
-};
-
-function delay(delayInms) {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(2);
-    }, delayInms);
-  });
-}
-
-const animateSecurityThreatLog = async function () {
-  const log = {
-    timestamp: moment().format("LT"),
-    type: "green",
-  };
-
-  updateLog({ ...log, message: "START" });
-  updateLog({ ...log, message: "Fixing threat..." });
-  await delay(2000);
-  updateLog({ ...log, message: "Security threat resolved" });
-};
-
 const resolveSecurityRisk = function () {
   playSound(SOUNDS.THREAT);
+  updateBalance(+200);
+
   const securityRiskButton = document.getElementById("security-risk-btn");
-  animateSecurityThreatLog();
+
+  log.pushLog("fixed security threat", "green")
 
   securityRiskButton.disabled = true;
   GAME_PROPERTIES.securityRiskStatus = false;
 
+  log.pushLog("$200 reward for fixing security threat", "green")
+
+  // Generate next security risk
   generateSecurityRisks();
 };
 
@@ -915,11 +856,7 @@ const generateSecurityRisks = function () {
 
     const securityRiskButton = document.getElementById("security-risk-btn");
 
-    updateLog({
-      timestamp: moment().format("LT"),
-      message: "Security threat detected!",
-      type: "red",
-    });
+    log.pushLog("Security threat detected!", "red")
 
     securityRiskButton.disabled = false;
   }, SECURITY_INTERVALS[Math.floor(Math.random() * SECURITY_INTERVALS.length)]);
@@ -935,9 +872,7 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-window.setInterval(() => renderActiveJobs(), 200);
-
-// Draggable map element handler
+/** Draggable map element handler */ 
 (function moveGameMap() {
   let elm = document.getElementById("frame");
 
@@ -956,4 +891,5 @@ window.setInterval(() => renderActiveJobs(), 200);
   };
 })();
 
+window.setInterval(() => renderActiveJobs(), 200);
 window.resolveSecurityRisk = resolveSecurityRisk;

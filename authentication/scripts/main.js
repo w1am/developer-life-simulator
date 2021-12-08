@@ -161,10 +161,12 @@ const handleSubmit = function (event, type) {
         assets: 0,
         level_progress: 0,
         level: 1,
-        type: "startup",
+        type: "micro",
         activeJobsStorageLimit: 0,
       };
       customStorage.setter(AUTHENTICATION_STORAGE.ACCOUNTS, accounts);
+
+      window.location.href = "/developer-life-simulator/authentication/login?registration=success";
     }
   } else if (type === "login") {
     // The user must exist first to proceed

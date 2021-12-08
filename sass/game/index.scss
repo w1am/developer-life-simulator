@@ -5,10 +5,20 @@
 @import "./level.scss";
 @import "./status.scss";
 @import "./notifications.scss";
+@import "./company-type.scss";
 
 $pixels: 2px;
 $tile-size: 64px;
 $room-padding: 10px;
+
+#confetti {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 99999999999999999999999999999999;
+  display: none;
+}
 
 #game-page {
   overflow: hidden;

@@ -28,7 +28,7 @@ function activeJobs()
       <div id="active-jobs-content"></div>
       <div id="active-jobs-amount-remaining">
         <span id="storage-count"></span>
-        <span>server(s) capacity</span>
+        <span>slot(s) max</span>
       </div>
     </div>
   ';
@@ -85,6 +85,13 @@ function status()
     <div id="status">
       <button onclick="resolveSecurityRisk()" id="security-risk-btn" disabled>Fix security risk</button>
     </div>
+  ';
+};
+
+function companyType()
+{
+  echo '
+    <div id="company-type">Micro</div>
   ';
 };
 

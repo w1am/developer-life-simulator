@@ -95,3 +95,37 @@ export class Notification {
     }, 10000)
   }
 }
+
+export class Log {
+  constructor() {
+    this.content = document.getElementById("logs");
+  }
+
+  /**
+   * 
+   * @param {string} message 
+   * @param {"normal" | "green" | "red"} type 
+   */
+  pushLog(message, type="normal") {
+    let heading = document.createElement("p");
+    heading.className = "heading";
+    let timestamp = document.createElement("p");
+    timestamp.className = "timestamp";
+
+    heading.setAttribute("type", type);
+
+    let container = document.createElement("div");
+
+    heading.append(message);
+    timestamp.append(moment().format("LT"));
+
+    container.append(heading, timestamp);
+
+    container.className = "item";
+
+    this.content.append(container);
+
+    let logs = document.getElementById("logs");
+    logs.scrollTop = logs.scrollHeight;
+  }
+}

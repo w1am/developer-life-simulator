@@ -42,12 +42,19 @@
     ?>
 
     <?php
-    status();
+    status()
     ?>
 
     <?php
     notifications();
     ?>
+
+    <!-- Company Type -->
+    <?php
+    companyType();
+    ?>
+    
+    <canvas id="confetti" width="1200" height="640"></canvas>
 
     <!-- MAP -->
     <div id="game">
@@ -68,6 +75,9 @@
   <audio id="audio-level-up" src="/developer-life-simulator/assets/level-up.wav"></audio>
   <audio id="audio-coin" src="/developer-life-simulator/assets/coin.wav"></audio>
   <audio id="audio-threat" src="/developer-life-simulator/assets/threat.wav"></audio>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
 
   <!-- Scripts that needs to be loaded after UI loads -->
   <script type="module" src="./scripts/main.js"></script>

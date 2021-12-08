@@ -7,6 +7,7 @@
  * */
 
 import ITEMS from "../game/scripts/items.js";
+import { Requirement } from "../game/scripts/models.js";
 
 // Authentication
 export const AUTHENTICATION_STORAGE = {
@@ -33,6 +34,7 @@ export const STORAGE = {
   LEVEL_PROGRESS: "level_progress",
   LEVEL: "level",
   ACTIVE_JOBS_STORAGE_LIMIT: "activeJobsStorageLimit",
+  TYPE: "type",
 };
 
 // Item type
@@ -93,3 +95,23 @@ export const POINTS_REWARDS = {
   4: 2,
   5: 1.25,
 };
+
+// The first 5 levels are easy to advance. Earning points becomes harder as the player progresses
+export const COMPANY_TYPE = {
+  1: "micro",
+  2: "small",
+  3: "medium",
+  4: "large",
+  5: "enterprise",
+};
+
+export const LANGUAGES = {
+  PYTHON: new Requirement("Python", "PY", ["#173248", "white"]),
+  JS: new Requirement("Javascript", "JS", ["#EAD41B", "#000000"]),
+  SCALA: new Requirement("Scala", "Scala", ["#D12F2D", "#000000"]),
+  JAVA: new Requirement("Java", "Java", ["#E97B18", "#4A738E"]),
+  CPP: new Requirement("C++", "C++", ["#486694", "#f7f7f7"]),
+  REACTJS: new Requirement("ReactJS", "ReactJS", ["#61DAFB", "#222222"]),
+  SQL: new Requirement("SQL", "SQL", ["#F10000", "white"]),
+  AWS: new Requirement("AWS", "AWS", ["#F79400", "#222E3C"])
+}

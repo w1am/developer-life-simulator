@@ -17,8 +17,12 @@
 
   <?php
   $not_authenticated = isset($_GET['source']) && $_GET['source'] === 'failed';
+  $registration_success = isset($_GET['registration']) && $_GET['registration'] === 'success';
   if ($not_authenticated) {
     messageBox('error', 'Please login to play the game');
+  }
+  if ($registration_success) {
+    messageBox('success', 'Registration successful. Login to play!');
   }
   ?>
 
