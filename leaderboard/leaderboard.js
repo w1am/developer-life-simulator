@@ -9,14 +9,14 @@ const players = customStorage.getter({}, 'accounts');
 
 // Order players by their networth in descending. high to low
 const ordered = Object.keys(players).sort(function (a, b) {
-  let netWorthA = players[a].balance + players[a].assets;
-  let netWorthB = players[b].balance + players[b].assets;
+  let balanceA = players[a].balance;
+  let balanceB = players[b].balance;
 
-  if (netWorthA < netWorthB) {
+  if (balanceA < balanceB) {
     return 1;
   }
 
-  if (netWorthA > netWorthB) {
+  if (balanceA > balanceB) {
     return -1;
   }
 
@@ -37,7 +37,7 @@ if (ordered.length === 0) {
 
     let name = player.firstName
     let employeesCount = Object.keys(player.developers).length;
-    let netWorth = player.assets + player.balance;
+    let balance = player.balance;
     let level = player.level
 
     let tr = document.createElement('tr');
@@ -55,7 +55,7 @@ if (ordered.length === 0) {
     td4.innerText = `LEVEL ${level}`
 
     let td5 = document.createElement('td');
-    td5.innerText = "$ " + formatNumber(netWorth);
+    td5.innerText = "$ " + formatNumber(balance);
 
     tr.append(td1, td2, td3, td4, td5);
 

@@ -150,6 +150,7 @@ const handleSubmit = function (event, type) {
       // Registration successful and set default account properties
       const { email, firstName, lastName, password } = formValue.register;
       accounts[email] = {
+        email,
         firstName,
         lastName,
         password,
@@ -158,7 +159,6 @@ const handleSubmit = function (event, type) {
         layout: [],
         objects: {},
         activeJobs: {},
-        assets: 0,
         level_progress: 0,
         level: 1,
         type: "micro",

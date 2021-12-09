@@ -18,9 +18,6 @@
     <page-wrapper>
       <h1>Leaderboard</h1>
       <br>
-      <h3 style="color: #357797"><i class="fas fa-info-circle"></i> Networth = Total assets - liabilities</h3>
-      <br>
-      <br>
       <br>
       <div id="leaderboard">
         <table>

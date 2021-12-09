@@ -196,11 +196,8 @@ document.getElementById("map").addEventListener("click", function (event) {
     [coordY, coordY + GAME_PROPERTIES.cursor[1] - 1],
   ]);
 
-  let assets = getAccountProperty(STORAGE.ASSETS);
-
   updateAccountProperty(STORAGE.LAYOUT, layout);
   updateAccountProperty(STORAGE.OBJECTS, objects);
-  updateAccountProperty(STORAGE.ASSETS, (assets += product.price));
   updateBalance(GAME_PROPERTIES.subtractedAmount * -1);
 
   const selectedProduct = PRODUCT_LIST[GAME_PROPERTIES.selected];
@@ -569,7 +566,6 @@ export const renderProducts = (tab) => {
           return;
         }
 
-        let assets = getAccountProperty(STORAGE.ASSETS);
         let accountLayouts = getAccountProperty(STORAGE.LAYOUT);
 
         // Initialise the layout
@@ -629,11 +625,6 @@ export const renderProducts = (tab) => {
 
         updateAccountProperty(STORAGE.LAYOUT, newLayout);
         updateAccountProperty(STORAGE.OBJECTS, objects);
-        updateAccountProperty(
-          STORAGE.ASSETS,
-          Number(assets) - Number(product.price)
-        );
-
         renderProducts(GAME_PROPERTIES.tab);
         renderJobs();
 

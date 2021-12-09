@@ -30,7 +30,6 @@ export const STORAGE = {
   DEVELOPERS: "developers",
   TASKS: "tasks",
   OBJECTS: "objects",
-  ASSETS: "assets",
   LEVEL_PROGRESS: "level_progress",
   LEVEL: "level",
   ACTIVE_JOBS_STORAGE_LIMIT: "activeJobsStorageLimit",
